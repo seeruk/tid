@@ -27,7 +27,7 @@ func (s *ErrorStack) Empty() bool {
 	return len(s.errors) == 0
 }
 
-// Error provides an error string for all errors in the stack.
+// Errors returns a summary error if there are any errors in the stack.
 func (s *ErrorStack) Errors() error {
 	if s.Empty() {
 		return nil
