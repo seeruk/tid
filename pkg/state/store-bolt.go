@@ -39,9 +39,7 @@ func (b *BoltStore) Read(key string, value proto.Message) error {
 		bucket := tx.Bucket([]byte(b.bucket))
 		result := bucket.Get([]byte(key))
 
-		proto.Unmarshal(result, value)
-
-		return nil
+		return proto.Unmarshal(result, value)
 	})
 }
 
