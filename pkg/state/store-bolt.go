@@ -24,6 +24,11 @@ func NewBoltStore(db *bolt.DB, bucket string) *BoltStore {
 	}
 }
 
+// Close closes the underlying Bolt DB.
+func (b *BoltStore) Close() error {
+	return b.db.Close()
+}
+
 // Read reads a value from the BoltStore, and returns a ProtoBuf message.
 func (b *BoltStore) Read(key string, value proto.Message) error {
 	if value == nil {

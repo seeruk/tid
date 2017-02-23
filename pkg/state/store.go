@@ -1,6 +1,8 @@
 package state
 
 import (
+	"io"
+
 	"github.com/golang/protobuf/proto"
 )
 
@@ -10,4 +12,6 @@ type Store interface {
 	Read(key string, value proto.Message) error
 	// Write a given value to a key given in the store.
 	Write(key string, value proto.Message) error
+	// Most stores will need to be closed when they're done with.
+	io.Closer
 }

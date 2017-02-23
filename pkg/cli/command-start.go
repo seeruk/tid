@@ -24,14 +24,18 @@ func StartCommand(store state.Store) console.Command {
 		// @todo: Create time sheet for today, if it doesn't exist.
 		// @todo: Add new entry.
 
+		now := time.Now().Local()
+		// @todo: Move format to a constant.
+		key := now.Format("2006-01-02")
+
 		output.Printf("Started tracking '%s'.\n", note)
 
-		err := createTimeSheetIfNotExists("")
+		err := createTimeSheetIfNotExists(key)
 		if err != nil {
 			return err
 		}
 
-		timeSheet, err := getTimeSheet("")
+		timeSheet, err := getTimeSheet(key)
 		if err != nil {
 			return err
 		}
@@ -39,7 +43,10 @@ func StartCommand(store state.Store) console.Command {
 		timeSheet.Entries = append(timeSheet.Entries, createEntry(note))
 
 		// Write to the store.
-		store.Write("", timeSheet)
+		err = store.Write("", &timeSheet)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	}
@@ -57,11 +64,11 @@ func createTimeSheetIfNotExists(key string) error {
 }
 
 func getTimeSheet(key string) (proto.TimeSheet, error) {
-	return nil, nil
+	return proto.TimeSheet{}, nil
 }
 
-func createEntry(note string) proto.TimeSheetEntry {
-	return proto.TimeSheetEntry{
+func createEntry(note string) *proto.TimeSheetEntry {
+	return &proto.TimeSheetEntry{
 		Note:      note,
 		StartTime: uint64(time.Now().Unix()),
 	}

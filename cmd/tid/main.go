@@ -12,18 +12,8 @@ import (
 )
 
 func main() {
-	// Open Bolt database.
-	bolt, err := state.OpenBolt(lookupTidDir())
-	fatal(err)
-
-	defer bolt.Close()
-
-	// Create required Buckets.
-	err = state.InitialiseBolt(bolt)
-	fatal(err)
-
-	// Pass Bolt database to create store instance.
-	store := state.NewBoltStore(bolt, state.BoltBucketTimeSheet)
+	store := getStore()
+	defer store.Close()
 
 	application := cli.CreateApplication()
 	application.AddCommands([]console.Command{
@@ -31,6 +21,20 @@ func main() {
 	})
 
 	os.Exit(application.Run(os.Args[1:]))
+}
+
+// getStore gets the application data store, in a ready state.
+func getStore() state.Store {
+	// Open Bolt database.
+	bolt, err := state.OpenBolt(lookupTidDir())
+	fatal(err)
+
+	// Create required Buckets.
+	err = state.InitialiseBolt(bolt)
+	fatal(err)
+
+	// Pass Bolt database to create store instance.
+	return state.NewBoltStore(bolt, state.BoltBucketTimeSheet)
 }
 
 // fatal kills the application upon error.
