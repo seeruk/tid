@@ -3,13 +3,14 @@ package cli
 import (
 	"time"
 
-	"github.com/SeerUK/tid/pkg/state"
+	"github.com/SeerUK/tid/pkg/errhandling"
+	"github.com/SeerUK/tid/pkg/timesheet"
 	"github.com/SeerUK/tid/proto"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
-func StartCommand(store state.Store) console.Command {
+func StartCommand(gateway timesheet.Gateway) console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
@@ -21,55 +22,62 @@ func StartCommand(store state.Store) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		// @todo: Create time sheet for today, if it doesn't exist.
-		// @todo: Add new entry.
+		// @todo: Refactor into some kind of a facade (how can we store the result as a value in
+		// that case, we'll have errors as values there still...)
 
-		now := time.Now().Local()
-		// @todo: Move format to a constant.
-		key := now.Format("2006-01-02")
+		status, err := gateway.FindStatus()
+		if err != nil {
+			return err
+		}
 
+		// @todo: Some IsActive helper?
+		if status.State == proto.Status_STARTED || status.State == proto.Status_PAUSED {
+			output.Println("start: Stop an existing timer before starting a new one.")
+			return nil
+		}
+
+		// @todo: This should be closer to the end.
 		output.Printf("Started tracking '%s'.\n", note)
 
-		err := createTimeSheetIfNotExists(key)
+		// @todo: FindCurrentTimeSheet():
+		now := time.Now().Local()
+
+		sheet, err := gateway.FindTimeSheet(now)
 		if err != nil {
 			return err
 		}
 
-		timeSheet, err := getTimeSheet(key)
-		if err != nil {
-			return err
+		// @todo: Maybe a helper for creating and appending instead of this?
+		sheet.Entries = append(sheet.Entries, createEntry(note))
+
+		// @todo: Make helper for this:
+		status.State = proto.Status_STARTED
+		status.TimeSheetEntry = &proto.TimeSheetEntryRef{
+			Date:  now.Format(timesheet.KeyTimesheetFmt),
+			Index: int64(len(sheet.Entries) - 1),
 		}
 
-		timeSheet.Entries = append(timeSheet.Entries, createEntry(note))
+		errs := errhandling.NewErrorStack()
+		errs.Add(gateway.PersistStatus(&status))
+		errs.Add(gateway.PersistTimesheet(now, &sheet))
 
-		// Write to the store.
-		err = store.Write("", &timeSheet)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return errs.Errors()
 	}
 
 	return console.Command{
 		Name:        "start",
-		Description: "Start a timer.",
+		Description: "Start a new timer.",
 		Configure:   configure,
 		Execute:     execute,
 	}
 }
 
-func createTimeSheetIfNotExists(key string) error {
-	return nil
-}
-
-func getTimeSheet(key string) (proto.TimeSheet, error) {
-	return proto.TimeSheet{}, nil
-}
-
+// @todo: This should not be in here.
 func createEntry(note string) *proto.TimeSheetEntry {
+	now := time.Now().Unix()
+
 	return &proto.TimeSheetEntry{
 		Note:      note,
-		StartTime: uint64(time.Now().Unix()),
+		StartTime: uint64(now),
 	}
 }

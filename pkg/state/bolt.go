@@ -8,7 +8,7 @@ import (
 )
 
 const BoltBucketTimeSheet = "tid_time_sheet"
-const BoltDatabaseFilename = "bolt.db"
+const BoltDatabaseFilename = "tid.db"
 
 // OpenBolt opens a Bolt database, creating it if it doesn't exist already.
 func OpenBolt(tidDir string) (*bolt.DB, error) {
