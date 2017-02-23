@@ -23,10 +23,12 @@ func main() {
 	fatal(err)
 
 	// Pass Bolt database to create store instance.
-	//store := state.NewBoltStore(bolt, state.BoltBucketTimeSheet)
+	store := state.NewBoltStore(bolt, state.BoltBucketTimeSheet)
 
 	application := cli.CreateApplication()
-	application.AddCommands([]console.Command{})
+	application.AddCommands([]console.Command{
+		cli.StartCommand(store),
+	})
 
 	os.Exit(application.Run(os.Args[1:]))
 }

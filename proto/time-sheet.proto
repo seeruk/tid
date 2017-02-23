@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "proto";
+
+message TimeSheet {
+    repeated TimeSheetEntry entries = 1;
+}
+
+message TimeSheetEntry {
+    uint64 duration = 1;
+    uint64 start_time = 2;
+    string note = 3;
+}

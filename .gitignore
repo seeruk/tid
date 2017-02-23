@@ -2,6 +2,7 @@
 *.o
 *.a
 *.so
+*.pb.go
 
 # Folders
 _obj
@@ -22,3 +23,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+/cmd/tid/*
+!/cmd/tid/main.go

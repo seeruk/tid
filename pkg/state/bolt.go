@@ -26,6 +26,7 @@ func OpenBolt(tidDir string) (*bolt.DB, error) {
 func InitialiseBolt(db *bolt.DB) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(BoltBucketTimeSheet))
+
 		return err
 	})
 }
