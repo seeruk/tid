@@ -7,7 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-var ErrNilValue = errors.New("state: `value` must not be null.")
+var ErrNilValue = errors.New("state: `value` must not be null")
 
 // BoltStore implements the Store interface to provide a simple, fast, and reliable key / value
 // store using Bolt.
