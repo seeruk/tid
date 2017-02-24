@@ -30,7 +30,6 @@ func StartCommand(gateway timesheet.Gateway) console.Command {
 			return err
 		}
 
-		// @todo: Some IsActive helper?
 		if timesheet.IsActive(status) {
 			output.Println("start: Stop an existing timer before starting a new one")
 			return nil
