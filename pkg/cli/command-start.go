@@ -31,8 +31,8 @@ func StartCommand(gateway timesheet.Gateway) console.Command {
 		}
 
 		// @todo: Some IsActive helper?
-		if status.State == proto.Status_STARTED || status.State == proto.Status_PAUSED {
-			output.Println("start: Stop an existing timer before starting a new one.")
+		if timesheet.IsActive(status) {
+			output.Println("start: Stop an existing timer before starting a new one")
 			return nil
 		}
 

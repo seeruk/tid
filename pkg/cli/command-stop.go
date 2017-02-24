@@ -18,9 +18,8 @@ func StopCommand(gateway timesheet.Gateway) console.Command {
 			return err
 		}
 
-		// @todo: Some IsActive helper?
-		if status.State != proto.Status_STARTED && status.State != proto.Status_PAUSED {
-			output.Println("stop: There is no existing timer running.")
+		if !timesheet.IsActive(status) {
+			output.Println("stop: There is no existing timer running")
 			return nil
 		}
 
