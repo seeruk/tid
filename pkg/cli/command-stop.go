@@ -40,10 +40,8 @@ func StopCommand(gateway timesheet.Gateway) console.Command {
 		entry := sheet.Entries[entryIdx]
 		entry.Duration = uint64(time.Now().Unix()) - entry.StartTime
 
-		timesheet.ResetStatus(&status)
-
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistStatus(&status))
+		errs.Add(gateway.PersistStatus(&proto.Status{}))
 		errs.Add(gateway.PersistTimesheet(date, &sheet))
 
 		return errs.Errors()
