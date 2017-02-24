@@ -35,13 +35,10 @@ func StartCommand(gateway timesheet.Gateway) console.Command {
 			return nil
 		}
 
-		// @todo: This should be closer to the end.
+		// @todo: This should be closer to the end. Consider adding "pre/post-execute" to console.
 		output.Printf("Started tracking '%s'.\n", note)
 
-		// @todo: FindCurrentTimeSheet():
-		now := time.Now().Local()
-
-		sheet, err := gateway.FindTimeSheet(now)
+		sheet, err := gateway.FindCurrentTimeSheet()
 		if err != nil {
 			return err
 		}

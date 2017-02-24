@@ -37,6 +37,10 @@ func (g *Gateway) FindTimeSheet(date time.Time) (proto.TimeSheet, error) {
 	return sheet, g.store.Read(date.Format(KeyTimesheetFmt), &sheet)
 }
 
+func (g *Gateway) FindCurrentTimeSheet() (proto.TimeSheet, error) {
+	return g.FindTimeSheet(time.Now().Local())
+}
+
 // PersistStatus persists a given status to the store.
 func (g *Gateway) PersistStatus(status *proto.Status) error {
 	return g.store.Write(KeyStatus, status)
