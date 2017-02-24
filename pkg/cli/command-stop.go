@@ -40,9 +40,7 @@ func StopCommand(gateway timesheet.Gateway) console.Command {
 		entry := sheet.Entries[entryIdx]
 		entry.Duration = uint64(time.Now().Unix()) - entry.StartTime
 
-		// @todo: Helper for this, "ResetStatus" or something.
-		status.State = proto.Status_STOPPED
-		status.TimeSheetEntry = &proto.TimeSheetEntryRef{}
+		timesheet.ResetStatus(&status)
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(&status))
