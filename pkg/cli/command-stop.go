@@ -33,14 +33,10 @@ func StopCommand(gateway timesheet.Gateway) console.Command {
 			return err
 		}
 
-		// @todo: Some helper for the entry update? Pass in sheet, and index.
-		entryIdx := status.TimeSheetEntry.Index
-
-		entry := sheet.Entries[entryIdx]
-		entry.Duration = uint64(time.Now().Unix()) - entry.StartTime
+		timesheet.UpdateEntryDuration(&sheet, status.TimeSheetEntry.Index)
 
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistStatus(&proto.Status{}))
+		errs.Add(gateway.PersistStatus(&proto.Status{})) // @todo: Could be more explicit...
 		errs.Add(gateway.PersistTimesheet(date, &sheet))
 
 		return errs.Errors()
