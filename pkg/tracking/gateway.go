@@ -1,4 +1,4 @@
-package timesheet
+package tracking
 
 import (
 	"time"
@@ -24,10 +24,10 @@ func NewGateway(store state.Store) Gateway {
 }
 
 // FindStatus attempts to get the current status.
-func (g *Gateway) FindStatus() (proto.Status, error) {
-	var status proto.Status
+func (g *Gateway) FindStatus() (*Status, error) {
+	status := NewStatus(&proto.Status{})
 
-	return status, g.store.Read(KeyStatus, &status)
+	return status, g.store.Read(KeyStatus, status)
 }
 
 // FindTimeSheet looks for a timesheet at the given date.
@@ -43,7 +43,7 @@ func (g *Gateway) FindCurrentTimeSheet() (proto.TimeSheet, error) {
 }
 
 // PersistStatus persists a given status to the store.
-func (g *Gateway) PersistStatus(status *proto.Status) error {
+func (g *Gateway) PersistStatus(status *Status) error {
 	return g.store.Write(KeyStatus, status)
 }
 

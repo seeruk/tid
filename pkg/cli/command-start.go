@@ -4,13 +4,12 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/timesheet"
-	"github.com/SeerUK/tid/proto"
+	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
-func StartCommand(gateway timesheet.Gateway) console.Command {
+func StartCommand(gateway tracking.Gateway) console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
@@ -30,36 +29,40 @@ func StartCommand(gateway timesheet.Gateway) console.Command {
 			return err
 		}
 
-		if timesheet.IsActive(status) {
+		if status.IsActive() {
 			output.Println("start: Stop an existing timer before starting a new one")
 			return nil
 		}
-
-		// @todo: This should be closer to the end. Consider adding "pre/post-execute" to console.
-		output.Printf("Started tracking '%s'.\n", note)
 
 		sheet, err := gateway.FindCurrentTimeSheet()
 		if err != nil {
 			return err
 		}
 
-		// @todo: Maybe a helper for creating and appending instead of this?
-		sheet.Entries = append(sheet.Entries, createEntry(note))
+		tracking.AppendNewEntry(&sheet, note)
+		tracking.UpdateStatusStartEntry(status, &sheet)
 
-		// @todo: Make helper for this:
-		now := time.Now().Local()
+		// Where does the gateway fall into this refactor?
+		// Bucket name should be tracking. Gateway is fine again then.
 
-		status.State = proto.Status_STARTED
-		status.TimeSheetEntry = &proto.TimeSheetEntryRef{
-			Date:  now.Format(timesheet.KeyTimesheetFmt),
-			Index: int64(len(sheet.Entries) - 1),
-		}
+		// timesheet = tracking.NewTimeSheet()
+		// entryRef = timesheet.AppendNewEntry(note)
+
+		// status = tracking.NewStatus()
+		// status.Start(entryRef)
 
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistStatus(&status))
-		errs.Add(gateway.PersistTimesheet(now, &sheet))
+		errs.Add(gateway.PersistStatus(status))
+		errs.Add(gateway.PersistTimesheet(time.Now().Local(), &sheet))
 
-		return errs.Errors()
+		if err = errs.Errors(); err != nil {
+			return err
+		}
+
+		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
+		output.Printf("Started tracking '%s'.\n", note)
+
+		return nil
 	}
 
 	return console.Command{
@@ -67,15 +70,5 @@ func StartCommand(gateway timesheet.Gateway) console.Command {
 		Description: "Start a new timer.",
 		Configure:   configure,
 		Execute:     execute,
-	}
-}
-
-// @todo: This should not be in here.
-func createEntry(note string) *proto.TimeSheetEntry {
-	now := time.Now().Unix()
-
-	return &proto.TimeSheetEntry{
-		Note:      note,
-		StartTime: uint64(now),
 	}
 }

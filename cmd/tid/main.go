@@ -8,7 +8,7 @@ import (
 
 	"github.com/SeerUK/tid/pkg/cli"
 	"github.com/SeerUK/tid/pkg/state"
-	"github.com/SeerUK/tid/pkg/timesheet"
+	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 )
 
@@ -16,7 +16,7 @@ func main() {
 	store := getStore()
 	defer store.Close()
 
-	tsGateway := timesheet.NewGateway(store)
+	tsGateway := tracking.NewGateway(store)
 
 	application := cli.CreateApplication()
 	application.AddCommands([]console.Command{

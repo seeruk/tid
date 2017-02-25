@@ -7,7 +7,7 @@ import (
 	"github.com/boltdb/bolt"
 )
 
-const BoltBucketTimeSheet = "tid_time_sheet"
+const BoltBucketTimeSheet = "tid_tracking"
 const BoltDatabaseFilename = "tid.db"
 
 // OpenBolt opens a Bolt database, creating it if it doesn't exist already.

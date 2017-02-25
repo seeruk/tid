@@ -4,12 +4,12 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/timesheet"
+	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/proto"
 	"github.com/eidolon/console"
 )
 
-func StopCommand(gateway timesheet.Gateway) console.Command {
+func StopCommand(gateway tracking.Gateway) console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		// @todo: Refactor into some kind of a facade.
 
@@ -18,12 +18,12 @@ func StopCommand(gateway timesheet.Gateway) console.Command {
 			return err
 		}
 
-		if !timesheet.IsActive(status) {
+		if !status.IsActive() {
 			output.Println("stop: There is no existing timer running")
 			return nil
 		}
 
-		date, err := time.Parse(timesheet.KeyTimesheetFmt, status.TimeSheetEntry.Date)
+		date, err := time.Parse(tracking.KeyTimesheetFmt, status.TimeSheetEntry.Date)
 		if err != nil {
 			return err
 		}
@@ -33,10 +33,10 @@ func StopCommand(gateway timesheet.Gateway) console.Command {
 			return err
 		}
 
-		timesheet.UpdateEntryDuration(&sheet, status.TimeSheetEntry.Index)
+		tracking.UpdateEntryDuration(&sheet, status.TimeSheetEntry.Index)
 
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistStatus(&proto.Status{})) // @todo: Could be more explicit...
+		errs.Add(gateway.PersistStatus(tracking.NewStatus(&proto.Status{})))
 		errs.Add(gateway.PersistTimesheet(date, &sheet))
 
 		return errs.Errors()
