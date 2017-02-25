@@ -37,6 +37,7 @@ func (g *Gateway) FindTimeSheet(date time.Time) (proto.TimeSheet, error) {
 	return sheet, g.store.Read(date.Format(KeyTimesheetFmt), &sheet)
 }
 
+// FindCurrentTimeSheet will find the timesheet for the current date.
 func (g *Gateway) FindCurrentTimeSheet() (proto.TimeSheet, error) {
 	return g.FindTimeSheet(time.Now().Local())
 }

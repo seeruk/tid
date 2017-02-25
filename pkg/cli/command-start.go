@@ -47,6 +47,8 @@ func StartCommand(gateway timesheet.Gateway) console.Command {
 		sheet.Entries = append(sheet.Entries, createEntry(note))
 
 		// @todo: Make helper for this:
+		now := time.Now().Local()
+
 		status.State = proto.Status_STARTED
 		status.TimeSheetEntry = &proto.TimeSheetEntryRef{
 			Date:  now.Format(timesheet.KeyTimesheetFmt),
