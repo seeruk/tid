@@ -9,10 +9,9 @@ import (
 	"github.com/eidolon/console"
 )
 
+// StopCommand creates a command to stop timers.
 func StopCommand(gateway tracking.Gateway) console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
-		// @todo: Refactor into some kind of a facade.
-
 		status, err := gateway.FindStatus()
 		if err != nil {
 			return err
@@ -23,7 +22,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		date, err := time.Parse(tracking.KeyTimesheetFmt, status.TimeSheetEntry.Date)
+		date, err := time.Parse(tracking.KeyTimeSheetFmt, status.TimeSheetEntry().Date)
 		if err != nil {
 			return err
 		}
@@ -33,7 +32,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		tracking.UpdateEntryDuration(&sheet, status.TimeSheetEntry.Index)
+		tracking.UpdateEntryDuration(&sheet, status.TimeSheetEntry().Index)
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(tracking.NewStatus(&proto.Status{})))

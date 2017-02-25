@@ -9,6 +9,7 @@ import (
 	"github.com/eidolon/console/parameters"
 )
 
+// StartCommand creates a command to start timers.
 func StartCommand(gateway tracking.Gateway) console.Command {
 	var note string
 
@@ -21,9 +22,6 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		// @todo: Refactor into some kind of a facade (how can we store the result as a value in
-		// that case, we'll have errors as values there still...)
-
 		status, err := gateway.FindStatus()
 		if err != nil {
 			return err
@@ -39,21 +37,20 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		tracking.AppendNewEntry(&sheet, note)
-		tracking.UpdateStatusStartEntry(status, &sheet)
-
-		// Where does the gateway fall into this refactor?
-		// Bucket name should be tracking. Gateway is fine again then.
-
-		// timesheet = tracking.NewTimeSheet()
 		// entryRef = timesheet.AppendNewEntry(note)
+		tracking.AppendNewEntry(&sheet, note)
 
-		// status = tracking.NewStatus()
-		// status.Start(entryRef)
+		status.Start(&sheet)
+
+		// date, err := time.Parse(tracking.KeyTimesheetFmt, entryRef.Date)
+		date, err := time.Parse(tracking.KeyTimeSheetFmt, status.TimeSheetEntry().Date)
+		if err != nil {
+			return err
+		}
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(status))
-		errs.Add(gateway.PersistTimesheet(time.Now().Local(), &sheet))
+		errs.Add(gateway.PersistTimesheet(date, &sheet))
 
 		if err = errs.Errors(); err != nil {
 			return err

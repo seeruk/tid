@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
+// ErrNilValue is the error given when a value passed in is nil.
 var ErrNilValue = errors.New("state: `value` must not be null")
 
 // BoltStore implements the Store interface to provide a simple, fast, and reliable key / value

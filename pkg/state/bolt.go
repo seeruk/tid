@@ -7,7 +7,10 @@ import (
 	"github.com/boltdb/bolt"
 )
 
+// BoltBucketTimeSheet is the name of the Bucket for the timesheet stored in Bolt.
 const BoltBucketTimeSheet = "tid_tracking"
+
+// BoltDatabaseFilename is the name of the database file name on disk.
 const BoltDatabaseFilename = "tid.db"
 
 // OpenBolt opens a Bolt database, creating it if it doesn't exist already.
