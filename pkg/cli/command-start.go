@@ -37,8 +37,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		sheet.AppendNewEntry(note)
-		status.Start(&sheet)
+		status.Start(sheet.AppendNewEntry(note))
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(status))

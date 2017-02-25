@@ -19,14 +19,19 @@ func NewTimeSheet(message *proto.TimeSheet) *TimeSheet {
 }
 
 // AppendNewEntry appends a new timesheet entry to a given timesheet.
-func (t *TimeSheet) AppendNewEntry(note string) {
-	now := time.Now().Unix()
+func (t *TimeSheet) AppendNewEntry(note string) proto.TimeSheetEntryRef {
+	now := time.Now()
 
 	t.Message.Entries = append(t.Message.Entries, createEntry(
 		uint64(0),
-		uint64(now),
+		uint64(now.Unix()),
 		note,
 	))
+
+	return proto.TimeSheetEntryRef{
+		Date:  now.Format(KeyTimeSheetFmt),
+		Index: int64(len(t.Message.Entries) - 1),
+	}
 }
 
 // UpdateEntryDuration updates the duration of the entry referenced in the status.

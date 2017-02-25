@@ -1,8 +1,6 @@
 package tracking
 
 import (
-	"time"
-
 	"github.com/SeerUK/tid/proto"
 )
 
@@ -26,14 +24,9 @@ func (s *Status) IsActive() bool {
 }
 
 // Start updates the status to reflect the fact that a new entry is being tracked.
-func (s *Status) Start(timesheet *proto.TimeSheet) {
-	now := time.Now().Local()
-
+func (s *Status) Start(entryRef *proto.TimeSheetEntryRef) {
 	s.Message.State = proto.Status_STARTED
-	s.Message.TimeSheetEntry = &proto.TimeSheetEntryRef{
-		Date:  now.Format(KeyTimeSheetFmt),
-		Index: int64(len(timesheet.Entries) - 1),
-	}
+	s.Message.TimeSheetEntry = &entryRef
 }
 
 // TimeSheetEntry gets the proto.TimeSheetEntryRef in the underlying ProtoBuf message.
