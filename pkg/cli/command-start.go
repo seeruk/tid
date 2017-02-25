@@ -37,20 +37,12 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		// entryRef = timesheet.AppendNewEntry(note)
-		tracking.AppendNewEntry(&sheet, note)
-
+		sheet.AppendNewEntry(note)
 		status.Start(&sheet)
-
-		// date, err := time.Parse(tracking.KeyTimesheetFmt, entryRef.Date)
-		date, err := time.Parse(tracking.KeyTimeSheetFmt, status.TimeSheetEntry().Date)
-		if err != nil {
-			return err
-		}
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(status))
-		errs.Add(gateway.PersistTimesheet(date, &sheet))
+		errs.Add(gateway.PersistTimesheet(time.Now().Local(), &sheet))
 
 		if err = errs.Errors(); err != nil {
 			return err

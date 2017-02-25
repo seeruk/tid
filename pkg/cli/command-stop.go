@@ -32,7 +32,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		tracking.UpdateEntryDuration(&sheet, status.TimeSheetEntry().Index)
+		sheet.UpdateEntryDuration(status)
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(tracking.NewStatus(&proto.Status{})))

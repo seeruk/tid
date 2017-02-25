@@ -34,14 +34,14 @@ func (g *Gateway) FindStatus() (*Status, error) {
 }
 
 // FindTimeSheet looks for a timesheet at the given date.
-func (g *Gateway) FindTimeSheet(date time.Time) (proto.TimeSheet, error) {
-	var sheet proto.TimeSheet
+func (g *Gateway) FindTimeSheet(date time.Time) (*TimeSheet, error) {
+	sheet := NewTimeSheet(&proto.TimeSheet{})
 
-	return sheet, g.store.Read(date.Format(KeyTimeSheetFmt), &sheet)
+	return sheet, g.store.Read(date.Format(KeyTimeSheetFmt), sheet.Message)
 }
 
 // FindCurrentTimeSheet will find the timesheet for the current date.
-func (g *Gateway) FindCurrentTimeSheet() (proto.TimeSheet, error) {
+func (g *Gateway) FindCurrentTimeSheet() (*TimeSheet, error) {
 	return g.FindTimeSheet(time.Now().Local())
 }
 

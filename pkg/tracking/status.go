@@ -11,7 +11,7 @@ type Status struct {
 	Message *proto.Status
 }
 
-// NewStatus creates a new instance of StatusWrapper.
+// NewStatus creates a new instance of Status.
 func NewStatus(message *proto.Status) *Status {
 	return &Status{
 		Message: message,
