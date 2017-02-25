@@ -36,7 +36,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(tracking.NewStatus(&proto.Status{})))
-		errs.Add(gateway.PersistTimesheet(date, &sheet))
+		errs.Add(gateway.PersistTimesheet(date, sheet))
 
 		return errs.Errors()
 	}

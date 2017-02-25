@@ -41,7 +41,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistStatus(status))
-		errs.Add(gateway.PersistTimesheet(time.Now().Local(), &sheet))
+		errs.Add(gateway.PersistTimesheet(time.Now().Local(), sheet))
 
 		if err = errs.Errors(); err != nil {
 			return err

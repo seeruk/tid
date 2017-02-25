@@ -24,7 +24,7 @@ func (s *Status) IsActive() bool {
 }
 
 // Start updates the status to reflect the fact that a new entry is being tracked.
-func (s *Status) Start(entryRef *proto.TimeSheetEntryRef) {
+func (s *Status) Start(entryRef proto.TimeSheetEntryRef) {
 	s.Message.State = proto.Status_STARTED
 	s.Message.TimeSheetEntry = &entryRef
 }

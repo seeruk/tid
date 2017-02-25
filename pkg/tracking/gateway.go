@@ -51,6 +51,6 @@ func (g *Gateway) PersistStatus(status *Status) error {
 }
 
 // PersistTimesheet persists a given timesheet to the store.
-func (g *Gateway) PersistTimesheet(date time.Time, sheet *proto.TimeSheet) error {
-	return g.store.Write(date.Format(KeyTimeSheetFmt), sheet)
+func (g *Gateway) PersistTimesheet(date time.Time, sheet *TimeSheet) error {
+	return g.store.Write(date.Format(KeyTimeSheetFmt), sheet.Message)
 }
