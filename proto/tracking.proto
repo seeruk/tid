@@ -52,3 +52,11 @@ message TrackingEntry {
     // The number of seconds this has been tracked for (once committed).
     uint64 duration = 6;
 }
+
+// TrackingEntryRef represents a reference from an entry's short key to it's full key.
+message TrackingEntryRef {
+    // The key of this entry reference.
+    string key = 1;
+    // The key of the entry this reference belongs to.
+    string entry = 2;
+}

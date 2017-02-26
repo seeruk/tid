@@ -38,14 +38,16 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		entry.UpdateDuration()
 
 		if short {
-			output.Printf("%s on '%s'\n", entry.Duration(), entry.Note())
+			output.Printf("%s on %s\n", entry.Duration(), entry.ShortKey())
 		} else {
-			// @todo: When pausing is in should this show the different start times that there have
-			// been (or at least a friendly way of showing that, like a timeline type thing?) Or at
-			// the very least, the number of times that it has been paused?
-			output.Printf("Started At: %s\n", entry.Created().Format("3:04PM (2006-01-02)"))
+			dateFormat := "3:04PM (2006-01-02)"
+
+			output.Printf("Started At: %s\n", entry.Created().Format(dateFormat))
+			output.Printf("Last Started At: %s\n", entry.Updated().Format(dateFormat))
 			output.Printf("Duration: %s\n", entry.Duration())
 			output.Printf("Note: %s\n", entry.Note())
+			output.Println()
+			output.Printf("Hash: %s\n", entry.Key())
 		}
 
 		return nil

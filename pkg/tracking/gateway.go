@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/proto"
 )
@@ -62,7 +63,18 @@ func (g *Gateway) FindTodaysTimesheet() (*Timesheet, error) {
 
 // PersistEntry persists a given entry to the store.
 func (g *Gateway) PersistEntry(entry *Entry) error {
-	return g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.Key()), entry.Message)
+	entryRef := &proto.TrackingEntryRef{
+		Key:   entry.ShortKey(),
+		Entry: entry.Key(),
+	}
+
+	// Persisting an entry is a 2-step process, as we need to also store the short-key so we can
+	// look up the long key.
+	errs := errhandling.NewErrorStack()
+	errs.Add(g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.ShortKey()), entryRef))
+	errs.Add(g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.Key()), entry.Message))
+
+	return errs.Errors()
 }
 
 // PersistStatus persists a given status to the store.

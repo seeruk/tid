@@ -60,6 +60,11 @@ func (e *Entry) ShortKey() string {
 	return e.Message.Key[0:7]
 }
 
+// Update updates the Updated timestamp in the underlying message.
+func (e *Entry) Update() {
+	e.Message.Updated = uint64(time.Now().Unix())
+}
+
 // Updated gets the updated time of the underlying message.
 func (e *Entry) Updated() time.Time {
 	return time.Unix(int64(e.Message.Updated), 0)
