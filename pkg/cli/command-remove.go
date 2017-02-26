@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
@@ -19,6 +20,21 @@ func RemoveCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
+		entry, err := gateway.FindEntry(hash)
+		if err != nil && err != state.ErrNilResult {
+			return err
+		}
+
+		if err == state.ErrNilResult {
+			output.Printf("remove: No entry with hash '%s'\n", hash)
+			return nil
+		}
+
+		gateway.RemoveEntry(entry)
+
+		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
+		output.Printf("Removed entry '%s' (%s)\n", entry.Note(), entry.ShortHash())
+
 		return nil
 	}
 

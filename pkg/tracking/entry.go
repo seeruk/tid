@@ -45,8 +45,8 @@ func (e *Entry) Duration() time.Duration {
 	return time.Duration(e.Message.Duration) * time.Second
 }
 
-// Key returns the key of the underlying message.
-func (e *Entry) Key() string {
+// Hash returns the key of the underlying message.
+func (e *Entry) Hash() string {
 	return e.Message.Key
 }
 
@@ -55,8 +55,8 @@ func (e *Entry) Note() string {
 	return e.Message.Note
 }
 
-// ShortKey returns the short version of the key.
-func (e *Entry) ShortKey() string {
+// ShortHash returns the short version of the key.
+func (e *Entry) ShortHash() string {
 	return e.Message.Key[0:7]
 }
 

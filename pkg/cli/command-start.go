@@ -20,7 +20,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindStatus()
+		status, err := gateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -30,7 +30,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		sheet, err := gateway.FindTodaysTimesheet()
+		sheet, err := gateway.FindOrCreateTodaysTimesheet()
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Started tracking '%s'.\n", note)
+		output.Printf("Started tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
 
 		return nil
 	}

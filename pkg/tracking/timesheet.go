@@ -19,10 +19,27 @@ func NewTimesheet(message *proto.TrackingTimesheet) *Timesheet {
 
 // AppendEntry appends a reference to an entry to the timesheet.
 func (t *Timesheet) AppendEntry(entry *Entry) {
-	t.Message.Entries = append(t.Message.Entries, entry.ShortKey())
+	t.Message.Entries = append(t.Message.Entries, entry.ShortHash())
 }
 
 // Key returns the key of the underlying message.
 func (t *Timesheet) Key() string {
 	return t.Message.Key
+}
+
+// RemoveEntry removes a reference to an entry from the timesheet.
+func (t *Timesheet) RemoveEntry(entry *Entry) {
+	index := -1
+
+	for idx, hash := range t.Message.Entries {
+		if hash == entry.Hash() {
+			index = idx
+			break
+		}
+	}
+
+	if index >= 0 {
+		// Remove the entry
+		t.Message.Entries = append(t.Message.Entries[:index], t.Message.Entries[index+1:]...)
+	}
 }

@@ -7,8 +7,12 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-// ErrNilValue is the error given when a value passed in is nil.
-var ErrNilValue = errors.New("state: `value` must not be null")
+var (
+	// ErrNilValue is the error given when a value passed in is nil.
+	ErrNilValue = errors.New("state: `value` must not be null")
+	// ErrNilResult is the error given when there is no entry found for a key in the database.
+	ErrNilResult = errors.New("state: No value found")
+)
 
 // BoltStore implements the Store interface to provide a simple, fast, and reliable key / value
 // store using Bolt.
@@ -39,6 +43,10 @@ func (b *BoltStore) Read(key string, value proto.Message) error {
 	return b.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(b.bucket))
 		result := bucket.Get([]byte(key))
+
+		if result == nil {
+			return ErrNilResult
+		}
 
 		return proto.Unmarshal(result, value)
 	})

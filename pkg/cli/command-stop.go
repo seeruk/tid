@@ -9,7 +9,7 @@ import (
 // StopCommand creates a command to stop timers.
 func StopCommand(gateway tracking.Gateway) console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindStatus()
+		status, err := gateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -32,7 +32,14 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 		errs.Add(gateway.PersistEntry(entry))
 		errs.Add(gateway.PersistStatus(status))
 
-		return errs.Errors()
+		if err = errs.Errors(); err != nil {
+			return err
+		}
+
+		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
+		output.Printf("Stopped tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
+
+		return nil
 	}
 
 	return console.Command{

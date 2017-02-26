@@ -27,13 +27,20 @@ func (s *Status) Start(sheet *Timesheet, entry *Entry) {
 	s.Message.State = proto.TrackingStatus_STARTED
 	s.Message.Ref = &proto.TrackingStatusRef{
 		Timesheet: sheet.Key(),
-		Entry:     entry.Key(),
+		Entry:     entry.Hash(),
 	}
 }
 
 // Stop updates the status to reflect that tracking has ended (at least temporarily).
 func (s *Status) Stop() {
 	s.Message.State = proto.TrackingStatus_STOPPED
+}
+
+// StopAndClear updates the status to reflect that tracking has ended, and we no longer need to
+// track whatever reference we were tracking.
+func (s *Status) StopAndClear() {
+	s.Stop()
+	s.Message.Ref = &proto.TrackingStatusRef{}
 }
 
 // Ref gets the proto.TrackingStatusRef of the underlying ProtoBuf message.

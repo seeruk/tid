@@ -9,7 +9,7 @@ import (
 // ResumeCommand creates a command to resume timers.
 func ResumeCommand(gateway tracking.Gateway) console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindStatus()
+		status, err := gateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -19,7 +19,12 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		sheet, err := gateway.FindTimesheet(status.Ref().Timesheet)
+		if status.Ref() == nil || status.Ref().Entry == "" {
+			output.Println("resume: No timer to resume")
+			return nil
+		}
+
+		sheet, err := gateway.FindOrCreateTimesheet(status.Ref().Timesheet)
 		if err != nil {
 			return err
 		}
@@ -38,7 +43,14 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 		errs.Add(gateway.PersistEntry(entry))
 		errs.Add(gateway.PersistStatus(status))
 
-		return errs.Errors()
+		if err = errs.Errors(); err != nil {
+			return err
+		}
+
+		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
+		output.Printf("Resumed tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
+
+		return nil
 	}
 
 	return console.Command{

@@ -19,7 +19,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindStatus()
+		status, err := gateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -38,7 +38,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		entry.UpdateDuration()
 
 		if short {
-			output.Printf("%s on %s\n", entry.Duration(), entry.ShortKey())
+			output.Printf("%s on %s\n", entry.Duration(), entry.ShortHash())
 		} else {
 			dateFormat := "3:04PM (2006-01-02)"
 
@@ -47,7 +47,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			output.Printf("Duration: %s\n", entry.Duration())
 			output.Printf("Note: %s\n", entry.Note())
 			output.Println()
-			output.Printf("Hash: %s\n", entry.Key())
+			output.Printf("Hash: %s\n", entry.Hash())
 		}
 
 		return nil
