@@ -38,7 +38,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		entry.UpdateDuration()
 
 		if short {
-			output.Printf("%s on %s\n", entry.Duration(), entry.Note())
+			output.Printf("%s on '%s'\n", entry.Duration(), entry.Note())
 		} else {
 			// @todo: When pausing is in should this show the different start times that there have
 			// been (or at least a friendly way of showing that, like a timeline type thing?) Or at
