@@ -40,8 +40,8 @@ func (g *Gateway) FindTimeSheet(date time.Time) (*TimeSheet, error) {
 	return sheet, g.store.Read(date.Format(KeyTimeSheetFmt), sheet.Message)
 }
 
-// FindCurrentTimeSheet will find the timesheet for the current date.
-func (g *Gateway) FindCurrentTimeSheet() (*TimeSheet, error) {
+// FindTodaysTimeSheet will find the timesheet for the current date.
+func (g *Gateway) FindTodaysTimeSheet() (*TimeSheet, error) {
 	return g.FindTimeSheet(time.Now().Local())
 }
 

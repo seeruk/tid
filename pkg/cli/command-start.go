@@ -32,7 +32,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		sheet, err := gateway.FindCurrentTimeSheet()
+		sheet, err := gateway.FindTodaysTimeSheet()
 		if err != nil {
 			return err
 		}
