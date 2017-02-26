@@ -21,6 +21,7 @@ func main() {
 	application := cli.CreateApplication()
 	application.AddCommands([]console.Command{
 		cli.StartCommand(tsGateway),
+		cli.StatusCommand(tsGateway),
 		cli.StopCommand(tsGateway),
 	})
 
