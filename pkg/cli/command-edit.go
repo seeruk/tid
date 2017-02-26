@@ -12,6 +12,7 @@ import (
 // EditCommand creates a command to edit timesheet entries.
 func EditCommand(gateway tracking.Gateway) console.Command {
 	var hash string
+	var offset time.Duration
 	var note string
 
 	// We need an identifiable value for this
@@ -21,13 +22,19 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 		def.AddOption(
 			parameters.NewDurationValue(&duration),
 			"-d, --duration=DURATION",
-			"A new duration to set on the entry.",
+			"A new duration to set on the entry. Mutually exclusive with offset.",
 		)
 
 		def.AddOption(
 			parameters.NewStringValue(&note),
 			"-n, --note=NOTE",
 			"A new note to set on the entry.",
+		)
+
+		def.AddOption(
+			parameters.NewDurationValue(&offset),
+			"-o, --offset=OFFSET",
+			"A offset to modify the duration by (can be negative). Mutually excluse with duration.",
 		)
 
 		def.AddArgument(
@@ -58,14 +65,25 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		// Check for duration zero-value
-		if duration.Nanoseconds() < 0 {
+		if duration >= 0 && offset != 0 {
+			output.Println("edit: Cannot specify duration and offset at the same time")
+			return nil
+		}
+
+		// Check for "zero-values"
+		if duration < 0 {
 			duration = entry.Duration()
 		}
 
-		// Check for note zero-value
 		if note == "" {
 			note = entry.Note()
+		}
+
+		duration = duration + offset
+
+		if duration < 0 {
+			output.Println("edit: Duration can not be less than 0")
+			return nil
 		}
 
 		entry.SetDuration(duration)
