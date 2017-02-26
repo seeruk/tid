@@ -34,10 +34,32 @@ func NewGateway(store state.Store) Gateway {
 }
 
 // FindEntry attempts to find an entry with the given key.
-func (g *Gateway) FindEntry(entryKey string) (*Entry, error) {
+func (g *Gateway) FindEntry(hash string) (*Entry, error) {
 	entry := NewEntry("")
+	key := hash
 
-	return entry, g.store.Read(fmt.Sprintf(KeyEntryFmt, entryKey), entry.Message)
+	if len(hash) == 7 {
+		longHash, err := g.FindEntryHashByShortHash(hash)
+		if err != nil {
+			return nil, err
+		}
+
+		key = longHash
+	}
+
+	return entry, g.store.Read(fmt.Sprintf(KeyEntryFmt, key), entry.Message)
+}
+
+// FindEntryHashByShortHash attempts to find an entry's hash by it's short hash.
+func (g *Gateway) FindEntryHashByShortHash(hash string) (string, error) {
+	var ref proto.TrackingEntryRef
+
+	err := g.store.Read(fmt.Sprintf(KeyEntryFmt, hash), &ref)
+	if err != nil {
+		return "", err
+	}
+
+	return ref.Entry, nil
 }
 
 // FindOrCreateStatus attempts to find the current status.
