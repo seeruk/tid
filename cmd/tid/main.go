@@ -20,6 +20,7 @@ func main() {
 
 	application := cli.CreateApplication()
 	application.AddCommands([]console.Command{
+		cli.EditCommand(tsGateway),
 		cli.RemoveCommand(tsGateway),
 		cli.ResumeCommand(tsGateway),
 		cli.StartCommand(tsGateway),

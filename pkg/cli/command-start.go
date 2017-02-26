@@ -26,7 +26,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		if status.IsActive() {
-			output.Println("start: Stop an existing timer before starting a new one")
+			output.Println("start: Stop your existing timer before starting a new one")
 			return nil
 		}
 

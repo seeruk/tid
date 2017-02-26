@@ -30,7 +30,10 @@ func RemoveCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		gateway.RemoveEntry(entry)
+		err = gateway.RemoveEntry(entry)
+		if err != nil {
+			return err
+		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
 		output.Printf("Removed entry '%s' (%s)\n", entry.Note(), entry.ShortHash())

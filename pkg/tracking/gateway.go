@@ -74,7 +74,7 @@ func (g *Gateway) FindOrCreateStatus() (*Status, error) {
 	return status, nil
 }
 
-// FindTimesheet attempts to find a timesheet with the given date.
+// FindOrCreateTimesheet attempts to find a timesheet with the given date.
 func (g *Gateway) FindOrCreateTimesheet(sheetKey string) (*Timesheet, error) {
 	sheet := NewTimesheet(&proto.TrackingTimesheet{
 		Key: sheetKey,
@@ -88,7 +88,7 @@ func (g *Gateway) FindOrCreateTimesheet(sheetKey string) (*Timesheet, error) {
 	return sheet, nil
 }
 
-// FindTodaysTimesheet attempts to find the timesheet for the current date.
+// FindOrCreateTodaysTimesheet attempts to find the timesheet for the current date.
 func (g *Gateway) FindOrCreateTodaysTimesheet() (*Timesheet, error) {
 	return g.FindOrCreateTimesheet(time.Now().Local().Format(KeyTimesheetDateFmt))
 }

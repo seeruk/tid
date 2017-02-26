@@ -1,0 +1,93 @@
+package cli
+
+import (
+	"time"
+
+	"github.com/SeerUK/tid/pkg/state"
+	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/eidolon/console"
+	"github.com/eidolon/console/parameters"
+)
+
+// EditCommand creates a command to edit timesheet entries.
+func EditCommand(gateway tracking.Gateway) console.Command {
+	var hash string
+	var note string
+
+	// We need an identifiable value for this
+	duration := time.Duration(-1)
+
+	configure := func(def *console.Definition) {
+		def.AddOption(
+			parameters.NewDurationValue(&duration),
+			"-d, --duration=DURATION",
+			"A new duration to set on the entry.",
+		)
+
+		def.AddOption(
+			parameters.NewStringValue(&note),
+			"-n, --note=NOTE",
+			"A new note to set on the entry.",
+		)
+
+		def.AddArgument(
+			parameters.NewStringValue(&hash),
+			"HASH",
+			"A short or long hash for an entry.",
+		)
+	}
+
+	execute := func(input *console.Input, output *console.Output) error {
+		entry, err := gateway.FindEntry(hash)
+		if err != nil && err != state.ErrNilResult {
+			return err
+		}
+
+		if err == state.ErrNilResult {
+			output.Printf("edit: No entry with hash '%s'\n", hash)
+			return nil
+		}
+
+		status, err := gateway.FindOrCreateStatus()
+		if err != nil {
+			return err
+		}
+
+		if status.IsActive() && status.Ref().Entry == entry.Hash() {
+			output.Println("edit: Stop your existing timer before trying to edit it's entry")
+			return nil
+		}
+
+		// Check for duration zero-value
+		if duration.Nanoseconds() < 0 {
+			duration = entry.Duration()
+		}
+
+		// Check for note zero-value
+		if note == "" {
+			note = entry.Note()
+		}
+
+		entry.SetDuration(duration)
+		entry.SetNote(note)
+
+		err = gateway.PersistEntry(entry)
+		if err != nil {
+			return err
+		}
+
+		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
+		output.Printf("Updated entry '%s' (%s)\n", entry.Note(), entry.ShortHash())
+
+		// @todo: Pretty table with old vs. new values.
+
+		return nil
+	}
+
+	return console.Command{
+		Name:        "edit",
+		Description: "Edit a timesheet entry.",
+		Configure:   configure,
+		Execute:     execute,
+	}
+}

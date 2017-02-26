@@ -55,6 +55,16 @@ func (e *Entry) Note() string {
 	return e.Message.Note
 }
 
+// SetDuration sets the duration on the underlying message.
+func (e *Entry) SetDuration(duration time.Duration) {
+	e.Message.Duration = uint64(duration.Seconds())
+}
+
+// SetNote sets the note on the underlying message.
+func (e *Entry) SetNote(note string) {
+	e.Message.Note = note
+}
+
 // ShortHash returns the short version of the key.
 func (e *Entry) ShortHash() string {
 	return e.Message.Key[0:7]
