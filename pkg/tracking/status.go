@@ -4,33 +4,39 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
-// Status wraps a ProtoBuf-generated proto.Status message with helper methods. No state should be
-// kept in this struct.
+// Status wraps a ProtoBuf-generated proto.TrackingStatus message with helper methods. No state
+// should be kept in this struct.
 type Status struct {
-	Message *proto.Status
+	Message *proto.TrackingStatus
 }
 
-// NewStatus creates a new instance of Status.
-func NewStatus(message *proto.Status) *Status {
+// NewStatus create a new instance of Status.
+func NewStatus() *Status {
 	return &Status{
-		Message: message,
+		Message: &proto.TrackingStatus{},
 	}
 }
 
 // IsActive checks if any timesheet is active.
 func (s *Status) IsActive() bool {
-	state := s.Message.GetState()
-
-	return state == proto.Status_STARTED || state == proto.Status_PAUSED
+	return s.Message.GetState() == proto.TrackingStatus_STARTED
 }
 
 // Start updates the status to reflect the fact that a new entry is being tracked.
-func (s *Status) Start(entryRef proto.TimeSheetEntryRef) {
-	s.Message.State = proto.Status_STARTED
-	s.Message.TimeSheetEntry = &entryRef
+func (s *Status) Start(sheet *Timesheet, entry *Entry) {
+	s.Message.State = proto.TrackingStatus_STARTED
+	s.Message.Ref = &proto.TrackingStatusRef{
+		Timesheet: sheet.Key(),
+		Entry:     entry.Key(),
+	}
 }
 
-// TimeSheetEntry gets the proto.TimeSheetEntryRef in the underlying ProtoBuf message.
-func (s *Status) TimeSheetEntry() *proto.TimeSheetEntryRef {
-	return s.Message.TimeSheetEntry
+// Stop updates the status to reflect that tracking has ended (at least temporarily).
+func (s *Status) Stop() {
+	s.Message.State = proto.TrackingStatus_STOPPED
+}
+
+// Ref gets the proto.TrackingStatusRef of the underlying ProtoBuf message.
+func (s *Status) Ref() *proto.TrackingStatusRef {
+	return s.Message.Ref
 }

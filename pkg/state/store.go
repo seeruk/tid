@@ -12,6 +12,8 @@ type Store interface {
 	Read(key string, value proto.Message) error
 	// Write a given value to a key given in the store.
 	Write(key string, value proto.Message) error
+	// Delete a value with a given key from the store.
+	Delete(key string) error
 	// Most stores will need to be closed when they're done with.
 	io.Closer
 }

@@ -1,11 +1,8 @@
 package cli
 
 import (
-	"time"
-
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
-	"github.com/SeerUK/tid/proto"
 	"github.com/eidolon/console"
 )
 
@@ -22,21 +19,18 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		date, err := time.Parse(tracking.KeyTimeSheetFmt, status.TimeSheetEntry().Date)
+		entry, err := gateway.FindEntry(status.Ref().Entry)
 		if err != nil {
 			return err
 		}
 
-		sheet, err := gateway.FindTimeSheet(date)
-		if err != nil {
-			return err
-		}
+		entry.UpdateDuration()
 
-		sheet.UpdateEntryDuration(status)
+		status.Stop()
 
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistStatus(tracking.NewStatus(&proto.Status{})))
-		errs.Add(gateway.PersistTimesheet(date, sheet))
+		errs.Add(gateway.PersistEntry(entry))
+		errs.Add(gateway.PersistStatus(status))
 
 		return errs.Errors()
 	}

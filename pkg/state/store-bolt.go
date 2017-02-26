@@ -66,3 +66,12 @@ func (b *BoltStore) Write(key string, value proto.Message) error {
 		return nil
 	})
 }
+
+// Delete a value with a given key from the BoltStore.
+func (b *BoltStore) Delete(key string) error {
+	return b.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(b.bucket))
+
+		return bucket.Delete([]byte(key))
+	})
+}

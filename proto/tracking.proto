@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+option go_package = "proto";
+
+// TrackingStatus keeps hold of information about the current "state" of tracking, i.e. whether or
+// not a timer is running, and which timer we last modified.
+message TrackingStatus {
+    // TrackingState represents all of the different states that tracking can be in.
+    enum TrackingState {
+        STOPPED = 0;
+        STARTED = 1;
+    }
+
+    // The current tracking state.
+    TrackingState state = 1;
+    // The current reference to a timesheet and entry.
+    TrackingStatusRef ref = 2;
+}
+
+// TrackingStatusRef represents a reference to a timesheet and an entry. This is used to find
+// the data to perform updates, etc.
+message TrackingStatusRef {
+    // Timesheet references the date of the timesheet. This corresponds to the key the timesheet
+    // is stored under in the database.
+    string timesheet = 1;
+    // Entry references the hash of the entry itself. Similar to a Git commit hash.
+    string entry = 2;
+}
+
+// TrackingTimesheet represents a timesheet. It contains all of the entries for a time period.
+message TrackingTimesheet {
+    // The key of this timesheet.
+    string key = 1;
+    // A timesheet consists of many entries. A timesheet can be totally empty, it's just there to
+    // hold the reference to a bunch of entries under a date, i.e. for easy access.
+    repeated string entries = 2;
+}
+
+// TrackingEntry represents an entry in the timesheet. This will have enough information to commit
+// to the duration, and also enough information to identify the entry.
+message TrackingEntry {
+    // The key of this entry.
+    string key = 1;
+    // The key of the timesheet this entry belongs to.
+    string timesheet = 2;
+    // The note associated with this entry.
+    string note = 3;
+    // The unix timestamp of when this entry was created.
+    uint64 created = 4;
+    // The unix timestamp of when this entry was last updated.
+    uint64 updated = 5;
+    // The number of seconds this has been tracked for (once committed).
+    uint64 duration = 6;
+}

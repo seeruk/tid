@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"time"
-
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
@@ -32,16 +30,20 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		sheet, err := gateway.FindTodaysTimeSheet()
+		sheet, err := gateway.FindTodaysTimesheet()
 		if err != nil {
 			return err
 		}
 
-		status.Start(sheet.AppendNewEntry(note))
+		entry := tracking.NewEntry(note)
+
+		sheet.AppendEntry(entry)
+		status.Start(sheet, entry)
 
 		errs := errhandling.NewErrorStack()
+		errs.Add(gateway.PersistEntry(entry))
+		errs.Add(gateway.PersistTimesheet(sheet))
 		errs.Add(gateway.PersistStatus(status))
-		errs.Add(gateway.PersistTimesheet(time.Now().Local(), sheet))
 
 		if err = errs.Errors(); err != nil {
 			return err

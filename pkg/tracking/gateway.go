@@ -1,17 +1,23 @@
 package tracking
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/proto"
 )
 
-// KeyStatus is the key for the current tracking status in the store.
-const KeyStatus = "status"
-
-// KeyTimeSheetFmt is the date formatting string for timesheet keys in the store.
-const KeyTimeSheetFmt = "2006-01-02"
+const (
+	// KeyStatus is the key for the current tracking status in the store.
+	KeyStatus = "status"
+	// KeyEntryFmt is the formatting string for the entry keys in the store.
+	KeyEntryFmt = "entry:%s"
+	// KeyTimesheetDateFmt is the date formatting string for timesheet keys in the store.
+	KeyTimesheetDateFmt = "sheet:2006-01-02"
+	// KeyTimesheetFmt is the formatting string for the timesheet keys in the store.
+	KeyTimesheetFmt = "sheet:%s"
+)
 
 // Gateway provides access to timesheet data in the database.
 type Gateway struct {
@@ -26,23 +32,37 @@ func NewGateway(store state.Store) Gateway {
 	}
 }
 
-// FindStatus attempts to get the current status.
+// FindEntry attempts to find an entry with the given key.
+func (g *Gateway) FindEntry(entryKey string) (*Entry, error) {
+	entry := NewEntry("")
+
+	return entry, g.store.Read(fmt.Sprintf(KeyEntryFmt, entryKey), entry.Message)
+}
+
+// FindStatus attempts to find the current status.
 func (g *Gateway) FindStatus() (*Status, error) {
-	status := NewStatus(&proto.Status{})
+	status := NewStatus()
 
 	return status, g.store.Read(KeyStatus, status.Message)
 }
 
-// FindTimeSheet looks for a timesheet at the given date.
-func (g *Gateway) FindTimeSheet(date time.Time) (*TimeSheet, error) {
-	sheet := NewTimeSheet(&proto.TimeSheet{})
+// FindTimesheet attempts to find a timesheet with the given date.
+func (g *Gateway) FindTimesheet(sheetKey string) (*Timesheet, error) {
+	sheet := NewTimesheet(&proto.TrackingTimesheet{
+		Key: sheetKey,
+	})
 
-	return sheet, g.store.Read(date.Format(KeyTimeSheetFmt), sheet.Message)
+	return sheet, g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), sheet.Message)
 }
 
-// FindTodaysTimeSheet will find the timesheet for the current date.
-func (g *Gateway) FindTodaysTimeSheet() (*TimeSheet, error) {
-	return g.FindTimeSheet(time.Now().Local())
+// FindTodaysTimesheet attempts to find the timesheet for the current date.
+func (g *Gateway) FindTodaysTimesheet() (*Timesheet, error) {
+	return g.FindTimesheet(time.Now().Local().Format(KeyTimesheetDateFmt))
+}
+
+// PersistEntry persists a given entry to the store.
+func (g *Gateway) PersistEntry(entry *Entry) error {
+	return g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.Key()), entry.Message)
 }
 
 // PersistStatus persists a given status to the store.
@@ -51,6 +71,6 @@ func (g *Gateway) PersistStatus(status *Status) error {
 }
 
 // PersistTimesheet persists a given timesheet to the store.
-func (g *Gateway) PersistTimesheet(date time.Time, sheet *TimeSheet) error {
-	return g.store.Write(date.Format(KeyTimeSheetFmt), sheet.Message)
+func (g *Gateway) PersistTimesheet(sheet *Timesheet) error {
+	return g.store.Write(fmt.Sprintf(KeyTimesheetFmt, sheet.Key()), sheet.Message)
 }

@@ -1,15 +1,12 @@
 package cli
 
 import (
-	"regexp"
-	"strings"
-	"time"
-
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
+// StatusCommand creates a command to view the status of the current timer.
 func StatusCommand(gateway tracking.Gateway) console.Command {
 	var short bool
 
@@ -32,32 +29,23 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		entryRef := status.TimeSheetEntry()
-
-		date, err := time.Parse(tracking.KeyTimeSheetFmt, entryRef.Date)
+		entry, err := gateway.FindEntry(status.Ref().Entry)
 		if err != nil {
 			return err
 		}
-
-		sheet, err := gateway.FindTimeSheet(date)
-		if err != nil {
-			return err
-		}
-
-		entry := sheet.Message.Entries[entryRef.Index]
 
 		// Update the duration, we're not persisting it in this command though.
-		sheet.UpdateEntryDuration(status)
+		entry.UpdateDuration()
 
 		if short {
-			duration := formatDuration(timeSinceStartTime(entry.StartTime))
-
-			output.Printf("%s on %s\n", duration, entry.Note)
+			output.Printf("%s on %s\n", entry.Duration(), entry.Note())
 		} else {
-			// @todo: Should also show start time, and maybe when pausing is in, also the different
-			// start times that there have been (or at least a friendly way of showing that, like
-			// a timeline type thing?)
-			output.Println("@todo: Long")
+			// @todo: When pausing is in should this show the different start times that there have
+			// been (or at least a friendly way of showing that, like a timeline type thing?) Or at
+			// the very least, the number of times that it has been paused?
+			output.Printf("Started At: %s\n", entry.Created().Format("3:04PM (2006-01-02)"))
+			output.Printf("Duration: %s\n", entry.Duration())
+			output.Printf("Note: %s\n", entry.Note())
 		}
 
 		return nil
@@ -69,26 +57,4 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		Configure:   configure,
 		Execute:     execute,
 	}
-}
-
-// @todo: Move me somewhere useful (timex? this is linked closer to an entry though)
-func timeSinceStartTime(startTime uint64) time.Duration {
-	startUnix := time.Unix(int64(startTime), 0)
-
-	return time.Since(startUnix)
-}
-
-// @todo: Move me somewhere useful (timex?)
-func formatDuration(duration time.Duration) string {
-	toFormat := duration.String()
-
-	// Grab the fractions of seconds in a group.
-	reg := regexp.MustCompile(`\d{1,2}(\.\d+)s`)
-	matches := reg.FindStringSubmatch(toFormat)
-
-	// Replace the fractions in the seconds with nothing. This is done separately to the rest of the
-	// duration to ensure accuracy.
-	seconds := strings.Replace(matches[0], matches[1], "", -1)
-
-	return strings.Replace(toFormat, matches[0], seconds, -1)
 }
