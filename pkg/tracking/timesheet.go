@@ -6,7 +6,8 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
-// TimeSheet wraps a ProtoBuf-generated proto.TimeSheet message with helper messages.
+// TimeSheet wraps a ProtoBuf-generated proto.TimeSheet message with helper messages. No state
+// should be kept in this struct.
 type TimeSheet struct {
 	Message *proto.TimeSheet
 }

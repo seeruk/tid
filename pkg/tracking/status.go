@@ -4,7 +4,8 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
-// Status wraps a ProtoBuf-generated proto.Status message with helper methods.
+// Status wraps a ProtoBuf-generated proto.Status message with helper methods. No state should be
+// kept in this struct.
 type Status struct {
 	Message *proto.Status
 }
