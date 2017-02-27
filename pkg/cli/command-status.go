@@ -87,7 +87,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 
 	return console.Command{
 		Name:        "status",
-		Description: "View the current status. What are you tracking?",
+		Description: "View the current status.",
 		Configure:   configure,
 		Execute:     execute,
 	}

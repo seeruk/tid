@@ -63,7 +63,7 @@ func AddCommand(gateway tracking.Gateway) console.Command {
 
 	return console.Command{
 		Name:        "add",
-		Description: "Add a timesheet entry with specific details.",
+		Description: "Add a timesheet entry.",
 		Configure:   configure,
 		Execute:     execute,
 	}
