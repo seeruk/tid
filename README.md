@@ -136,10 +136,8 @@ stopped state. If it was being tracked most recently, you will no longer have an
 
 ## Completions
 
-Completions are provided for both Bash and Fish. How you install those many be platform dependant,
-but the scripts are located with obvious names in the `completions/` directory.
-
-For Fish, installation will probably look something like this:
+Completions are provided for Fish and are located with obvious names in the `completions/` 
+directory. Installation will probably look something like this:
 
 ```
 $ mkdir -p ~/.config/fish/completions/
