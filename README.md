@@ -1,3 +1,7 @@
+<div style="text-align: center">
+    <img src="https://raw.githubusercontent.com/SeerUK/tid/master/logo.png" height="256" />
+</div>
+
 # tid
 
 A simple, CLI-based time tracking utility for personal time tracking. `tid` uses [Bolt][1] as a
