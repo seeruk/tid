@@ -69,7 +69,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		var entries int
 
 		err = forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
-			if status.Ref().Entry == entry.Hash() {
+			if status.IsActive() && status.Ref().Entry == entry.Hash() {
 				entry.UpdateDuration()
 				entry.Update()
 
