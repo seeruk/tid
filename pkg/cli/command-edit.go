@@ -90,6 +90,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 
 		entry.SetDuration(duration)
 		entry.SetNote(note)
+		entry.Update()
 
 		err = gateway.PersistEntry(entry)
 		if err != nil {
