@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/SeerUK/tid/pkg/state"
@@ -111,11 +112,14 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			"Last Started",
 			"Note",
 			"Duration",
+			"Running",
 		})
 
 		dateFormat := "03:04:05PM (2006-01-02)"
 
 		err = forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
+			isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+
 			table.Append([]string{
 				entry.Timesheet(),
 				entry.ShortHash(),
@@ -123,6 +127,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 				entry.Updated().Format(dateFormat),
 				entry.Note(),
 				entry.Duration().String(),
+				fmt.Sprintf("%t", isRunning),
 			})
 		})
 
