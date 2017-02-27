@@ -1,6 +1,6 @@
 # tid
 
-A simple, CLI-based time tracking utility - because Tempo and JIRA suck. `tid` uses [Bolt][1] as a
+A simple, CLI-based time tracking utility for personal time tracking. `tid` uses [Bolt][1] as a
 storage backend, and does not use any kind of active daemon.
 
 ## Installation
