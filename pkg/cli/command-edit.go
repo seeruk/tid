@@ -34,7 +34,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 		def.AddOption(
 			parameters.NewDurationValue(&offset),
 			"-o, --offset=OFFSET",
-			"A offset to modify the duration by (can be negative). Mutually excluse with duration.",
+			"An offset to modify the duration by (can be negative). Mutually exclusive with duration.",
 		)
 
 		def.AddArgument(

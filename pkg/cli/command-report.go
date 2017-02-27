@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/SeerUK/tid/pkg/state"
@@ -16,6 +17,8 @@ const ReportDateFmt = "2006-01-02"
 func ReportCommand(gateway tracking.Gateway) console.Command {
 	var start time.Time
 	var end time.Time
+	var format string
+	var noSummary bool
 
 	configure := func(def *console.Definition) {
 		def.AddOption(
@@ -28,6 +31,18 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			parameters.NewDateValue(&end),
 			"-e, --end=END",
 			"The end date of the report.",
+		)
+
+		def.AddOption(
+			parameters.NewStringValue(&format),
+			"-f, --format=FORMAT",
+			"Format string, uses table headers e.g. '{{HASH}}\t{{NOTE}}'.",
+		)
+
+		def.AddOption(
+			parameters.NewBoolValue(&noSummary),
+			"--no-summary",
+			"Hide the summary?",
 		)
 	}
 
@@ -89,57 +104,82 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		if start.Equal(end) {
-			format := "Report for %s.\n"
-			output.Printf(format, end.Format(ReportDateFmt))
-			output.Println()
-		} else {
-			format := "Report for %s to %s.\n"
-			output.Printf(format, start.Format(ReportDateFmt), end.Format(ReportDateFmt))
+		if !noSummary {
+			if start.Equal(end) {
+				format := "Report for %s.\n"
+				output.Printf(format, end.Format(ReportDateFmt))
+				output.Println()
+			} else {
+				format := "Report for %s to %s.\n"
+				output.Printf(format, start.Format(ReportDateFmt), end.Format(ReportDateFmt))
+				output.Println()
+			}
+
+			output.Printf("Total Duration: %s\n", duration)
+			output.Printf("Entry Count: %d\n", entries)
 			output.Println()
 		}
-
-		output.Printf("Total Duration: %s\n", duration)
-		output.Printf("Total Entries: %d\n", entries)
-		output.Println()
-
-		table := tablewriter.NewWriter(output.Writer)
-		table.SetAlignment(tablewriter.ALIGN_LEFT)
-		table.SetHeader([]string{
-			"Date",
-			"Hash",
-			"Created",
-			"Updated",
-			"Note",
-			"Duration",
-			"Running",
-		})
 
 		dateFormat := "03:04:05PM (2006-01-02)"
 
-		err = forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
-			isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+		if format != "" {
+			// Write formatted output
+			return forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
+				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
 
-			table.Append([]string{
-				entry.Timesheet(),
-				entry.ShortHash(),
-				entry.Created().Format(dateFormat),
-				entry.Updated().Format(dateFormat),
-				entry.Note(),
-				entry.Duration().String(),
-				fmt.Sprintf("%t", isRunning),
+				created := entry.Created().Format(dateFormat)
+				updated := entry.Updated().Format(dateFormat)
+
+				result := format
+				result = strings.Replace(result, "{{DATE}}", entry.Timesheet(), -1)
+				result = strings.Replace(result, "{{HASH}}", entry.ShortHash(), -1)
+				result = strings.Replace(result, "{{CREATED}}", created, -1)
+				result = strings.Replace(result, "{{UPDATED}}", updated, -1)
+				result = strings.Replace(result, "{{NOTE}}", entry.Note(), -1)
+				result = strings.Replace(result, "{{DURATION}}", entry.Duration().String(), -1)
+				result = strings.Replace(result, "{{RUNNING}}", fmt.Sprintf("%t", isRunning), -1)
+
+				output.Printf("%s\n", result)
 			})
-		})
+		} else {
+			// Write table
+			table := tablewriter.NewWriter(output.Writer)
+			table.SetAlignment(tablewriter.ALIGN_LEFT)
 
-		if err != nil {
-			return err
+			table.SetHeader([]string{
+				"Date",
+				"Hash",
+				"Created",
+				"Updated",
+				"Note",
+				"Duration",
+				"Running",
+			})
+
+			err = forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
+				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+
+				table.Append([]string{
+					entry.Timesheet(),
+					entry.ShortHash(),
+					entry.Created().Format(dateFormat),
+					entry.Updated().Format(dateFormat),
+					entry.Note(),
+					entry.Duration().String(),
+					fmt.Sprintf("%t", isRunning),
+				})
+			})
+
+			if err != nil {
+				return err
+			}
+
+			table.SetAutoMergeCells(true)
+			table.SetRowLine(true)
+			table.Render()
+
+			return nil
 		}
-
-		table.SetAutoMergeCells(true)
-		table.SetRowLine(true)
-		table.Render()
-
-		return nil
 	}
 
 	return console.Command{
