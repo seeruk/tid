@@ -10,7 +10,7 @@ storage backend, and does not use any kind of active daemon.
 ## Installation
 
 ```
-$ go install github.com/SeerUK/tid/...
+$ go get -u -v github.com/SeerUK/tid/...
 ```
 
 ## Usage
