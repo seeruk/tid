@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"strings"
+	"text/template"
 
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
@@ -60,19 +60,9 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		if format != "" {
-			created := entry.Created().Format(dateFormat)
-			updated := entry.Updated().Format(dateFormat)
-
-			result := format
-			result = strings.Replace(result, "{{DATE}}", entry.Timesheet(), -1)
-			result = strings.Replace(result, "{{HASH}}", entry.ShortHash(), -1)
-			result = strings.Replace(result, "{{CREATED}}", created, -1)
-			result = strings.Replace(result, "{{UPDATED}}", updated, -1)
-			result = strings.Replace(result, "{{NOTE}}", entry.Note(), -1)
-			result = strings.Replace(result, "{{DURATION}}", entry.Duration().String(), -1)
-			result = strings.Replace(result, "{{RUNNING}}", fmt.Sprintf("%t", isRunning), -1)
-
-			output.Printf("%s\n", result)
+			item := tracking.NewStatusItem(entry, isRunning)
+			tmpl := template.Must(template.New("status").Parse(format))
+			tmpl.Execute(output.Writer, item)
 		} else {
 			table := tablewriter.NewWriter(output.Writer)
 			table.SetHeader([]string{
