@@ -30,21 +30,21 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		if status.Ref() == nil || status.Ref().Entry == "" {
-			output.Println("resume: No timer to resume")
-			return nil
-		}
-
-		sheet, err := gateway.FindOrCreateTimesheet(status.Ref().Timesheet)
-		if err != nil {
-			return err
-		}
-
 		if hash == "" {
+			if status.Ref() == nil || status.Ref().Entry == "" {
+				output.Println("resume: No timer to resume")
+				return nil
+			}
+
 			hash = status.Ref().Entry
 		}
 
 		entry, err := gateway.FindEntry(hash)
+		if err != nil {
+			return err
+		}
+
+		sheet, err := gateway.FindOrCreateTimesheet(entry.Timesheet())
 		if err != nil {
 			return err
 		}

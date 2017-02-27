@@ -82,6 +82,7 @@ pass in an entry hash to use resume (e.g. if you remove the entry being tracked)
 ```
 $ tid status
 $ tid status fdb6f0d
+$ tid status --format="{{DURATION}} on '{{NOTE}}'"
 ```
 
 You can view the status of the currently tracked entry (the most recently started or resumed entry)
@@ -143,6 +144,10 @@ directory. Installation will probably look something like this:
 $ mkdir -p ~/.config/fish/completions/
 $ cp completions/tid.fish ~/.config/fish/completions/
 ```
+
+### Todo
+
+* Use Go's template syntax for format strings instead of custom formatting.
 
 ## License
 

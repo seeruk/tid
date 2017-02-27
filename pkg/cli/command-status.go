@@ -3,6 +3,8 @@ package cli
 import (
 	"fmt"
 
+	"strings"
+
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
@@ -11,14 +13,14 @@ import (
 
 // StatusCommand creates a command to view the status of the current timer.
 func StatusCommand(gateway tracking.Gateway) console.Command {
-	var short bool
+	var format string
 	var hash string
 
 	configure := func(def *console.Definition) {
 		def.AddOption(
-			parameters.NewBoolValue(&short),
-			"-s, --short",
-			"Show shortened output?",
+			parameters.NewStringValue(&format),
+			"-f, --format=FORMAT",
+			"Format string, uses table headers e.g. '{{HASH}}'.",
 		)
 
 		def.AddArgument(
@@ -48,6 +50,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
+		dateFormat := "3:04PM (2006-01-02)"
 		isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
 
 		if isRunning {
@@ -56,13 +59,24 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			entry.UpdateDuration()
 		}
 
-		if short {
-			output.Printf("%s on %s\n", entry.Duration(), entry.ShortHash())
-		} else {
-			dateFormat := "3:04PM (2006-01-02)"
+		if format != "" {
+			created := entry.Created().Format(dateFormat)
+			updated := entry.Updated().Format(dateFormat)
 
+			result := format
+			result = strings.Replace(result, "{{DATE}}", entry.Timesheet(), -1)
+			result = strings.Replace(result, "{{HASH}}", entry.ShortHash(), -1)
+			result = strings.Replace(result, "{{CREATED}}", created, -1)
+			result = strings.Replace(result, "{{UPDATED}}", updated, -1)
+			result = strings.Replace(result, "{{NOTE}}", entry.Note(), -1)
+			result = strings.Replace(result, "{{DURATION}}", entry.Duration().String(), -1)
+			result = strings.Replace(result, "{{RUNNING}}", fmt.Sprintf("%t", isRunning), -1)
+
+			output.Printf("%s\n", result)
+		} else {
 			table := tablewriter.NewWriter(output.Writer)
 			table.SetHeader([]string{
+				"Date",
 				"Hash",
 				"Created",
 				"Updated",
@@ -71,6 +85,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 				"Running",
 			})
 			table.Append([]string{
+				entry.Timesheet(),
 				entry.ShortHash(),
 				entry.Created().Format(dateFormat),
 				entry.Updated().Format(dateFormat),

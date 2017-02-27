@@ -19,7 +19,7 @@ func NewTimesheet(message *proto.TrackingTimesheet) *Timesheet {
 
 // AppendEntry appends a reference to an entry to the timesheet.
 func (t *Timesheet) AppendEntry(entry *Entry) {
-	t.Message.Entries = append(t.Message.Entries, entry.ShortHash())
+	t.Message.Entries = append(t.Message.Entries, entry.Hash())
 }
 
 // Entries returns the entries on the underlying message.

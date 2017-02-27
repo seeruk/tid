@@ -70,7 +70,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		keys := getDateRangeTimesheetKeys(start, end)
-		sheets, err := getTimesheetsBykeys(gateway, keys)
+		sheets, err := getTimesheetsByKeys(gateway, keys)
 		if err != nil {
 			return err
 		}
@@ -208,7 +208,7 @@ func forEachEntry(gw tracking.Gateway, ss []*tracking.Timesheet, fn func(*tracki
 }
 
 // getTimesheetsByKeys returns all of the timesheets that exist from an array of keys to try.
-func getTimesheetsBykeys(gateway tracking.Gateway, keys []string) ([]*tracking.Timesheet, error) {
+func getTimesheetsByKeys(gateway tracking.Gateway, keys []string) ([]*tracking.Timesheet, error) {
 	sheets := []*tracking.Timesheet{}
 
 	for _, key := range keys {

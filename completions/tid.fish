@@ -52,7 +52,7 @@ complete -c tid -f -n '__fish_tid_no_subcommand' -a start -d 'Start a new timer.
 
 # status
 complete -c tid -f -n '__fish_tid_no_subcommand' -a status -d 'View the current status.'
-complete -c tid -n '__fish_seen_subcommand_from status' -s s -l 'short' -f -d 'Show shortened output?'
+complete -c tid -n '__fish_seen_subcommand_from status' -r -s f -l 'format=STR' -f -d 'Format string, uses table headers e.g. \'{{HASH}}\'.'
 complete -c tid -f -n '__fish_seen_subcommand_from status' -a '(__fish_tid_entries)'
 
 # stop

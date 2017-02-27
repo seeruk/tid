@@ -136,12 +136,12 @@ func (g *Gateway) RemoveEntry(entry *Entry) error {
 		return err
 	}
 
-	if status.Ref().Entry == entry.Hash() {
+	if status.Ref() != nil && status.Ref().Entry == entry.Hash() {
 		status.StopAndClear()
 	}
 
 	// Remove from timesheet
-	sheet, err := g.FindOrCreateTimesheet(entry.Message.Timesheet)
+	sheet, err := g.FindOrCreateTimesheet(entry.Timesheet())
 	if err != nil {
 		return err
 	}
