@@ -64,8 +64,8 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			table := tablewriter.NewWriter(output.Writer)
 			table.SetHeader([]string{
 				"Hash",
-				"Started",
-				"Last Started",
+				"Created",
+				"Updated",
 				"Note",
 				"Duration",
 				"Running",

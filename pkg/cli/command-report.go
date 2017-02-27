@@ -108,8 +108,8 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		table.SetHeader([]string{
 			"Date",
 			"Hash",
-			"Started",
-			"Last Started",
+			"Created",
+			"Updated",
 			"Note",
 			"Duration",
 			"Running",
