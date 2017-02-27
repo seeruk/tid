@@ -1,8 +1,7 @@
 # tid
 
-A simple, CLI-based time tracking utility - because Tempo and JIRA suck. `tid` uses sqlite for the
-database, and does not use any kind of active daemon. Updates should be handled gracefully via
-migrations.
+A simple, CLI-based time tracking utility - because Tempo and JIRA suck. `tid` uses [Bolt][1] as a
+storage backend, and does not use any kind of active daemon.
 
 ## Installation
 
@@ -21,13 +20,13 @@ $ # Or for command help:
 $ tid start --help
 ```
 
-Starting a timer:
+**Starting a timer:**
 
 ```
 $ tid start "A note"
 ```
 
-Stopping a timer:
+**Stopping a timer:**
 
 ```
 $ tid stop
@@ -36,3 +35,5 @@ $ tid stop
 ## License
 
 MIT
+
+[1]: https://github.com/boltdb/bolt
