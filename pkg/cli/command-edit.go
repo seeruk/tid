@@ -60,6 +60,8 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
+		// @todo: Maybe a facade?
+
 		if status.IsActive() && status.Ref().Entry == entry.Hash() {
 			output.Println("edit: Stop your existing timer before trying to edit it's entry")
 			return nil

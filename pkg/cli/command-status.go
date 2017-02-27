@@ -1,9 +1,12 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
+	"github.com/olekukonko/tablewriter"
 )
 
 // StatusCommand creates a command to view the status of the current timer.
@@ -58,13 +61,25 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		} else {
 			dateFormat := "3:04PM (2006-01-02)"
 
-			output.Printf("Hash: %s\n", entry.Hash())
-			output.Println()
-			output.Printf("Started At: %s\n", entry.Created().Format(dateFormat))
-			output.Printf("Last Started At: %s\n", entry.Updated().Format(dateFormat))
-			output.Printf("Duration: %s\n", entry.Duration())
-			output.Printf("Note: %s\n", entry.Note())
-			output.Printf("Running: %t\n", isRunning)
+			table := tablewriter.NewWriter(output.Writer)
+			table.SetHeader([]string{
+				"Hash",
+				"Started",
+				"Last Started",
+				"Note",
+				"Duration",
+				"Running",
+			})
+			table.Append([]string{
+				entry.ShortHash(),
+				entry.Created().Format(dateFormat),
+				entry.Updated().Format(dateFormat),
+				entry.Note(),
+				entry.Duration().String(),
+				fmt.Sprintf("%t", isRunning),
+			})
+			table.SetAlignment(tablewriter.ALIGN_LEFT)
+			table.Render()
 		}
 
 		return nil

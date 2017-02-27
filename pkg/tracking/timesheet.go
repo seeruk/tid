@@ -22,6 +22,11 @@ func (t *Timesheet) AppendEntry(entry *Entry) {
 	t.Message.Entries = append(t.Message.Entries, entry.ShortHash())
 }
 
+// Entries returns the entries on the underlying message.
+func (t *Timesheet) Entries() []string {
+	return t.Message.Entries
+}
+
 // Key returns the key of the underlying message.
 func (t *Timesheet) Key() string {
 	return t.Message.Key

@@ -1,64 +1,69 @@
 package cli
 
 import (
+	"time"
+
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
-// StartCommand creates a command to start timers.
-func StartCommand(gateway tracking.Gateway) console.Command {
+// AddCommand creates a command to add timesheet entries.
+func AddCommand(gateway tracking.Gateway) console.Command {
+	var startedAt time.Time
+	var duration time.Duration
 	var note string
 
 	configure := func(def *console.Definition) {
 		def.AddArgument(
+			parameters.NewDateValue(&startedAt),
+			"STARTED",
+			"When did you start working?",
+		)
+
+		def.AddArgument(
+			parameters.NewDurationValue(&duration),
+			"DURATION",
+			"How long did you spend on what you want to add?",
+		)
+
+		def.AddArgument(
 			parameters.NewStringValue(&note),
 			"NOTE",
-			"What are you working on?",
+			"What were you working on?",
 		)
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindOrCreateStatus()
-		if err != nil {
-			return err
-		}
-
-		if status.IsActive() {
-			output.Println("start: Stop your existing timer before starting a new one")
-			return nil
-		}
-
-		sheet, err := gateway.FindOrCreateTodaysTimesheet()
+		sheet, err := gateway.FindOrCreateTimesheet(startedAt.Format(tracking.KeyTimesheetDateFmt))
 		if err != nil {
 			return err
 		}
 
 		entry := tracking.NewEntry(note)
+		entry.SetDuration(duration)
 		entry.SetTimesheet(sheet)
 
 		sheet.AppendEntry(entry)
-		status.Start(sheet, entry)
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(gateway.PersistEntry(entry))
 		errs.Add(gateway.PersistTimesheet(sheet))
-		errs.Add(gateway.PersistStatus(status))
 
 		if err = errs.Errors(); err != nil {
 			return err
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Started tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
+		output.Printf("Added entry '%s' (%s)\n", entry.Note(), entry.ShortHash())
 
 		return nil
 	}
 
 	return console.Command{
-		Name:        "start",
-		Description: "Start a new timer.",
+		Name:        "add",
+		Description: "Add a timesheet entry with specific details.",
 		Configure:   configure,
 		Execute:     execute,
 	}

@@ -70,6 +70,16 @@ func (e *Entry) ShortHash() string {
 	return e.Message.Key[0:7]
 }
 
+// Timesheet returns the key (date) of the timesheet this message belongs too.
+func (e *Entry) Timesheet() string {
+	return e.Message.Timesheet
+}
+
+// SetTimesheet sets the timesheet of the entry to the given timesheet's key.
+func (e *Entry) SetTimesheet(sheet *Timesheet) {
+	e.Message.Timesheet = sheet.Key()
+}
+
 // Update updates the Updated timestamp in the underlying message.
 func (e *Entry) Update() {
 	e.Message.Updated = uint64(time.Now().Unix())

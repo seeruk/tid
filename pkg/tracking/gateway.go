@@ -15,7 +15,7 @@ const (
 	// KeyEntryFmt is the formatting string for the entry keys in the store.
 	KeyEntryFmt = "entry:%s"
 	// KeyTimesheetDateFmt is the date formatting string for timesheet keys in the store.
-	KeyTimesheetDateFmt = "sheet:2006-01-02"
+	KeyTimesheetDateFmt = "2006-01-02"
 	// KeyTimesheetFmt is the formatting string for the timesheet keys in the store.
 	KeyTimesheetFmt = "sheet:%s"
 )
@@ -74,7 +74,16 @@ func (g *Gateway) FindOrCreateStatus() (*Status, error) {
 	return status, nil
 }
 
-// FindOrCreateTimesheet attempts to find a timesheet with the given date.
+// FindTimesheet attempts to find a timesheet for the given date.
+func (g *Gateway) FindTimesheet(sheetKey string) (*Timesheet, error) {
+	sheet := NewTimesheet(&proto.TrackingTimesheet{
+		Key: sheetKey,
+	})
+
+	return sheet, g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), sheet.Message)
+}
+
+// FindOrCreateTimesheet attempts to find a timesheet for the given date, or returns a timesheet.
 func (g *Gateway) FindOrCreateTimesheet(sheetKey string) (*Timesheet, error) {
 	sheet := NewTimesheet(&proto.TrackingTimesheet{
 		Key: sheetKey,
