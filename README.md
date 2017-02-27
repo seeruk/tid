@@ -1,6 +1,6 @@
-<div style="text-align: center">
+<p align="center">
     <img src="https://raw.githubusercontent.com/SeerUK/tid/master/logo.png" height="256" />
-</div>
+</p>
 
 # tid
 
