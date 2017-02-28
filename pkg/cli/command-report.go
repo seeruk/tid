@@ -25,6 +25,7 @@ type reportOutputItem struct {
 func ReportCommand(gateway tracking.Gateway) console.Command {
 	var start time.Time
 	var end time.Time
+	var date time.Time
 	var format string
 	var noSummary bool
 
@@ -39,6 +40,12 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			parameters.NewDateValue(&end),
 			"-e, --end=END",
 			"The end date of the report.",
+		)
+
+		def.AddOption(
+			parameters.NewDateValue(&date),
+			"-d, --date=DATE",
+			"The exact date of a timesheet to show a report for.",
 		)
 
 		def.AddOption(
@@ -57,6 +64,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		hasStart := input.HasOption([]string{"s", "start"})
 		hasEnd := input.HasOption([]string{"e", "end"})
+		hasDate := input.HasOption([]string{"d", "date"})
 
 		// We need to get the current date, this is a little hacky, but we need it without any time
 		now, err := time.Parse(ReportDateFmt, time.Now().Format(ReportDateFmt))
@@ -64,12 +72,17 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if !hasStart {
-			start = now
-		}
+		if hasDate {
+			start = date
+			end = date
+		} else {
+			if !hasStart {
+				start = now
+			}
 
-		if !hasEnd {
-			end = now
+			if !hasEnd {
+				end = now
+			}
 		}
 
 		if start.After(end) {

@@ -38,6 +38,7 @@ complete -c tid -f -n '__fish_seen_subcommand_from remove' -a '(__fish_tid_entri
 
 # report
 complete -c tid -f -n '__fish_tid_no_subcommand' -a report -d 'Display a tabular timesheet report.'
+complete -c tid -n '__fish_seen_subcommand_from report' -r -s e -l 'date=DATE' -f -d 'The exact date of a timesheet to show a report for.'
 complete -c tid -n '__fish_seen_subcommand_from report' -r -s e -l 'end=DATE' -f -d 'The end date of the report.'
 complete -c tid -n '__fish_seen_subcommand_from report' -r -s f -l 'format=STR' -f -d 'Format string, uses Go templates.'
 complete -c tid -n '__fish_seen_subcommand_from report' -l 'no-summary' -f -d 'Hide the summary?'
