@@ -83,15 +83,13 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		var duration time.Duration
 		var entries int
 
-		err = forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
-			if status.IsActive() && status.Ref().Entry == entry.Hash() {
+		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
+			if status.IsActive() && status.Ref().Entry == entry.Hash {
 				entry.UpdateDuration()
-				entry.Update()
-
 				gateway.PersistEntry(entry)
 			}
 
-			duration = duration + entry.Duration()
+			duration = duration + entry.Duration
 			entries = entries + 1
 		})
 
@@ -124,19 +122,19 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 
 		if format != "" {
 			// Write formatted output
-			return forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
-				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+			return forEachEntry(gateway, sheets, func(entry tracking.Entry) {
+				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash
 
-				created := entry.Created().Format(dateFormat)
-				updated := entry.Updated().Format(dateFormat)
+				created := entry.Created.Format(dateFormat)
+				updated := entry.Updated.Format(dateFormat)
 
 				result := format
-				result = strings.Replace(result, "{{DATE}}", entry.Timesheet(), -1)
-				result = strings.Replace(result, "{{HASH}}", entry.ShortHash(), -1)
+				result = strings.Replace(result, "{{DATE}}", entry.Timesheet, -1)
+				result = strings.Replace(result, "{{HASH}}", entry.ShortHash, -1)
 				result = strings.Replace(result, "{{CREATED}}", created, -1)
 				result = strings.Replace(result, "{{UPDATED}}", updated, -1)
-				result = strings.Replace(result, "{{NOTE}}", entry.Note(), -1)
-				result = strings.Replace(result, "{{DURATION}}", entry.Duration().String(), -1)
+				result = strings.Replace(result, "{{NOTE}}", entry.Note, -1)
+				result = strings.Replace(result, "{{DURATION}}", entry.Duration.String(), -1)
 				result = strings.Replace(result, "{{RUNNING}}", fmt.Sprintf("%t", isRunning), -1)
 
 				output.Printf("%s\n", result)
@@ -156,16 +154,16 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 				"Running",
 			})
 
-			err = forEachEntry(gateway, sheets, func(entry *tracking.Entry) {
-				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+			err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
+				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash
 
 				table.Append([]string{
-					entry.Timesheet(),
-					entry.ShortHash(),
-					entry.Created().Format(dateFormat),
-					entry.Updated().Format(dateFormat),
-					entry.Note(),
-					entry.Duration().String(),
+					entry.Timesheet,
+					entry.ShortHash,
+					entry.Created.Format(dateFormat),
+					entry.Updated.Format(dateFormat),
+					entry.Note,
+					entry.Duration.String(),
 					fmt.Sprintf("%t", isRunning),
 				})
 			})
@@ -192,7 +190,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 
 // forEachEntry runs the given function on each entry in each timesheet in the given array of
 // timesheets. This uses the database.
-func forEachEntry(gw tracking.Gateway, ss []*tracking.Timesheet, fn func(*tracking.Entry)) error {
+func forEachEntry(gw tracking.Gateway, ss []*tracking.Timesheet, fn func(tracking.Entry)) error {
 	for _, sheet := range ss {
 		for _, hash := range sheet.Entries() {
 			entry, err := gw.FindEntry(hash)

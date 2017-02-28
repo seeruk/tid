@@ -1,109 +1,70 @@
 package tracking
 
 import (
-	"crypto/sha1"
-	"fmt"
-	"math/rand"
-	"os"
 	"time"
 
+	"github.com/SeerUK/tid/pkg/hash"
 	"github.com/SeerUK/tid/proto"
 )
 
-// Entry wraps a ProtoBuf-generated proto.TrackingEntry message with helper methods. No state should
-// be kept in this struct.
+// Entry represents a timesheet entry.
 type Entry struct {
-	Message *proto.TrackingEntry
+	// The date of the timesheet this entry belongs to.
+	Timesheet string
+	// The hash of this entry.
+	Hash string
+	// The short hash of this entry.
+	ShortHash string
+	// The time that this entry was created.
+	Created time.Time
+	// The time that this entry was last updated.
+	Updated time.Time
+	// The note on this entry.
+	Note string
+	// The amount of time logged against this entry.
+	Duration time.Duration
 }
 
-// NewEntry creates a new instance of Entry.
-func NewEntry(note string) *Entry {
-	nowUnix := time.Now().Unix()
-
-	created := uint64(nowUnix)
-	updated := uint64(nowUnix)
-
-	key := createNewKey()
-
-	return &Entry{
-		Message: &proto.TrackingEntry{
-			Key:     key,
-			Note:    note,
-			Created: created,
-			Updated: updated,
-		},
+// NewEntry creates a new instance of Entry, with a new random hash.
+func NewEntry() Entry {
+	return Entry{
+		Hash:    hash.CreateHash(),
+		Created: time.Now(),
+		Updated: time.Now(),
 	}
 }
 
-// Created gets the created time of the underlying message.
-func (e *Entry) Created() time.Time {
-	return time.Unix(int64(e.Message.Created), 0)
+// FromMessage reads a `proto.TrackingEntry` message into this Entry.
+func (e *Entry) FromMessage(message *proto.TrackingEntry) {
+	e.Timesheet = message.Timesheet
+	e.Hash = message.Key
+	e.ShortHash = message.Key[:7]
+	e.Created = time.Unix(int64(message.Created), 0)
+	e.Updated = time.Unix(int64(message.Updated), 0)
+	e.Note = message.Note
+	e.Duration = time.Duration(message.Duration) * time.Second
 }
 
-// Duration gets the duration as a time.Duration for nice formatting.
-func (e *Entry) Duration() time.Duration {
-	return time.Duration(e.Message.Duration) * time.Second
-}
-
-// Hash returns the key of the underlying message.
-func (e *Entry) Hash() string {
-	return e.Message.Key
-}
-
-// Note gets the note of the underlying message.
-func (e *Entry) Note() string {
-	return e.Message.Note
-}
-
-// SetDuration sets the duration on the underlying message.
-func (e *Entry) SetDuration(duration time.Duration) {
-	e.Message.Duration = uint64(duration.Seconds())
-}
-
-// SetNote sets the note on the underlying message.
-func (e *Entry) SetNote(note string) {
-	e.Message.Note = note
-}
-
-// ShortHash returns the short version of the key.
-func (e *Entry) ShortHash() string {
-	return e.Message.Key[0:7]
-}
-
-// Timesheet returns the key (date) of the timesheet this message belongs too.
-func (e *Entry) Timesheet() string {
-	return e.Message.Timesheet
-}
-
-// SetTimesheet sets the timesheet of the entry to the given timesheet's key.
-func (e *Entry) SetTimesheet(sheet *Timesheet) {
-	e.Message.Timesheet = sheet.Key()
-}
-
-// Update updates the Updated timestamp in the underlying message.
-func (e *Entry) Update() {
-	e.Message.Updated = uint64(time.Now().Unix())
-}
-
-// Updated gets the updated time of the underlying message.
-func (e *Entry) Updated() time.Time {
-	return time.Unix(int64(e.Message.Updated), 0)
+// ToMessage converts this Entry into a `proto.TrackingEntry`.
+func (e *Entry) ToMessage() *proto.TrackingEntry {
+	return &proto.TrackingEntry{
+		Key:       e.Hash,
+		Timesheet: e.Timesheet,
+		Note:      e.Note,
+		Created:   uint64(e.Created.Unix()),
+		Updated:   uint64(e.Updated.Unix()),
+		Duration:  uint64(e.Duration.Seconds()),
+	}
 }
 
 // UpdateDuration adds the difference between the time this entry was last stopped and now to the
-// duration on the underlying message.
+// duration. This also updates `Entry.Updated`.
 func (e *Entry) UpdateDuration() {
-	e.Message.Duration = e.Message.Duration + (uint64(time.Now().Unix()) - e.Message.Updated)
-}
+	diff := time.Now().Sub(e.Updated)
 
-// createNewKey creates a
-func createNewKey() string {
-	nowUnix := time.Now().UnixNano()
-	number := rand.Int()
-	pid := os.Getpid()
+	// We only care about the seconds, nothing more specific, otherwise output is too long.
+	seconds := e.Duration.Seconds() + diff.Seconds()
 
-	data := fmt.Sprintf("%d%d%d", nowUnix, number, pid)
-	hash := sha1.Sum([]byte(data))
-
-	return fmt.Sprintf("%x", hash)
+	e.Duration = time.Duration(seconds) * time.Second
+	e.Updated = time.Now()
 }

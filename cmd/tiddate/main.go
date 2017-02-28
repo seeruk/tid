@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"time"
 	"fmt"
+	"time"
 )
 
 func main() {

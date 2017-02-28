@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-
 	"text/template"
 
 	"github.com/SeerUK/tid/pkg/tracking"
@@ -10,6 +9,11 @@ import (
 	"github.com/eidolon/console/parameters"
 	"github.com/olekukonko/tablewriter"
 )
+
+type StatusOutput struct {
+	Entry  tracking.Entry
+	Status tracking.Status
+}
 
 // StatusCommand creates a command to view the status of the current timer.
 func StatusCommand(gateway tracking.Gateway) console.Command {
@@ -51,7 +55,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		dateFormat := "3:04PM (2006-01-02)"
-		isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+		isRunning := status.IsActive() && status.Ref().Entry == entry.Hash
 
 		if isRunning {
 			// If we're viewing the status of the currently active entry, we should get make sure
@@ -60,9 +64,12 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		if format != "" {
-			item := tracking.NewStatusItem(entry, isRunning)
+			out := StatusOutput{}
+			out.Entry = entry
+			out.Status = *status
+
 			tmpl := template.Must(template.New("status").Parse(format))
-			tmpl.Execute(output.Writer, item)
+			tmpl.Execute(output.Writer, out)
 		} else {
 			table := tablewriter.NewWriter(output.Writer)
 			table.SetHeader([]string{
@@ -75,12 +82,12 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 				"Running",
 			})
 			table.Append([]string{
-				entry.Timesheet(),
-				entry.ShortHash(),
-				entry.Created().Format(dateFormat),
-				entry.Updated().Format(dateFormat),
-				entry.Note(),
-				entry.Duration().String(),
+				entry.Timesheet,
+				entry.ShortHash,
+				entry.Created.Format(dateFormat),
+				entry.Updated.Format(dateFormat),
+				entry.Note,
+				entry.Duration.String(),
 				fmt.Sprintf("%t", isRunning),
 			})
 			table.SetAlignment(tablewriter.ALIGN_LEFT)

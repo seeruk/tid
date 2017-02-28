@@ -23,11 +23,11 @@ func (s *Status) IsActive() bool {
 }
 
 // Start updates the status to reflect the fact that a new entry is being tracked.
-func (s *Status) Start(sheet *Timesheet, entry *Entry) {
+func (s *Status) Start(sheet *Timesheet, entry Entry) {
 	s.Message.State = proto.TrackingStatus_STARTED
 	s.Message.Ref = &proto.TrackingStatusRef{
 		Timesheet: sheet.Key(),
-		Entry:     entry.Hash(),
+		Entry:     entry.Hash,
 	}
 }
 

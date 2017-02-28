@@ -35,10 +35,12 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		entry := tracking.NewEntry(note)
-		entry.SetTimesheet(sheet)
+		entry := tracking.NewEntry()
+		entry.Note = note
+		entry.Timesheet = sheet.Key()
 
 		sheet.AppendEntry(entry)
+
 		status.Start(sheet, entry)
 
 		errs := errhandling.NewErrorStack()
@@ -51,7 +53,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Started tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
+		output.Printf("Started tracking '%s' (%s)\n", entry.Note, entry.ShortHash)
 
 		return nil
 	}

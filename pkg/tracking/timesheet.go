@@ -18,8 +18,8 @@ func NewTimesheet(message *proto.TrackingTimesheet) *Timesheet {
 }
 
 // AppendEntry appends a reference to an entry to the timesheet.
-func (t *Timesheet) AppendEntry(entry *Entry) {
-	t.Message.Entries = append(t.Message.Entries, entry.Hash())
+func (t *Timesheet) AppendEntry(entry Entry) {
+	t.Message.Entries = append(t.Message.Entries, entry.Hash)
 }
 
 // Entries returns the entries on the underlying message.
@@ -33,11 +33,11 @@ func (t *Timesheet) Key() string {
 }
 
 // RemoveEntry removes a reference to an entry from the timesheet.
-func (t *Timesheet) RemoveEntry(entry *Entry) {
+func (t *Timesheet) RemoveEntry(entry Entry) {
 	index := -1
 
 	for idx, hash := range t.Message.Entries {
-		if hash == entry.Hash() {
+		if hash == entry.Hash {
 			index = idx
 			break
 		}
