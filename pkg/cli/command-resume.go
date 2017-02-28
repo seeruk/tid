@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"time"
+
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
@@ -25,18 +27,18 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if status.IsActive() {
+		if status.IsActive {
 			output.Println("resume: Stop an existing timer before resuming a one")
 			return nil
 		}
 
 		if hash == "" {
-			if status.Ref() == nil || status.Ref().Entry == "" {
+			if status.Entry == "" {
 				output.Println("resume: No timer to resume")
 				return nil
 			}
 
-			hash = status.Ref().Entry
+			hash = status.Entry
 		}
 
 		entry, err := gateway.FindEntry(hash)
@@ -44,13 +46,13 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		sheet, err := gateway.FindOrCreateTimesheet(entry.Timesheet())
+		sheet, err := gateway.FindOrCreateTimesheet(entry.Timesheet)
 		if err != nil {
 			return err
 		}
 
 		// Update the time that this entry was last updated.
-		entry.Update()
+		entry.Updated = time.Now()
 
 		status.Start(sheet, entry)
 
@@ -63,7 +65,7 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Resumed tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
+		output.Printf("Resumed tracking '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
 	}

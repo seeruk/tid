@@ -2,14 +2,21 @@ package cli
 
 import (
 	"fmt"
+	"text/template"
 
-	"strings"
-
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 	"github.com/olekukonko/tablewriter"
 )
+
+// statusOutput represents the formattable source of the status command output.
+type statusOutput struct {
+	Entry   tracking.Entry
+	Status  tracking.Status
+	Running bool
+}
 
 // StatusCommand creates a command to view the status of the current timer.
 func StatusCommand(gateway tracking.Gateway) console.Command {
@@ -20,7 +27,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		def.AddOption(
 			parameters.NewStringValue(&format),
 			"-f, --format=FORMAT",
-			"Format string, uses table headers e.g. '{{HASH}}'.",
+			"Format string, uses Go templates.",
 		)
 
 		def.AddArgument(
@@ -36,22 +43,27 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if status.Ref() == nil || status.Ref().Entry == "" {
+		if status.Entry == "" {
 			output.Println("status: No timer to check the status of")
 			return nil
 		}
 
 		if hash == "" {
-			hash = status.Ref().Entry
+			hash = status.Entry
 		}
 
 		entry, err := gateway.FindEntry(hash)
-		if err != nil {
+		if err != nil && err != state.ErrNilResult {
 			return err
 		}
 
+		if err == state.ErrNilResult {
+			output.Printf("status: No entry with hash '%s'\n", hash)
+			return nil
+		}
+
 		dateFormat := "3:04PM (2006-01-02)"
-		isRunning := status.IsActive() && status.Ref().Entry == entry.Hash()
+		isRunning := status.IsActive && status.Entry == entry.Hash
 
 		if isRunning {
 			// If we're viewing the status of the currently active entry, we should get make sure
@@ -60,19 +72,16 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		if format != "" {
-			created := entry.Created().Format(dateFormat)
-			updated := entry.Updated().Format(dateFormat)
+			out := statusOutput{}
+			out.Entry = entry
+			out.Status = status
+			out.Running = isRunning
 
-			result := format
-			result = strings.Replace(result, "{{DATE}}", entry.Timesheet(), -1)
-			result = strings.Replace(result, "{{HASH}}", entry.ShortHash(), -1)
-			result = strings.Replace(result, "{{CREATED}}", created, -1)
-			result = strings.Replace(result, "{{UPDATED}}", updated, -1)
-			result = strings.Replace(result, "{{NOTE}}", entry.Note(), -1)
-			result = strings.Replace(result, "{{DURATION}}", entry.Duration().String(), -1)
-			result = strings.Replace(result, "{{RUNNING}}", fmt.Sprintf("%t", isRunning), -1)
+			tmpl := template.Must(template.New("status").Parse(format))
+			tmpl.Execute(output.Writer, out)
 
-			output.Printf("%s\n", result)
+			// Always end with a new line...
+			output.Println()
 		} else {
 			table := tablewriter.NewWriter(output.Writer)
 			table.SetHeader([]string{
@@ -85,12 +94,12 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 				"Running",
 			})
 			table.Append([]string{
-				entry.Timesheet(),
+				entry.Timesheet,
 				entry.ShortHash(),
-				entry.Created().Format(dateFormat),
-				entry.Updated().Format(dateFormat),
-				entry.Note(),
-				entry.Duration().String(),
+				entry.Created.Format(dateFormat),
+				entry.Updated.Format(dateFormat),
+				entry.Note,
+				entry.Duration.String(),
 				fmt.Sprintf("%t", isRunning),
 			})
 			table.SetAlignment(tablewriter.ALIGN_LEFT)

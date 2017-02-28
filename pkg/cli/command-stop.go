@@ -14,12 +14,12 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if !status.IsActive() {
+		if !status.IsActive {
 			output.Println("stop: There is no active timer running")
 			return nil
 		}
 
-		entry, err := gateway.FindEntry(status.Ref().Entry)
+		entry, err := gateway.FindEntry(status.Entry)
 		if err != nil {
 			return err
 		}
@@ -37,7 +37,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Stopped tracking '%s' (%s)\n", entry.Note(), entry.ShortHash())
+		output.Printf("Stopped tracking '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
 	}
