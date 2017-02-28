@@ -5,8 +5,8 @@ option go_package = "proto";
 // TrackingStatus keeps hold of information about the current "state" of tracking, i.e. whether or
 // not a timer is running, and which timer we last modified.
 message TrackingStatus {
-    // Whether or a timer is active.
-    bool is_active = 1;
+    // Whether or not a (any) timer is running.
+    bool is_running = 1;
     // The date of the timesheet currently being tracked.
     string timesheet = 2;
     // The hash of the entry currently being tracked.

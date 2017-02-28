@@ -147,6 +147,25 @@ $ cp completions/tid.fish ~/.config/fish/completions/
 
 Completion covers commands, options of commands, and entries where applicable.
 
+## Formatting Reference
+
+Both status and report accept a `--format` option that uses Go's text templates. The data that gets
+passed in has the following structure:
+
+```
+Entry.Timesheet   (string)         The timesheet date this entry belongs to.
+Entry.Hash        (string)         The hash of this entry.
+Entry.ShortHash   (string)         The short hash of this entry.
+Entry.Created     (time.Time)      The date/time this entry was created.
+Entry.Updated     (time.Time)      The date/time this entry was last updated.
+Entry.Note        (string)         The note of this entry.
+Entry.Duration    (time.Duration)  The duration logged against this entry.
+Entry.IsRunning   (bool)           True if this entry's timer is running.
+Status.Timesheet  (string)         The timesheet date for the currently active entry.
+Status.Entry      (string)         The entry hash for the currently active entry.
+Status.IsRunning  (bool)           True if a (any) entry's timer is running.
+```
+
 ## License
 
 MIT

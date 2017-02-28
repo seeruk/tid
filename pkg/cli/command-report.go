@@ -17,9 +17,8 @@ const ReportDateFmt = "2006-01-02"
 
 // reportOutputItem represents the formattable source of an item in the report command output.
 type reportOutputItem struct {
-	Entry   tracking.Entry
-	Status  tracking.Status
-	Running bool
+	Entry  tracking.Entry
+	Status tracking.Status
 }
 
 // ReportCommand creates a command to view a timesheet report.
@@ -93,7 +92,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		var entries int
 
 		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-			if status.IsActive && status.Entry == entry.Hash {
+			if status.IsRunning && status.Entry == entry.Hash {
 				entry.UpdateDuration()
 				gateway.PersistEntry(entry)
 			}
@@ -127,7 +126,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			output.Println()
 		}
 
-		dateFormat := "3:04PM (2006-01-02)"
+		dateFormat := "3:04:05PM (2006-01-02)"
 
 		if format != "" {
 			// Write formatted output
@@ -135,7 +134,6 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 				out := reportOutputItem{}
 				out.Entry = entry
 				out.Status = status
-				out.Running = status.IsActive && status.Entry == entry.Hash
 
 				tmpl := template.Must(template.New("status").Parse(format))
 				tmpl.Execute(output.Writer, out)
@@ -160,8 +158,6 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		})
 
 		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-			isRunning := status.IsActive && status.Entry == entry.Hash
-
 			table.Append([]string{
 				entry.Timesheet,
 				entry.ShortHash(),
@@ -169,7 +165,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 				entry.Updated.Format(dateFormat),
 				entry.Note,
 				entry.Duration.String(),
-				fmt.Sprintf("%t", isRunning),
+				fmt.Sprintf("%t", entry.IsRunning),
 			})
 		})
 

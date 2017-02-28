@@ -21,6 +21,8 @@ type Entry struct {
 	Note string
 	// The amount of time logged against this entry.
 	Duration time.Duration
+	// Whether or not this entry's timer is running.
+	IsRunning bool
 }
 
 // NewEntry creates a new instance of Entry, with a new random hash, and dates set.

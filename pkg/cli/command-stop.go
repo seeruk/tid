@@ -14,7 +14,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if !status.IsActive {
+		if !status.IsRunning {
 			output.Println("stop: There is no active timer running")
 			return nil
 		}

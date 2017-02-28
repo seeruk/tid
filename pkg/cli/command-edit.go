@@ -62,7 +62,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if status.IsActive && status.Entry == entry.Hash {
+		if status.IsRunning && status.Entry == entry.Hash {
 			entry.UpdateDuration()
 		}
 

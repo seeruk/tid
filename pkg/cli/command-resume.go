@@ -27,7 +27,7 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if status.IsActive {
+		if status.IsRunning {
 			output.Println("resume: Stop an existing timer before resuming a one")
 			return nil
 		}

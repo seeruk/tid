@@ -37,6 +37,11 @@ func NewGateway(store state.Store) Gateway {
 func (g *Gateway) FindEntry(hash string) (Entry, error) {
 	entry := NewEntry()
 
+	status, err := g.FindOrCreateStatus()
+	if err != nil {
+		return entry, err
+	}
+
 	if len(hash) == 7 {
 		longHash, err := g.FindEntryHashByShortHash(hash)
 		if err != nil {
@@ -48,12 +53,13 @@ func (g *Gateway) FindEntry(hash string) (Entry, error) {
 
 	message := &proto.TrackingEntry{}
 
-	err := g.store.Read(fmt.Sprintf(KeyEntryFmt, hash), message)
+	err = g.store.Read(fmt.Sprintf(KeyEntryFmt, hash), message)
 	if err != nil {
 		return entry, err
 	}
 
 	entry.FromMessage(message)
+	entry.IsRunning = status.IsRunning && status.Entry == entry.Hash
 
 	return entry, nil
 }

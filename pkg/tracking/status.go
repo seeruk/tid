@@ -6,8 +6,8 @@ import (
 
 // Status represents the status of what is being tracked currently.
 type Status struct {
-	// Whether or a timer is active.
-	IsActive bool
+	// Whether or not a (any) entry's timer is running.
+	IsRunning bool
 	// The date of the timesheet currently being tracked.
 	Timesheet string
 	// The hash of the entry currently being tracked.
@@ -22,7 +22,7 @@ func NewStatus() Status {
 
 // FromMessage reads a `proto.TrackingStatus` message into this Status.
 func (s *Status) FromMessage(message *proto.TrackingStatus) {
-	s.IsActive = message.IsActive
+	s.IsRunning = message.IsRunning
 	s.Timesheet = message.Timesheet
 	s.Entry = message.Entry
 }
@@ -30,7 +30,7 @@ func (s *Status) FromMessage(message *proto.TrackingStatus) {
 // ToMessage converts this Status into a `proto.TrackingStatus`.
 func (s *Status) ToMessage() *proto.TrackingStatus {
 	return &proto.TrackingStatus{
-		IsActive:  s.IsActive,
+		IsRunning: s.IsRunning,
 		Timesheet: s.Timesheet,
 		Entry:     s.Entry,
 	}
@@ -38,14 +38,14 @@ func (s *Status) ToMessage() *proto.TrackingStatus {
 
 // Start updates the status to reflect that a given timesheet and entry are being tracked.
 func (s *Status) Start(sheet Timesheet, entry Entry) {
-	s.IsActive = true
+	s.IsRunning = true
 	s.Timesheet = sheet.Key
 	s.Entry = entry.Hash
 }
 
 // Stop updates the status to reflect that tracking has ended (at least temporarily).
 func (s *Status) Stop() {
-	s.IsActive = false
+	s.IsRunning = false
 }
 
 // StopAndClear updates the status to reflect that tracking has ended, and we should no longer know

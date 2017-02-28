@@ -1,8 +1,9 @@
 package cli
 
 import (
-	"fmt"
 	"text/template"
+
+	"fmt"
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
@@ -13,9 +14,8 @@ import (
 
 // statusOutput represents the formattable source of the status command output.
 type statusOutput struct {
-	Entry   tracking.Entry
-	Status  tracking.Status
-	Running bool
+	Entry  tracking.Entry
+	Status tracking.Status
 }
 
 // StatusCommand creates a command to view the status of the current timer.
@@ -62,10 +62,9 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		dateFormat := "3:04PM (2006-01-02)"
-		isRunning := status.IsActive && status.Entry == entry.Hash
+		dateFormat := "3:04:05PM (2006-01-02)"
 
-		if isRunning {
+		if entry.IsRunning {
 			// If we're viewing the status of the currently active entry, we should get make sure
 			// that it's duration is up-to-date.
 			entry.UpdateDuration()
@@ -75,7 +74,6 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			out := statusOutput{}
 			out.Entry = entry
 			out.Status = status
-			out.Running = isRunning
 
 			tmpl := template.Must(template.New("status").Parse(format))
 			tmpl.Execute(output.Writer, out)
@@ -100,7 +98,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 				entry.Updated.Format(dateFormat),
 				entry.Note,
 				entry.Duration.String(),
-				fmt.Sprintf("%t", isRunning),
+				fmt.Sprintf("%t", entry.IsRunning),
 			})
 			table.SetAlignment(tablewriter.ALIGN_LEFT)
 			table.Render()
