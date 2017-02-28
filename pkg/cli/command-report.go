@@ -2,9 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"time"
-
 	"text/template"
+	"time"
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
