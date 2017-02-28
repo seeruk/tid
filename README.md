@@ -149,8 +149,8 @@ Completion covers commands, options of commands, and entries where applicable.
 
 ## Formatting Reference
 
-Both status and report accept a `--format` option that uses Go's text templates. The data that gets
-passed in has the following structure:
+Both the `status` and `report` commands accept a `--format` option that uses Go's text templates. 
+The data that gets passed in has the following structure:
 
 ```
 Entry.Timesheet   (string)         The timesheet date this entry belongs to.
