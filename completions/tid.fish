@@ -39,7 +39,7 @@ complete -c tid -f -n '__fish_seen_subcommand_from remove' -a '(__fish_tid_entri
 # report
 complete -c tid -f -n '__fish_tid_no_subcommand' -a report -d 'Display a tabular timesheet report.'
 complete -c tid -n '__fish_seen_subcommand_from report' -r -s e -l 'end=DATE' -f -d 'The end date of the report.'
-complete -c tid -n '__fish_seen_subcommand_from report' -r -s f -l 'format=STR' -f -d 'Format string, uses table headers e.g. \'{{HASH}}\'.'
+complete -c tid -n '__fish_seen_subcommand_from report' -r -s f -l 'format=STR' -f -d 'Format string, uses Go templates.'
 complete -c tid -n '__fish_seen_subcommand_from report' -l 'no-summary' -f -d 'Hide the summary?'
 complete -c tid -n '__fish_seen_subcommand_from report' -r -s s -l 'start=DATE' -f -d 'The start date of the report.'
 
@@ -52,7 +52,7 @@ complete -c tid -f -n '__fish_tid_no_subcommand' -a start -d 'Start a new timer.
 
 # status
 complete -c tid -f -n '__fish_tid_no_subcommand' -a status -d 'View the current status.'
-complete -c tid -n '__fish_seen_subcommand_from status' -r -s f -l 'format=STR' -f -d 'Format string, uses table headers e.g. \'{{HASH}}\'.'
+complete -c tid -n '__fish_seen_subcommand_from status' -r -s f -l 'format=STR' -f -d 'Format string, uses Go templates.'
 complete -c tid -f -n '__fish_seen_subcommand_from status' -a '(__fish_tid_entries)'
 
 # stop

@@ -27,7 +27,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		def.AddOption(
 			parameters.NewStringValue(&format),
 			"-f, --format=FORMAT",
-			"Format string, uses table headers e.g. '{{HASH}}'.",
+			"Format string, uses Go templates.",
 		)
 
 		def.AddArgument(
