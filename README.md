@@ -92,10 +92,10 @@ or you can view the status of a specific entry. The output is similar to the rep
 
 ```
 $ tid report
-$ tid report --start=2017-02-01 --end=2017-02-27
+$ tid report --start=2017-02-01 --end=2017-02-28
 $ tid report --start=(tiddate --months=-6)
 $ tid report --no-summary
-$ tid report --format="{{.Entry.Hash}} {{.Entry.Note}}"
+$ tid report --format="{{.Entry.Hash}} {{.Entry.Note}}" --no-summary
 ```
 
 The report command is quite powerful and gives you a lot of different ways to view timesheet data.

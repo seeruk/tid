@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"text/template"
 
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
@@ -52,8 +53,13 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		entry, err := gateway.FindEntry(hash)
-		if err != nil {
+		if err != nil && err != state.ErrNilResult {
 			return err
+		}
+
+		if err == state.ErrNilResult {
+			output.Printf("status: No entry with hash '%s'\n", hash)
+			return nil
 		}
 
 		dateFormat := "3:04PM (2006-01-02)"

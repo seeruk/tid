@@ -13,6 +13,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
+// ReportDateFmt is the date format for report date ranges.
 const ReportDateFmt = "2006-01-02"
 
 // reportOutputItem represents the formattable source of an item in the report command output.
@@ -22,6 +23,7 @@ type reportOutputItem struct {
 	Running bool
 }
 
+// ReportCommand creates a command to view a timesheet report.
 func ReportCommand(gateway tracking.Gateway) console.Command {
 	var start time.Time
 	var end time.Time
@@ -126,7 +128,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			output.Println()
 		}
 
-		dateFormat := "03:04:05PM (2006-01-02)"
+		dateFormat := "3:04PM (2006-01-02)"
 
 		if format != "" {
 			// Write formatted output
@@ -142,45 +144,45 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 				// Always end with a new line...
 				output.Println()
 			})
-		} else {
-			// Write table
-			table := tablewriter.NewWriter(output.Writer)
-			table.SetAlignment(tablewriter.ALIGN_LEFT)
-
-			table.SetHeader([]string{
-				"Date",
-				"Hash",
-				"Created",
-				"Updated",
-				"Note",
-				"Duration",
-				"Running",
-			})
-
-			err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-				isRunning := status.IsActive && status.Entry == entry.Hash
-
-				table.Append([]string{
-					entry.Timesheet,
-					entry.ShortHash(),
-					entry.Created.Format(dateFormat),
-					entry.Updated.Format(dateFormat),
-					entry.Note,
-					entry.Duration.String(),
-					fmt.Sprintf("%t", isRunning),
-				})
-			})
-
-			if err != nil {
-				return err
-			}
-
-			table.SetAutoMergeCells(true)
-			table.SetRowLine(true)
-			table.Render()
-
-			return nil
 		}
+
+		// Write table
+		table := tablewriter.NewWriter(output.Writer)
+		table.SetAlignment(tablewriter.ALIGN_LEFT)
+
+		table.SetHeader([]string{
+			"Date",
+			"Hash",
+			"Created",
+			"Updated",
+			"Note",
+			"Duration",
+			"Running",
+		})
+
+		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
+			isRunning := status.IsActive && status.Entry == entry.Hash
+
+			table.Append([]string{
+				entry.Timesheet,
+				entry.ShortHash(),
+				entry.Created.Format(dateFormat),
+				entry.Updated.Format(dateFormat),
+				entry.Note,
+				entry.Duration.String(),
+				fmt.Sprintf("%t", isRunning),
+			})
+		})
+
+		if err != nil {
+			return err
+		}
+
+		table.SetAutoMergeCells(true)
+		table.SetRowLine(true)
+		table.Render()
+
+		return nil
 	}
 
 	return console.Command{
@@ -193,9 +195,9 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 
 // forEachEntry runs the given function on each entry in each timesheet in the given array of
 // timesheets. This uses the database.
-func forEachEntry(gw tracking.Gateway, ss []*tracking.Timesheet, fn func(tracking.Entry)) error {
+func forEachEntry(gw tracking.Gateway, ss []tracking.Timesheet, fn func(tracking.Entry)) error {
 	for _, sheet := range ss {
-		for _, hash := range sheet.Entries() {
+		for _, hash := range sheet.Entries {
 			entry, err := gw.FindEntry(hash)
 			if err != nil {
 				return err
@@ -209,8 +211,8 @@ func forEachEntry(gw tracking.Gateway, ss []*tracking.Timesheet, fn func(trackin
 }
 
 // getTimesheetsByKeys returns all of the timesheets that exist from an array of keys to try.
-func getTimesheetsByKeys(gateway tracking.Gateway, keys []string) ([]*tracking.Timesheet, error) {
-	sheets := []*tracking.Timesheet{}
+func getTimesheetsByKeys(gateway tracking.Gateway, keys []string) ([]tracking.Timesheet, error) {
+	sheets := []tracking.Timesheet{}
 
 	for _, key := range keys {
 		sheet, err := gateway.FindTimesheet(key)

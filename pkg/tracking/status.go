@@ -37,9 +37,9 @@ func (s *Status) ToMessage() *proto.TrackingStatus {
 }
 
 // Start updates the status to reflect that a given timesheet and entry are being tracked.
-func (s *Status) Start(sheet *Timesheet, entry Entry) {
+func (s *Status) Start(sheet Timesheet, entry Entry) {
 	s.IsActive = true
-	s.Timesheet = sheet.Key()
+	s.Timesheet = sheet.Key
 	s.Entry = entry.Hash
 }
 

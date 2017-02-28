@@ -37,7 +37,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 
 		entry := tracking.NewEntry()
 		entry.Note = note
-		entry.Timesheet = sheet.Key()
+		entry.Timesheet = sheet.Key
 
 		sheet.AppendEntry(entry)
 

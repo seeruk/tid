@@ -89,30 +89,43 @@ func (g *Gateway) FindOrCreateStatus() (Status, error) {
 }
 
 // FindTimesheet attempts to find a timesheet for the given date.
-func (g *Gateway) FindTimesheet(sheetKey string) (*Timesheet, error) {
-	sheet := NewTimesheet(&proto.TrackingTimesheet{
-		Key: sheetKey,
-	})
+func (g *Gateway) FindTimesheet(sheetKey string) (Timesheet, error) {
+	sheet := NewTimesheet()
+	message := &proto.TrackingTimesheet{}
 
-	return sheet, g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), sheet.Message)
+	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), message)
+	if err != nil {
+		return sheet, err
+	}
+
+	sheet.FromMessage(message)
+
+	return sheet, nil
 }
 
-// FindOrCreateTimesheet attempts to find a timesheet for the given date, or returns a timesheet.
-func (g *Gateway) FindOrCreateTimesheet(sheetKey string) (*Timesheet, error) {
-	sheet := NewTimesheet(&proto.TrackingTimesheet{
-		Key: sheetKey,
-	})
+// FindOrCreateTimesheet attempts to find a timesheet for the given date, if one is not in the store
+// then a new timesheet object is instantiated.
+func (g *Gateway) FindOrCreateTimesheet(sheetKey string) (Timesheet, error) {
+	sheet := NewTimesheet()
+	sheet.Key = sheetKey
 
-	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), sheet.Message)
+	message := &proto.TrackingTimesheet{}
+
+	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), message)
 	if err != nil && err != state.ErrNilResult {
-		return nil, err
+		return sheet, err
+	}
+
+	if err == nil {
+		sheet.FromMessage(message)
 	}
 
 	return sheet, nil
 }
 
-// FindOrCreateTodaysTimesheet attempts to find the timesheet for the current date.
-func (g *Gateway) FindOrCreateTodaysTimesheet() (*Timesheet, error) {
+// FindOrCreateTodaysTimesheet attempts to find the timesheet for the current date, if one is not in
+// the store then a new timesheet object is instantiated.
+func (g *Gateway) FindOrCreateTodaysTimesheet() (Timesheet, error) {
 	return g.FindOrCreateTimesheet(time.Now().Local().Format(KeyTimesheetDateFmt))
 }
 
@@ -138,8 +151,8 @@ func (g *Gateway) PersistStatus(status Status) error {
 }
 
 // PersistTimesheet persists a given timesheet to the store.
-func (g *Gateway) PersistTimesheet(sheet *Timesheet) error {
-	return g.store.Write(fmt.Sprintf(KeyTimesheetFmt, sheet.Key()), sheet.Message)
+func (g *Gateway) PersistTimesheet(sheet Timesheet) error {
+	return g.store.Write(fmt.Sprintf(KeyTimesheetFmt, sheet.Key), sheet.ToMessage())
 }
 
 // RemoveEntry attempts to remove an entry.

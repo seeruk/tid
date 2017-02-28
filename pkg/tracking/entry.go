@@ -67,6 +67,6 @@ func (e *Entry) UpdateDuration() {
 }
 
 // ShortHash returns a shortened version of this Entry's hash.
-func (e *Entry) ShortHash() string {
+func (e Entry) ShortHash() string {
 	return e.Hash[:7]
 }

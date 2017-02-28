@@ -1,42 +1,50 @@
 package tracking
 
 import (
+	"time"
+
 	"github.com/SeerUK/tid/proto"
 )
 
-// Timesheet wraps a ProtoBuf-generated proto.TimeSheet message with helper methods. No state should
-// be kept in this struct.
+// Timesheet represents a timesheet with entries.
 type Timesheet struct {
-	Message *proto.TrackingTimesheet
+	// The date of the timesheet.
+	Key string
+	// An array of the hashes of entries that belong in this timesheet.
+	Entries []string
 }
 
-// NewTimesheet create a new instance of TimeSheet.
-func NewTimesheet(message *proto.TrackingTimesheet) *Timesheet {
-	return &Timesheet{
-		Message: message,
+// NewTimesheet create a new instance of Timesheet.
+func NewTimesheet() Timesheet {
+	return Timesheet{
+		Key: time.Now().Format(KeyTimesheetDateFmt),
+	}
+}
+
+// FromMessage reads a `proto.TrackingTimesheet` message into this Timesheet.
+func (t *Timesheet) FromMessage(message *proto.TrackingTimesheet) {
+	t.Key = message.Key
+	t.Entries = message.Entries
+}
+
+// ToMessage converts this Timesheet to a `proto.TrackingTimesheet`.
+func (t *Timesheet) ToMessage() *proto.TrackingTimesheet {
+	return &proto.TrackingTimesheet{
+		Key:     t.Key,
+		Entries: t.Entries,
 	}
 }
 
 // AppendEntry appends a reference to an entry to the timesheet.
 func (t *Timesheet) AppendEntry(entry Entry) {
-	t.Message.Entries = append(t.Message.Entries, entry.Hash)
-}
-
-// Entries returns the entries on the underlying message.
-func (t *Timesheet) Entries() []string {
-	return t.Message.Entries
-}
-
-// Key returns the key of the underlying message.
-func (t *Timesheet) Key() string {
-	return t.Message.Key
+	t.Entries = append(t.Entries, entry.Hash)
 }
 
 // RemoveEntry removes a reference to an entry from the timesheet.
 func (t *Timesheet) RemoveEntry(entry Entry) {
 	index := -1
 
-	for idx, hash := range t.Message.Entries {
+	for idx, hash := range t.Entries {
 		if hash == entry.Hash {
 			index = idx
 			break
@@ -45,6 +53,6 @@ func (t *Timesheet) RemoveEntry(entry Entry) {
 
 	if index >= 0 {
 		// Remove the entry
-		t.Message.Entries = append(t.Message.Entries[:index], t.Message.Entries[index+1:]...)
+		t.Entries = append(t.Entries[:index], t.Entries[index+1:]...)
 	}
 }
