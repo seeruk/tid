@@ -45,6 +45,8 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
+		// @todo: Maybe a facade?
+
 		entry, err := gateway.FindEntry(hash)
 		if err != nil && err != state.ErrNilResult {
 			return err
@@ -60,11 +62,8 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		// @todo: Maybe a facade?
-
 		if status.IsActive && status.Entry == entry.Hash {
-			output.Println("edit: Stop your existing timer before trying to edit it's entry")
-			return nil
+			entry.UpdateDuration()
 		}
 
 		if duration >= 0 && offset != 0 {
