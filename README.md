@@ -45,7 +45,7 @@ $ tid report
 ...
 ```
 
-(`...`) is used in place of larger output)
+(`...` is used in place of larger output)
 
 ### Starting an Entry Timer
 
