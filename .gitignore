@@ -25,3 +25,6 @@ _testmain.go
 
 /cmd/tid/*
 !/cmd/tid/main.go
+
+/cmd/tiddate/*
+!/cmd/tiddate/main.go
