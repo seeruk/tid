@@ -2,8 +2,9 @@ package cli
 
 import (
 	"fmt"
-	"strings"
 	"time"
+
+	"text/template"
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
@@ -13,6 +14,13 @@ import (
 )
 
 const ReportDateFmt = "2006-01-02"
+
+// reportOutputItem represents the formattable source of an item in the report command output.
+type reportOutputItem struct {
+	Entry   tracking.Entry
+	Status  tracking.Status
+	Running bool
+}
 
 func ReportCommand(gateway tracking.Gateway) console.Command {
 	var start time.Time
@@ -84,7 +92,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		var entries int
 
 		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-			if status.IsActive() && status.Ref().Entry == entry.Hash {
+			if status.IsActive && status.Entry == entry.Hash {
 				entry.UpdateDuration()
 				gateway.PersistEntry(entry)
 			}
@@ -123,21 +131,16 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		if format != "" {
 			// Write formatted output
 			return forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash
+				out := reportOutputItem{}
+				out.Entry = entry
+				out.Status = status
+				out.Running = status.IsActive && status.Entry == entry.Hash
 
-				created := entry.Created.Format(dateFormat)
-				updated := entry.Updated.Format(dateFormat)
+				tmpl := template.Must(template.New("status").Parse(format))
+				tmpl.Execute(output.Writer, out)
 
-				result := format
-				result = strings.Replace(result, "{{DATE}}", entry.Timesheet, -1)
-				result = strings.Replace(result, "{{HASH}}", entry.ShortHash, -1)
-				result = strings.Replace(result, "{{CREATED}}", created, -1)
-				result = strings.Replace(result, "{{UPDATED}}", updated, -1)
-				result = strings.Replace(result, "{{NOTE}}", entry.Note, -1)
-				result = strings.Replace(result, "{{DURATION}}", entry.Duration.String(), -1)
-				result = strings.Replace(result, "{{RUNNING}}", fmt.Sprintf("%t", isRunning), -1)
-
-				output.Printf("%s\n", result)
+				// Always end with a new line...
+				output.Println()
 			})
 		} else {
 			// Write table
@@ -155,11 +158,11 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			})
 
 			err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-				isRunning := status.IsActive() && status.Ref().Entry == entry.Hash
+				isRunning := status.IsActive && status.Entry == entry.Hash
 
 				table.Append([]string{
 					entry.Timesheet,
-					entry.ShortHash,
+					entry.ShortHash(),
 					entry.Created.Format(dateFormat),
 					entry.Updated.Format(dateFormat),
 					entry.Note,

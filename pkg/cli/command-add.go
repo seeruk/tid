@@ -57,7 +57,7 @@ func AddCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Added entry '%s' (%s)\n", entry.Note, entry.ShortHash)
+		output.Printf("Added entry '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
 	}

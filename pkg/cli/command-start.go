@@ -25,7 +25,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if status.IsActive() {
+		if status.IsActive {
 			output.Println("start: Stop your existing timer before starting a new one")
 			return nil
 		}
@@ -53,7 +53,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Started tracking '%s' (%s)\n", entry.Note, entry.ShortHash)
+		output.Printf("Started tracking '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
 	}

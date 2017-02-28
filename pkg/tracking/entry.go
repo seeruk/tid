@@ -13,8 +13,6 @@ type Entry struct {
 	Timesheet string
 	// The hash of this entry.
 	Hash string
-	// The short hash of this entry.
-	ShortHash string
 	// The time that this entry was created.
 	Created time.Time
 	// The time that this entry was last updated.
@@ -25,7 +23,7 @@ type Entry struct {
 	Duration time.Duration
 }
 
-// NewEntry creates a new instance of Entry, with a new random hash.
+// NewEntry creates a new instance of Entry, with a new random hash, and dates set.
 func NewEntry() Entry {
 	return Entry{
 		Hash:    hash.CreateHash(),
@@ -38,7 +36,6 @@ func NewEntry() Entry {
 func (e *Entry) FromMessage(message *proto.TrackingEntry) {
 	e.Timesheet = message.Timesheet
 	e.Hash = message.Key
-	e.ShortHash = message.Key[:7]
 	e.Created = time.Unix(int64(message.Created), 0)
 	e.Updated = time.Unix(int64(message.Updated), 0)
 	e.Note = message.Note
@@ -67,4 +64,9 @@ func (e *Entry) UpdateDuration() {
 
 	e.Duration = time.Duration(seconds) * time.Second
 	e.Updated = time.Now()
+}
+
+// ShortHash returns a shortened version of this Entry's hash.
+func (e *Entry) ShortHash() string {
+	return e.Hash[:7]
 }

@@ -82,7 +82,7 @@ pass in an entry hash to use resume (e.g. if you remove the entry being tracked)
 ```
 $ tid status
 $ tid status fdb6f0d
-$ tid status --format="{{DURATION}} on '{{NOTE}}'"
+$ tid status --format="{{.Entry.Duration}} on '{{.Entry.Note}}'"
 ```
 
 You can view the status of the currently tracked entry (the most recently started or resumed entry)
@@ -95,7 +95,7 @@ $ tid report
 $ tid report --start=2017-02-01 --end=2017-02-27
 $ tid report --start=(tiddate --months=-6)
 $ tid report --no-summary
-$ tid report --format="{{HASH}} {{NOTE}}"
+$ tid report --format="{{.Entry.Hash}} {{.Entry.Note}}"
 ```
 
 The report command is quite powerful and gives you a lot of different ways to view timesheet data.
@@ -145,9 +145,7 @@ $ mkdir -p ~/.config/fish/completions/
 $ cp completions/tid.fish ~/.config/fish/completions/
 ```
 
-### Todo
-
-* Use Go's template syntax for format strings instead of custom formatting.
+Completion covers commands, options of commands, and entries where applicable.
 
 ## License
 

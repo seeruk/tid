@@ -70,13 +70,19 @@ func (g *Gateway) FindEntryHashByShortHash(hash string) (string, error) {
 	return ref.Entry, nil
 }
 
-// FindOrCreateStatus attempts to find the current status.
-func (g *Gateway) FindOrCreateStatus() (*Status, error) {
+// FindOrCreateStatus attempts to find the current status, if one is not in the store then a new
+// status object is instantiated.
+func (g *Gateway) FindOrCreateStatus() (Status, error) {
 	status := NewStatus()
+	message := &proto.TrackingStatus{}
 
-	err := g.store.Read(KeyStatus, status.Message)
+	err := g.store.Read(KeyStatus, message)
 	if err != nil && err != state.ErrNilResult {
-		return nil, err
+		return status, err
+	}
+
+	if err == nil {
+		status.FromMessage(message)
 	}
 
 	return status, nil
@@ -113,22 +119,22 @@ func (g *Gateway) FindOrCreateTodaysTimesheet() (*Timesheet, error) {
 // PersistEntry persists a given entry to the store.
 func (g *Gateway) PersistEntry(entry Entry) error {
 	entryRef := &proto.TrackingEntryRef{
-		Key:   entry.ShortHash,
+		Key:   entry.ShortHash(),
 		Entry: entry.Hash,
 	}
 
 	// Persisting an entry is a 2-step process, as we need to also store the short-key so we can
 	// look up the long key.
 	errs := errhandling.NewErrorStack()
-	errs.Add(g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.ShortHash), entryRef))
+	errs.Add(g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.ShortHash()), entryRef))
 	errs.Add(g.store.Write(fmt.Sprintf(KeyEntryFmt, entry.Hash), entry.ToMessage()))
 
 	return errs.Errors()
 }
 
 // PersistStatus persists a given status to the store.
-func (g *Gateway) PersistStatus(status *Status) error {
-	return g.store.Write(KeyStatus, status.Message)
+func (g *Gateway) PersistStatus(status Status) error {
+	return g.store.Write(KeyStatus, status.ToMessage())
 }
 
 // PersistTimesheet persists a given timesheet to the store.
@@ -144,7 +150,7 @@ func (g *Gateway) RemoveEntry(entry Entry) error {
 		return err
 	}
 
-	if status.Ref() != nil && status.Ref().Entry == entry.Hash {
+	if status.Entry == entry.Hash {
 		status.StopAndClear()
 	}
 
@@ -166,7 +172,7 @@ func (g *Gateway) RemoveEntry(entry Entry) error {
 
 	// Remove entry
 	errs = errhandling.NewErrorStack()
-	errs.Add(g.store.Delete(fmt.Sprintf(KeyEntryFmt, entry.ShortHash)))
+	errs.Add(g.store.Delete(fmt.Sprintf(KeyEntryFmt, entry.ShortHash())))
 	errs.Add(g.store.Delete(fmt.Sprintf(KeyEntryFmt, entry.Hash)))
 
 	return errs.Errors()

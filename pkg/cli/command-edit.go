@@ -62,7 +62,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 
 		// @todo: Maybe a facade?
 
-		if status.IsActive() && status.Ref().Entry == entry.Hash {
+		if status.IsActive && status.Entry == entry.Hash {
 			output.Println("edit: Stop your existing timer before trying to edit it's entry")
 			return nil
 		}
@@ -98,7 +98,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Updated entry '%s' (%s)\n", entry.Note, entry.ShortHash)
+		output.Printf("Updated entry '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		// @todo: Pretty table with old vs. new values.
 

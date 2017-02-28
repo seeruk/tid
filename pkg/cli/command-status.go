@@ -10,9 +10,11 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-type StatusOutput struct {
-	Entry  tracking.Entry
-	Status tracking.Status
+// statusOutput represents the formattable source of the status command output.
+type statusOutput struct {
+	Entry   tracking.Entry
+	Status  tracking.Status
+	Running bool
 }
 
 // StatusCommand creates a command to view the status of the current timer.
@@ -40,13 +42,13 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			return err
 		}
 
-		if status.Ref() == nil || status.Ref().Entry == "" {
+		if status.Entry == "" {
 			output.Println("status: No timer to check the status of")
 			return nil
 		}
 
 		if hash == "" {
-			hash = status.Ref().Entry
+			hash = status.Entry
 		}
 
 		entry, err := gateway.FindEntry(hash)
@@ -55,7 +57,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		dateFormat := "3:04PM (2006-01-02)"
-		isRunning := status.IsActive() && status.Ref().Entry == entry.Hash
+		isRunning := status.IsActive && status.Entry == entry.Hash
 
 		if isRunning {
 			// If we're viewing the status of the currently active entry, we should get make sure
@@ -64,12 +66,16 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		if format != "" {
-			out := StatusOutput{}
+			out := statusOutput{}
 			out.Entry = entry
-			out.Status = *status
+			out.Status = status
+			out.Running = isRunning
 
 			tmpl := template.Must(template.New("status").Parse(format))
 			tmpl.Execute(output.Writer, out)
+
+			// Always end with a new line...
+			output.Println()
 		} else {
 			table := tablewriter.NewWriter(output.Writer)
 			table.SetHeader([]string{
@@ -83,7 +89,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			})
 			table.Append([]string{
 				entry.Timesheet,
-				entry.ShortHash,
+				entry.ShortHash(),
 				entry.Created.Format(dateFormat),
 				entry.Updated.Format(dateFormat),
 				entry.Note,
