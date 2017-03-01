@@ -28,7 +28,7 @@ Here's some simple general usage:
 
 ```
 $ tid start "Working on AI"
-Started tracking 'Working on AI' (fdb6f0d)
+Started timer for 'Working on AI' (fdb6f0d)
 
 $ tid status
 +------------+---------+------------+------------+---------------+----------+---------+
@@ -38,12 +38,12 @@ $ tid status
 +------------+---------+------------+------------+---------------+----------+---------+
 
 $ tid stop
-Stopped tracking 'Working on AI' (fdb6f0d)
+Stopped timer for 'Working on AI' (fdb6f0d)
 
 # Gone for lunch...
 
 $ tid resume
-Resumed tracking 'Working on AI' (fdb6f0d)
+Resumed timer for 'Working on AI' (fdb6f0d)
 
 # Forgot to add this!
 

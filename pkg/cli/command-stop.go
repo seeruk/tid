@@ -37,7 +37,7 @@ func StopCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Stopped tracking '%s' (%s)\n", entry.Note, entry.ShortHash())
+		output.Printf("Stopped timer for '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
 	}

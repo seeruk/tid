@@ -65,7 +65,7 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
-		output.Printf("Resumed tracking '%s' (%s)\n", entry.Note, entry.ShortHash())
+		output.Printf("Resumed timer for '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
 	}
