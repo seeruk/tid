@@ -139,8 +139,6 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			output.Println()
 		}
 
-		dateFormat := "3:04:05PM (2006-01-02)"
-
 		if format != "" {
 			// Write formatted output
 			return forEachEntry(gateway, sheets, func(entry tracking.Entry) {
@@ -174,8 +172,8 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			table.Append([]string{
 				entry.Timesheet,
 				entry.ShortHash(),
-				entry.Created.Format(dateFormat),
-				entry.Updated.Format(dateFormat),
+				entry.Created.Format(entry.CreatedTimeFormat()),
+				entry.Updated.Format(entry.UpdatedTimeFormat()),
 				entry.Note,
 				entry.Duration.String(),
 				fmt.Sprintf("%t", entry.IsRunning),

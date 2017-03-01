@@ -7,6 +7,11 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
+var (
+	timeFormatShort = "3:04:05PM"
+	timeFormatLong  = "3:04:05PM (2006-01-02)"
+)
+
 // Entry represents a timesheet entry.
 type Entry struct {
 	// The date of the timesheet this entry belongs to.
@@ -71,4 +76,24 @@ func (e *Entry) UpdateDuration() {
 // ShortHash returns a shortened version of this Entry's hash.
 func (e Entry) ShortHash() string {
 	return e.Hash[:7]
+}
+
+// CreatedTimeFormat returns an appropriate time format for reporting output that is longer if the
+// entry's created date was not the same as the timesheet it belongs to's date.
+func (e Entry) CreatedTimeFormat() string {
+	if e.Created.Format("2006-01-02") == e.Timesheet {
+		return timeFormatShort
+	}
+
+	return timeFormatLong
+}
+
+// UpdatedTimeFormat returns an appropriate time format for reporting output that is longer if the
+// entry's updated date was not the same as the timesheet it belongs to's date.
+func (e Entry) UpdatedTimeFormat() string {
+	if e.Updated.Format("2006-01-02") == e.Timesheet {
+		return timeFormatShort
+	}
+
+	return timeFormatLong
 }

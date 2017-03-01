@@ -62,8 +62,6 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		dateFormat := "3:04:05PM (2006-01-02)"
-
 		if entry.IsRunning {
 			// If we're viewing the status of the currently active entry, we should get make sure
 			// that it's duration is up-to-date.
@@ -94,8 +92,8 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			table.Append([]string{
 				entry.Timesheet,
 				entry.ShortHash(),
-				entry.Created.Format(dateFormat),
-				entry.Updated.Format(dateFormat),
+				entry.Created.Format(entry.CreatedTimeFormat()),
+				entry.Updated.Format(entry.UpdatedTimeFormat()),
 				entry.Note,
 				entry.Duration.String(),
 				fmt.Sprintf("%t", entry.IsRunning),
