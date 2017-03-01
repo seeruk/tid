@@ -31,7 +31,11 @@ $ tid start "Working on AI"
 Started tracking 'Working on AI' (fdb6f0d)
 
 $ tid status
-...
++------------+---------+------------+------------+---------------+----------+---------+
+|    DATE    |  HASH   |  CREATED   |  UPDATED   |      NOTE     | DURATION | RUNNING |
++------------+---------+------------+------------+---------------+----------+---------+
+| 2017-03-01 | fdb6f0d | 10:41:34AM | 10:41:34AM | Working on AI | 5s       | true    |
++------------+---------+------------+------------+---------------+----------+---------+
 
 $ tid stop
 Stopped tracking 'Working on AI' (fdb6f0d)
@@ -41,11 +45,25 @@ Stopped tracking 'Working on AI' (fdb6f0d)
 $ tid resume
 Resumed tracking 'Working on AI' (fdb6f0d)
 
-$ tid report
-...
-```
+# Forgot to add this!
 
-(Larger output is reaplce by `...` to aid readability)
+$ tid add (tiddate) 15m "Afternoon nap"
+Added entry 'Afternoon nap' (3d77f69)
+
+$ tid report
+Report for 2017-03-01.
+
+Total Duration: 2h19m37s
+Entry Count: 1
+
++------------+---------+------------+-----------+-----------------+----------+---------+
+|    DATE    |  HASH   |  CREATED   |  UPDATED  |      NOTE       | DURATION | RUNNING |
++------------+---------+------------+-----------+-----------------+----------+---------+
+| 2017-03-01 | fdb6f0d | 10:41:34AM | 1:01:03PM | Working on AI   | 2h19m37s | true    |
++            +---------+------------+-----------+-----------------+----------+---------+
+|            | 3d77f69 | 1:26:30PM  | 1:26:30PM | Afternoon nap   | 15m0s    | false   |
++------------+---------+------------+-----------+-----------------+----------+---------+
+```
 
 ### Starting an Entry Timer
 
