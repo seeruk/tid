@@ -53,7 +53,7 @@ Added entry 'Afternoon nap' (3d77f69)
 $ tid report
 Report for 2017-03-01.
 
-Total Duration: 2h19m37s
+Total Duration: 2h34m37s
 Entry Count: 1
 
 +------------+---------+------------+-----------+-----------------+----------+---------+
