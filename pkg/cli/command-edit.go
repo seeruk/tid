@@ -10,7 +10,7 @@ import (
 )
 
 // EditCommand creates a command to edit timesheet entries.
-func EditCommand(gateway tracking.Gateway) console.Command {
+func EditCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
 	var hash string
 	var offset time.Duration
 	var note string
@@ -47,7 +47,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		// @todo: Maybe a facade?
 
-		entry, err := gateway.FindEntry(hash)
+		entry, err := tsGateway.FindEntry(hash)
 		if err != nil && err != state.ErrNilResult {
 			return err
 		}
@@ -57,7 +57,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		status, err := gateway.FindOrCreateStatus()
+		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -91,7 +91,7 @@ func EditCommand(gateway tracking.Gateway) console.Command {
 		entry.Note = note
 		entry.Updated = time.Now()
 
-		err = gateway.PersistEntry(entry)
+		err = tsGateway.PersistEntry(entry)
 		if err != nil {
 			return err
 		}

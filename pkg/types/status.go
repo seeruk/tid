@@ -1,4 +1,4 @@
-package tracking
+package types
 
 import (
 	"github.com/SeerUK/tid/proto"
@@ -20,16 +20,16 @@ func NewStatus() Status {
 	return Status{}
 }
 
-// FromMessage reads a `proto.TrackingStatus` message into this Status.
-func (s *Status) FromMessage(message *proto.TrackingStatus) {
+// FromMessage reads a `proto.SysStatus` message into this Status.
+func (s *Status) FromMessage(message *proto.SysStatus) {
 	s.IsRunning = message.IsRunning
 	s.Timesheet = message.Timesheet
 	s.Entry = message.Entry
 }
 
-// ToMessage converts this Status into a `proto.TrackingStatus`.
-func (s *Status) ToMessage() *proto.TrackingStatus {
-	return &proto.TrackingStatus{
+// ToMessage converts this Status into a `proto.SysStatus`.
+func (s *Status) ToMessage() *proto.SysStatus {
+	return &proto.SysStatus{
 		IsRunning: s.IsRunning,
 		Timesheet: s.Timesheet,
 		Entry:     s.Entry,

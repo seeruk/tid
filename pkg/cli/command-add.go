@@ -5,12 +5,13 @@ import (
 
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // AddCommand creates a command to add timesheet entries.
-func AddCommand(gateway tracking.Gateway) console.Command {
+func AddCommand(gateway tracking.TimesheetGateway) console.Command {
 	var startedAt time.Time
 	var duration time.Duration
 	var note string
@@ -36,12 +37,12 @@ func AddCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		sheet, err := gateway.FindOrCreateTimesheet(startedAt.Format(tracking.KeyTimesheetDateFmt))
+		sheet, err := gateway.FindOrCreateTimesheet(startedAt.Format(types.TimesheetKeyDateFmt))
 		if err != nil {
 			return err
 		}
 
-		entry := tracking.NewEntry()
+		entry := types.NewEntry()
 		entry.Duration = duration
 		entry.Note = note
 		entry.Timesheet = sheet.Key

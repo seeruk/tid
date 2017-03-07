@@ -10,7 +10,7 @@ import (
 )
 
 // ResumeCommand creates a command to resume timers.
-func ResumeCommand(gateway tracking.Gateway) console.Command {
+func ResumeCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
 	var hash string
 
 	configure := func(def *console.Definition) {
@@ -22,7 +22,7 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindOrCreateStatus()
+		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -41,12 +41,12 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 			hash = status.Entry
 		}
 
-		entry, err := gateway.FindEntry(hash)
+		entry, err := tsGateway.FindEntry(hash)
 		if err != nil {
 			return err
 		}
 
-		sheet, err := gateway.FindOrCreateTimesheet(entry.Timesheet)
+		sheet, err := tsGateway.FindOrCreateTimesheet(entry.Timesheet)
 		if err != nil {
 			return err
 		}
@@ -57,8 +57,8 @@ func ResumeCommand(gateway tracking.Gateway) console.Command {
 		status.Start(sheet, entry)
 
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistEntry(entry))
-		errs.Add(gateway.PersistStatus(status))
+		errs.Add(sysGateway.PersistStatus(status))
+		errs.Add(tsGateway.PersistEntry(entry))
 
 		if err = errs.Errors(); err != nil {
 			return err

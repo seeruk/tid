@@ -1,12 +1,12 @@
 package cli
 
 import (
-	"text/template"
-
 	"fmt"
+	"text/template"
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 	"github.com/olekukonko/tablewriter"
@@ -14,12 +14,12 @@ import (
 
 // statusOutput represents the formattable source of the status command output.
 type statusOutput struct {
-	Entry  tracking.Entry
-	Status tracking.Status
+	Entry  types.Entry
+	Status types.Status
 }
 
 // StatusCommand creates a command to view the status of the current timer.
-func StatusCommand(gateway tracking.Gateway) console.Command {
+func StatusCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
 	var format string
 	var hash string
 
@@ -38,7 +38,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindOrCreateStatus()
+		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -52,7 +52,7 @@ func StatusCommand(gateway tracking.Gateway) console.Command {
 			hash = status.Entry
 		}
 
-		entry, err := gateway.FindEntry(hash)
+		entry, err := tsGateway.FindEntry(hash)
 		if err != nil && err != state.ErrNilResult {
 			return err
 		}

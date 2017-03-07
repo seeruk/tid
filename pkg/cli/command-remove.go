@@ -8,7 +8,7 @@ import (
 )
 
 // RemoveCommand creates a command to remove timesheet entries.
-func RemoveCommand(gateway tracking.Gateway) console.Command {
+func RemoveCommand(gateway tracking.TimesheetGateway, facade *tracking.Facade) console.Command {
 	var hash string
 
 	configure := func(def *console.Definition) {
@@ -30,7 +30,7 @@ func RemoveCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		err = gateway.RemoveEntry(entry)
+		err = facade.RemoveEntry(entry)
 		if err != nil {
 			return err
 		}

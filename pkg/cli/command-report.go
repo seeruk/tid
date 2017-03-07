@@ -7,6 +7,7 @@ import (
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 	"github.com/olekukonko/tablewriter"
@@ -17,12 +18,12 @@ const ReportDateFmt = "2006-01-02"
 
 // reportOutputItem represents the formattable source of an item in the report command output.
 type reportOutputItem struct {
-	Entry  tracking.Entry
-	Status tracking.Status
+	Entry  types.Entry
+	Status types.Status
 }
 
 // ReportCommand creates a command to view a timesheet report.
-func ReportCommand(gateway tracking.Gateway) console.Command {
+func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
 	var start time.Time
 	var end time.Time
 	var date time.Time
@@ -91,12 +92,12 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		}
 
 		keys := getDateRangeTimesheetKeys(start, end)
-		sheets, err := getTimesheetsByKeys(gateway, keys)
+		sheets, err := getTimesheetsByKeys(tsGateway, keys)
 		if err != nil {
 			return err
 		}
 
-		status, err := gateway.FindOrCreateStatus()
+		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -104,10 +105,10 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 		var duration time.Duration
 		var entries int
 
-		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
-			if status.IsRunning && status.Entry == entry.Hash {
+		err = forEachEntry(tsGateway, sheets, func(entry types.Entry) {
+			if entry.IsRunning {
 				entry.UpdateDuration()
-				gateway.PersistEntry(entry)
+				tsGateway.PersistEntry(entry)
 			}
 
 			duration = duration + entry.Duration
@@ -141,7 +142,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 
 		if format != "" {
 			// Write formatted output
-			return forEachEntry(gateway, sheets, func(entry tracking.Entry) {
+			return forEachEntry(tsGateway, sheets, func(entry types.Entry) {
 				out := reportOutputItem{}
 				out.Entry = entry
 				out.Status = status
@@ -168,7 +169,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 			"Running",
 		})
 
-		err = forEachEntry(gateway, sheets, func(entry tracking.Entry) {
+		err = forEachEntry(tsGateway, sheets, func(entry types.Entry) {
 			table.Append([]string{
 				entry.Timesheet,
 				entry.ShortHash(),
@@ -201,7 +202,7 @@ func ReportCommand(gateway tracking.Gateway) console.Command {
 
 // forEachEntry runs the given function on each entry in each timesheet in the given array of
 // timesheets. This uses the database.
-func forEachEntry(gw tracking.Gateway, ss []tracking.Timesheet, fn func(tracking.Entry)) error {
+func forEachEntry(gw tracking.TimesheetGateway, ss []types.Timesheet, fn func(types.Entry)) error {
 	for _, sheet := range ss {
 		for _, hash := range sheet.Entries {
 			entry, err := gw.FindEntry(hash)
@@ -217,8 +218,8 @@ func forEachEntry(gw tracking.Gateway, ss []tracking.Timesheet, fn func(tracking
 }
 
 // getTimesheetsByKeys returns all of the timesheets that exist from an array of keys to try.
-func getTimesheetsByKeys(gateway tracking.Gateway, keys []string) ([]tracking.Timesheet, error) {
-	sheets := []tracking.Timesheet{}
+func getTimesheetsByKeys(gateway tracking.TimesheetGateway, keys []string) ([]types.Timesheet, error) {
+	sheets := []types.Timesheet{}
 
 	for _, key := range keys {
 		sheet, err := gateway.FindTimesheet(key)
@@ -242,7 +243,7 @@ func getDateRangeTimesheetKeys(start time.Time, end time.Time) []string {
 	keys := []string{}
 
 	for current := start; !current.After(end); current = current.AddDate(0, 0, 1) {
-		keys = append(keys, current.Format(tracking.KeyTimesheetDateFmt))
+		keys = append(keys, current.Format(types.TimesheetKeyDateFmt))
 	}
 
 	return keys

@@ -1,16 +1,18 @@
 syntax = "proto3";
 
-option go_package = "proto";
+package proto;
 
 // TrackingStatus keeps hold of information about the current "state" of tracking, i.e. whether or
 // not a timer is running, and which timer we last modified.
-message TrackingStatus {
+message SysStatus {
     // Whether or not a (any) timer is running.
     bool is_running = 1;
     // The date of the timesheet currently being tracked.
     string timesheet = 2;
     // The hash of the entry currently being tracked.
     string entry = 3;
+    // The name of the workspace currently being tracked.
+    string workspace = 4;
 }
 
 // TrackingTimesheet represents a timesheet. It contains all of the entries for a time period.

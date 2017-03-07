@@ -1,10 +1,13 @@
-package tracking
+package types
 
 import (
 	"time"
 
 	"github.com/SeerUK/tid/proto"
 )
+
+// TimesheetKeyDateFmt is the date formatting string for timesheet keys in the store.
+const TimesheetKeyDateFmt = "2006-01-02"
 
 // Timesheet represents a timesheet with entries.
 type Timesheet struct {
@@ -17,7 +20,7 @@ type Timesheet struct {
 // NewTimesheet create a new instance of Timesheet.
 func NewTimesheet() Timesheet {
 	return Timesheet{
-		Key: time.Now().Format(KeyTimesheetDateFmt),
+		Key: time.Now().Format(TimesheetKeyDateFmt),
 	}
 }
 

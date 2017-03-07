@@ -58,3 +58,7 @@ complete -c tid -f -n '__fish_seen_subcommand_from status' -a '(__fish_tid_entri
 
 # stop
 complete -c tid -f -n '__fish_tid_no_subcommand' -a stop -d 'Stop an existing timer.'
+
+# workspace
+complete -c tid -f -n '__fish_tid_no_subcommand' -a workspace -d 'List or switch workspace.'
+

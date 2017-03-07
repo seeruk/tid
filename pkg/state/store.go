@@ -1,9 +1,17 @@
 package state
 
 import (
+	"errors"
 	"io"
 
 	"github.com/golang/protobuf/proto"
+)
+
+var (
+	// ErrNilValue is the error given when a value passed in is nil.
+	ErrNilValue = errors.New("state: `value` must not be null")
+	// ErrNilResult is the error given when there is no entry found for a key in the database.
+	ErrNilResult = errors.New("state: No value found")
 )
 
 // Store provides a means of persisting some data in a key/value store.

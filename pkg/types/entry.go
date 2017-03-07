@@ -1,9 +1,12 @@
-package tracking
+package types
 
 import (
+	"crypto/sha1"
+	"fmt"
+	"math/rand"
+	"os"
 	"time"
 
-	"github.com/SeerUK/tid/pkg/hash"
 	"github.com/SeerUK/tid/proto"
 )
 
@@ -33,7 +36,7 @@ type Entry struct {
 // NewEntry creates a new instance of Entry, with a new random hash, and dates set.
 func NewEntry() Entry {
 	return Entry{
-		Hash:    hash.CreateHash(),
+		Hash:    createHash(),
 		Created: time.Now(),
 		Updated: time.Now(),
 	}
@@ -96,4 +99,16 @@ func (e Entry) UpdatedTimeFormat() string {
 	}
 
 	return timeFormatLong
+}
+
+// createHash creates a new random SHA-1 hash.
+func createHash() string {
+	nowUnix := time.Now().UnixNano()
+	number := rand.Int()
+	pid := os.Getpid()
+
+	data := fmt.Sprintf("%d%d%d", nowUnix, number, pid)
+	hash := sha1.Sum([]byte(data))
+
+	return fmt.Sprintf("%x", hash)
 }

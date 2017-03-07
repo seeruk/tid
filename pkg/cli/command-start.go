@@ -3,12 +3,13 @@ package cli
 import (
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // StartCommand creates a command to start timers.
-func StartCommand(gateway tracking.Gateway) console.Command {
+func StartCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
@@ -20,7 +21,7 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		status, err := gateway.FindOrCreateStatus()
+		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
 			return err
 		}
@@ -30,12 +31,12 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 			return nil
 		}
 
-		sheet, err := gateway.FindOrCreateTodaysTimesheet()
+		sheet, err := tsGateway.FindOrCreateTodaysTimesheet()
 		if err != nil {
 			return err
 		}
 
-		entry := tracking.NewEntry()
+		entry := types.NewEntry()
 		entry.Note = note
 		entry.Timesheet = sheet.Key
 
@@ -44,9 +45,9 @@ func StartCommand(gateway tracking.Gateway) console.Command {
 		status.Start(sheet, entry)
 
 		errs := errhandling.NewErrorStack()
-		errs.Add(gateway.PersistEntry(entry))
-		errs.Add(gateway.PersistTimesheet(sheet))
-		errs.Add(gateway.PersistStatus(status))
+		errs.Add(sysGateway.PersistStatus(status))
+		errs.Add(tsGateway.PersistEntry(entry))
+		errs.Add(tsGateway.PersistTimesheet(sheet))
 
 		if err = errs.Errors(); err != nil {
 			return err
