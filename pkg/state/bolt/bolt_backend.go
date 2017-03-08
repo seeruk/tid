@@ -42,7 +42,13 @@ func (b *boltBackend) HasBucket(name string) bool {
 
 func (b *boltBackend) DeleteBucket(name string) error {
 	return b.db.Update(func(tx *boltdb.Tx) error {
-		return tx.DeleteBucket([]byte(name))
+		err := tx.DeleteBucket([]byte(name))
+
+		if err == boltdb.ErrBucketNotFound {
+			return state.ErrNilBucket
+		}
+
+		return err
 	})
 }
 
