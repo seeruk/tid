@@ -10,6 +10,8 @@ import (
 	"github.com/boltdb/bolt"
 )
 
+// @todo: Refactor things out thanks to Backend and boltBackend.
+
 const (
 	// BoltBucketSys is the bucket name for system information.
 	BoltBucketSys = "tid_sys"

@@ -37,7 +37,7 @@ func main() {
 		cli.StartCommand(sysGateway, tsGateway),
 		cli.StatusCommand(sysGateway, tsGateway),
 		cli.StopCommand(sysGateway, tsGateway),
-		cli.WorkspaceCommand(tsGateway),
+		cli.WorkspaceCommand(sysGateway),
 	})
 
 	os.Exit(application.Run(os.Args[1:]))
@@ -63,6 +63,8 @@ func getStore(db *boltdb.DB, bucketName string) state.Store {
 
 // getWorkspaceBucketName gets the name of the currently active workspace's bucket in Bolt.
 func getWorkspaceBucketName(sysGateway tracking.SysGateway) string {
+	// @todo: Does this belong in here?
+
 	status, err := sysGateway.FindOrCreateStatus()
 	fatal(err)
 
@@ -81,6 +83,8 @@ func fatal(err error) {
 
 // lookupTidDir returns the location to store all tid files.
 func lookupTidDir() string {
+	// @todo: Does this belong in here?
+
 	usr, err := user.Current()
 	fatal(err)
 

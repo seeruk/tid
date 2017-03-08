@@ -4,6 +4,7 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
+// StatusDefaultWorkspace is the default workspace to fallback on if one isn't present in the DB.
 const StatusDefaultWorkspace = "default"
 
 // Status represents the status of what is being tracked currently.
