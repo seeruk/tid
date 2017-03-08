@@ -9,10 +9,10 @@ import (
 	"github.com/SeerUK/tid/pkg/cli"
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/state/bolt"
+	"github.com/SeerUK/tid/pkg/state/migrate"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 
-	"github.com/SeerUK/tid/pkg/state/migrate"
 	boltdb "github.com/boltdb/bolt"
 )
 
