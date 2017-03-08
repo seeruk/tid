@@ -48,11 +48,11 @@ func EditCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGat
 		// @todo: Maybe a facade?
 
 		entry, err := tsGateway.FindEntry(hash)
-		if err != nil && err != state.ErrNilResult {
+		if err != nil && err != state.ErrStoreNilResult {
 			return err
 		}
 
-		if err == state.ErrNilResult {
+		if err == state.ErrStoreNilResult {
 			output.Printf("edit: No entry with hash '%s'\n", hash)
 			return nil
 		}

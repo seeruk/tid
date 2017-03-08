@@ -12,6 +12,7 @@ import (
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 
+	"github.com/SeerUK/tid/pkg/state/migrate"
 	boltdb "github.com/boltdb/bolt"
 )
 
@@ -19,10 +20,15 @@ func main() {
 	db := getBoltDB()
 	defer db.Close()
 
-	sysStore := getStore(db, bolt.BoltBucketSys)
+	backend := bolt.NewBoltBackend(db)
+
+	// Initialise the backend, preparing it for use, ensuring it's up-to-date.
+	migrate.Backend(backend)
+
+	sysStore := getStore(backend, state.BackendBucketSys)
 	sysGateway := tracking.NewStoreSysGateway(sysStore)
 
-	tsStore := getStore(db, getWorkspaceBucketName(sysGateway))
+	tsStore := getStore(backend, getWorkspaceBucketName(sysGateway))
 	tsGateway := tracking.NewStoreTimesheetGateway(tsStore, sysGateway)
 
 	facade := tracking.NewFacade(sysGateway, tsGateway)
@@ -37,7 +43,7 @@ func main() {
 		cli.StartCommand(sysGateway, tsGateway),
 		cli.StatusCommand(sysGateway, tsGateway),
 		cli.StopCommand(sysGateway, tsGateway),
-		cli.WorkspaceCommand(sysGateway),
+		cli.WorkspaceCommand(backend, sysGateway),
 	})
 
 	os.Exit(application.Run(os.Args[1:]))
@@ -49,16 +55,12 @@ func getBoltDB() *boltdb.DB {
 	db, err := bolt.Open(lookupTidDir())
 	fatal(err)
 
-	// Create required Buckets.
-	err = bolt.Initialise(db)
-	fatal(err)
-
 	return db
 }
 
-// getStore gets the application data store, in a ready state.
-func getStore(db *boltdb.DB, bucketName string) state.Store {
-	return bolt.NewBoltStore(db, bucketName)
+// getStore gets the application data store.
+func getStore(db state.Backend, bucketName string) state.Store {
+	return state.NewBackendStore(db, bucketName)
 }
 
 // getWorkspaceBucketName gets the name of the currently active workspace's bucket in Bolt.
@@ -69,7 +71,7 @@ func getWorkspaceBucketName(sysGateway tracking.SysGateway) string {
 	fatal(err)
 
 	return fmt.Sprintf(
-		bolt.BoltBucketWorkspaceFmt,
+		state.BackendBucketWorkspaceFmt,
 		status.Workspace,
 	)
 }

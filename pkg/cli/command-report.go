@@ -223,11 +223,11 @@ func getTimesheetsByKeys(gateway tracking.TimesheetGateway, keys []string) ([]ty
 
 	for _, key := range keys {
 		sheet, err := gateway.FindTimesheet(key)
-		if err != nil && err != state.ErrNilResult {
+		if err != nil && err != state.ErrStoreNilResult {
 			return sheets, err
 		}
 
-		if err == state.ErrNilResult {
+		if err == state.ErrStoreNilResult {
 			continue
 		}
 

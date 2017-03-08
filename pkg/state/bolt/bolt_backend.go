@@ -2,7 +2,6 @@ package bolt
 
 import (
 	"github.com/SeerUK/tid/pkg/state"
-	"github.com/golang/protobuf/proto"
 
 	boltdb "github.com/boltdb/bolt"
 )
@@ -52,42 +51,32 @@ func (b *boltBackend) DeleteBucket(name string) error {
 	})
 }
 
-func (b *boltBackend) Read(bucket string, key string, value proto.Message) error {
-	if value == nil {
-		return state.ErrNilValue
+func (b *boltBackend) Read(bucket string, key string) ([]byte, error) {
+	var value []byte
+
+	err := b.db.View(func(tx *boltdb.Tx) error {
+		bucket := tx.Bucket([]byte(bucket))
+		value = bucket.Get([]byte(key))
+
+		return nil
+	})
+
+	if err != nil {
+		return value, err
 	}
 
-	return b.db.View(func(tx *boltdb.Tx) error {
-		bucket := tx.Bucket([]byte(bucket))
-		result := bucket.Get([]byte(key))
+	if value == nil {
+		return value, state.ErrStoreNilResult
+	}
 
-		if result == nil {
-			return state.ErrNilResult
-		}
-
-		return proto.Unmarshal(result, value)
-	})
+	return value, nil
 }
 
-func (b *boltBackend) Write(bucket string, key string, value proto.Message) error {
-	if value == nil {
-		return state.ErrNilValue
-	}
-
+func (b *boltBackend) Write(bucket string, key string, value []byte) error {
 	return b.db.Update(func(tx *boltdb.Tx) error {
 		bucket := tx.Bucket([]byte(bucket))
 
-		result, err := proto.Marshal(value)
-		if err != nil {
-			return err
-		}
-
-		err = bucket.Put([]byte(key), result)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return bucket.Put([]byte(key), value)
 	})
 }
 
@@ -99,6 +88,18 @@ func (b *boltBackend) Delete(bucket string, key string) error {
 	})
 }
 
-func (b *boltBackend) Close() error {
-	return b.db.Close()
+func (b *boltBackend) ForEach(bucket string, fn func(key string, val []byte) error) error {
+	return b.db.View(func(tx *boltdb.Tx) error {
+		bucket := tx.Bucket([]byte(bucket))
+		cursor := bucket.Cursor()
+
+		for k, v := cursor.First(); k != nil; k, v = cursor.Next() {
+			err := fn(string(k), v)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }

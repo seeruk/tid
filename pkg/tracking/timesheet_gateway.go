@@ -117,7 +117,7 @@ func (g *storeTimesheetGateway) FindOrCreateTimesheet(sheetKey string) (types.Ti
 	message := &proto.TrackingTimesheet{}
 
 	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), message)
-	if err != nil && err != state.ErrNilResult {
+	if err != nil && err != state.ErrStoreNilResult {
 		return sheet, err
 	}
 

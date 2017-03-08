@@ -36,7 +36,7 @@ func (g *storeSysGateway) FindOrCreateStatus() (types.Status, error) {
 	message := &proto.SysStatus{}
 
 	err := g.store.Read(KeyStatus, message)
-	if err != nil && err != state.ErrNilResult {
+	if err != nil && err != state.ErrStoreNilResult {
 		return status, err
 	}
 

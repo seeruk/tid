@@ -21,11 +21,11 @@ func RemoveCommand(gateway tracking.TimesheetGateway, facade *tracking.Facade) c
 
 	execute := func(input *console.Input, output *console.Output) error {
 		entry, err := gateway.FindEntry(hash)
-		if err != nil && err != state.ErrNilResult {
+		if err != nil && err != state.ErrStoreNilResult {
 			return err
 		}
 
-		if err == state.ErrNilResult {
+		if err == state.ErrStoreNilResult {
 			output.Printf("remove: No entry with hash '%s'\n", hash)
 			return nil
 		}
