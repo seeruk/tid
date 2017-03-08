@@ -2,7 +2,6 @@ package state
 
 import (
 	"errors"
-	"io"
 
 	"github.com/golang/protobuf/proto"
 )
@@ -22,6 +21,4 @@ type Store interface {
 	Write(key string, value proto.Message) error
 	// Delete a value with a given key from the store.
 	Delete(key string) error
-	// Most stores will need to be closed when they're done with.
-	io.Closer
 }

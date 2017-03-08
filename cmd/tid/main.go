@@ -17,18 +17,13 @@ import (
 
 func main() {
 	db := getBoltDB()
+	defer db.Close()
 
 	sysStore := getStore(db, bolt.BoltBucketSys)
-	timeSheetStore := getStore(db, fmt.Sprintf(
-		bolt.BoltBucketWorkspaceFmt,
-		bolt.BoltBucketWorkspaceDefault,
-	))
-
-	defer sysStore.Close()
-	defer timeSheetStore.Close()
-
 	sysGateway := tracking.NewStoreSysGateway(sysStore)
-	tsGateway := tracking.NewStoreTimesheetGateway(timeSheetStore, sysGateway)
+
+	tsStore := getStore(db, getWorkspaceBucketName(sysGateway))
+	tsGateway := tracking.NewStoreTimesheetGateway(tsStore, sysGateway)
 
 	facade := tracking.NewFacade(sysGateway, tsGateway)
 
@@ -64,6 +59,17 @@ func getBoltDB() *boltdb.DB {
 // getStore gets the application data store, in a ready state.
 func getStore(db *boltdb.DB, bucketName string) state.Store {
 	return bolt.NewBoltStore(db, bucketName)
+}
+
+// getWorkspaceBucketName gets the name of the currently active workspace's bucket in Bolt.
+func getWorkspaceBucketName(sysGateway tracking.SysGateway) string {
+	status, err := sysGateway.FindOrCreateStatus()
+	fatal(err)
+
+	return fmt.Sprintf(
+		bolt.BoltBucketWorkspaceFmt,
+		status.Workspace,
+	)
 }
 
 // fatal kills the application upon error.

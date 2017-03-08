@@ -6,6 +6,7 @@ import (
 
 	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/boltdb/bolt"
 )
 
@@ -15,8 +16,6 @@ const (
 	// BoltBucketTimesheet is the original name of the Bucket for the timesheet stored in Bolt. This
 	// is only used for migrating old data now.
 	BoltBucketTimesheet = "tid_tracking"
-	// BoltBucketWorkspaceDefault is the default workspace's name.
-	BoltBucketWorkspaceDefault = "default"
 	// BoltBucketWorkspaceFmt is the formatting string for timesheet bucket names.
 	BoltBucketWorkspaceFmt = "tid_tracking_%s"
 	// BoltDatabaseFilename is the name of the database file name on disk.
@@ -41,7 +40,7 @@ func Initialise(db *bolt.DB) error {
 		_, err2 := tx.CreateBucketIfNotExists([]byte(BoltBucketTimesheet))
 		_, err3 := tx.CreateBucketIfNotExists([]byte(fmt.Sprintf(
 			BoltBucketWorkspaceFmt,
-			BoltBucketWorkspaceDefault,
+			types.StatusDefaultWorkspace,
 		)))
 
 		errs := errhandling.NewErrorStack()
@@ -67,7 +66,7 @@ func migrateTimesheetToDefaultWorkspace(db *bolt.DB) error {
 		timesheetBucket := tx.Bucket([]byte(BoltBucketTimesheet))
 		workspaceBucket := tx.Bucket([]byte(fmt.Sprintf(
 			BoltBucketWorkspaceFmt,
-			BoltBucketWorkspaceDefault,
+			types.StatusDefaultWorkspace,
 		)))
 
 		cursor := timesheetBucket.Cursor()

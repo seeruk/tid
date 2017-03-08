@@ -67,7 +67,3 @@ func (b *boltStore) Delete(key string) error {
 		return bucket.Delete([]byte(key))
 	})
 }
-
-func (b *boltStore) Close() error {
-	return b.db.Close()
-}

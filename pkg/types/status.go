@@ -4,6 +4,8 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
+const StatusDefaultWorkspace = "default"
+
 // Status represents the status of what is being tracked currently.
 type Status struct {
 	// Whether or not a (any) entry's timer is running.
@@ -12,6 +14,8 @@ type Status struct {
 	Timesheet string
 	// The hash of the entry currently being tracked.
 	Entry string
+	// THe name of the workspace currently being tracked.
+	Workspace string
 }
 
 // NewStatus create a new instance of Status.
@@ -25,6 +29,12 @@ func (s *Status) FromMessage(message *proto.SysStatus) {
 	s.IsRunning = message.IsRunning
 	s.Timesheet = message.Timesheet
 	s.Entry = message.Entry
+
+	if message.Workspace != "" {
+		s.Workspace = message.Workspace
+	} else {
+		s.Workspace = StatusDefaultWorkspace
+	}
 }
 
 // ToMessage converts this Status into a `proto.SysStatus`.
@@ -33,6 +43,7 @@ func (s *Status) ToMessage() *proto.SysStatus {
 		IsRunning: s.IsRunning,
 		Timesheet: s.Timesheet,
 		Entry:     s.Entry,
+		Workspace: s.Workspace,
 	}
 }
 
