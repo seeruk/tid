@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	// ErrStoreNilValue is the error given when a value passed in is nil.
+	// ErrStoreNilMessage is the error given when a value passed in is nil.
 	ErrStoreNilMessage = errors.New("state: `message` must not be null")
 	// ErrStoreNilResult is the error given when there is no entry found for a key in the database.
 	ErrStoreNilResult = errors.New("state: No value found")
