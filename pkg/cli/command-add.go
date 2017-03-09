@@ -11,7 +11,7 @@ import (
 )
 
 // AddCommand creates a command to add timesheet entries.
-func AddCommand(gateway tracking.TimesheetGateway) console.Command {
+func AddCommand(gateway tracking.TimesheetGateway) *console.Command {
 	var startedAt time.Time
 	var duration time.Duration
 	var note string
@@ -63,7 +63,7 @@ func AddCommand(gateway tracking.TimesheetGateway) console.Command {
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "add",
 		Description: "Add a timesheet entry.",
 		Configure:   configure,

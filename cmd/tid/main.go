@@ -34,7 +34,7 @@ func main() {
 	facade := tracking.NewFacade(sysGateway, tsGateway)
 
 	application := cli.CreateApplication()
-	application.AddCommands([]console.Command{
+	application.AddCommands([]*console.Command{
 		cli.AddCommand(tsGateway),
 		cli.EditCommand(sysGateway, tsGateway),
 		cli.RemoveCommand(tsGateway, facade),
@@ -43,7 +43,9 @@ func main() {
 		cli.StartCommand(sysGateway, tsGateway),
 		cli.StatusCommand(sysGateway, tsGateway),
 		cli.StopCommand(sysGateway, tsGateway),
-		cli.WorkspaceCommand(backend, sysGateway),
+		cli.WorkspaceCommand(backend, sysGateway).AddCommands([]*console.Command{
+			cli.WorkspaceDeleteCommand(),
+		}),
 	})
 
 	os.Exit(application.Run(os.Args[1:]))

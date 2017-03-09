@@ -7,7 +7,7 @@ import (
 )
 
 // StopCommand creates a command to stop timers.
-func StopCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
+func StopCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
@@ -42,7 +42,7 @@ func StopCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGat
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "stop",
 		Description: "Stop an existing timer.",
 		Execute:     execute,

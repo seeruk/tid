@@ -10,7 +10,7 @@ import (
 )
 
 // ResumeCommand creates a command to resume timers.
-func ResumeCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
+func ResumeCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
 	var hash string
 
 	configure := func(def *console.Definition) {
@@ -70,7 +70,7 @@ func ResumeCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetG
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "resume",
 		Description: "Resume an existing timer.",
 		Configure:   configure,

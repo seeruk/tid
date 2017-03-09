@@ -23,7 +23,7 @@ type reportOutputItem struct {
 }
 
 // ReportCommand creates a command to view a timesheet report.
-func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
+func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
 	var start time.Time
 	var end time.Time
 	var date time.Time
@@ -192,7 +192,7 @@ func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetG
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "report",
 		Description: "Display a tabular timesheet report.",
 		Configure:   configure,

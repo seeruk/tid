@@ -9,7 +9,7 @@ import (
 )
 
 // StartCommand creates a command to start timers.
-func StartCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
+func StartCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
@@ -59,7 +59,7 @@ func StartCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGa
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "start",
 		Description: "Start a new timer.",
 		Configure:   configure,

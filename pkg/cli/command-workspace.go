@@ -10,7 +10,7 @@ import (
 )
 
 // WorkspaceCommand creates a command for listing and switching workspaces.
-func WorkspaceCommand(backend state.Backend, sysGateway tracking.SysGateway) console.Command {
+func WorkspaceCommand(backend state.Backend, sysGateway tracking.SysGateway) *console.Command {
 	var workspaceName string
 
 	configure := func(def *console.Definition) {
@@ -38,7 +38,7 @@ func WorkspaceCommand(backend state.Backend, sysGateway tracking.SysGateway) con
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "workspace",
 		Description: "List or switch workspace.",
 		Configure:   configure,

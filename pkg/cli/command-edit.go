@@ -10,7 +10,7 @@ import (
 )
 
 // EditCommand creates a command to edit timesheet entries.
-func EditCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) console.Command {
+func EditCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
 	var hash string
 	var offset time.Duration
 	var note string
@@ -104,7 +104,7 @@ func EditCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGat
 		return nil
 	}
 
-	return console.Command{
+	return &console.Command{
 		Name:        "edit",
 		Description: "Edit a timesheet entry.",
 		Configure:   configure,
