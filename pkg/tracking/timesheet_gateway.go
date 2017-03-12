@@ -1,6 +1,7 @@
 package tracking
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -23,6 +24,8 @@ type TimesheetGateway interface {
 	FindEntry(hash string) (types.Entry, error)
 	// FindEntryHashByShortHash attempts to find an entry's hash by it's short hash.
 	FindEntryHashByShortHash(hash string) (string, error)
+	// FindEntriesInDateRange attempts to find all of the entries within a given start and end date.
+	FindEntriesInDateRange(start time.Time, end time.Time) ([]types.Entry, error)
 	// FindTimesheet attempts to find a timesheet for the given date.
 	FindTimesheet(key string) (types.Timesheet, error)
 	// FindOrCreateTimesheet attempts to find a timesheet for the given date, if one is not in the
@@ -31,6 +34,8 @@ type TimesheetGateway interface {
 	// FindOrCreateTodaysTimesheet attempts to find the timesheet for the current date, if one is
 	// not in the store then a new timesheet object is instantiated.
 	FindOrCreateTodaysTimesheet() (types.Timesheet, error)
+	// FindTimesheetsInDateRange attempts to find all timesheets within a given start and end date.
+	FindTimesheetsInDateRange(start time.Time, end time.Time) ([]types.Timesheet, error)
 	// PersistEntry persists a given entry to the store.
 	PersistEntry(entry types.Entry) error
 	// PersistTimesheet persists a given timesheet to the store.
@@ -96,6 +101,28 @@ func (g *storeTimesheetGateway) FindEntryHashByShortHash(hash string) (string, e
 	return ref.Entry, nil
 }
 
+func (g *storeTimesheetGateway) FindEntriesInDateRange(start time.Time, end time.Time) ([]types.Entry, error) {
+	var entries []types.Entry
+
+	timesheets, err := g.FindTimesheetsInDateRange(start, end)
+	if err != nil {
+		return entries, err
+	}
+
+	for _, sheet := range timesheets {
+		for _, hash := range sheet.Entries {
+			entry, err := g.FindEntry(hash)
+			if err != nil {
+				return entries, err
+			}
+
+			entries = append(entries, entry)
+		}
+	}
+
+	return entries, nil
+}
+
 func (g *storeTimesheetGateway) FindTimesheet(sheetKey string) (types.Timesheet, error) {
 	sheet := types.NewTimesheet()
 	message := &proto.TrackingTimesheet{}
@@ -130,6 +157,31 @@ func (g *storeTimesheetGateway) FindOrCreateTimesheet(sheetKey string) (types.Ti
 
 func (g *storeTimesheetGateway) FindOrCreateTodaysTimesheet() (types.Timesheet, error) {
 	return g.FindOrCreateTimesheet(time.Now().Local().Format(types.TimesheetKeyDateFmt))
+}
+
+func (g *storeTimesheetGateway) FindTimesheetsInDateRange(start time.Time, end time.Time) ([]types.Timesheet, error) {
+	var sheets []types.Timesheet
+
+	if start.After(end) {
+		return sheets, errors.New("tracking: The start date must be before the end date")
+	}
+
+	for current := start; !current.After(end); current = current.AddDate(0, 0, 1) {
+		key := current.Format(types.TimesheetKeyDateFmt)
+
+		sheet, err := g.FindTimesheet(key)
+		if err != nil && err != state.ErrStoreNilResult {
+			return sheets, err
+		}
+
+		if err == state.ErrStoreNilResult {
+			continue
+		}
+
+		sheets = append(sheets, sheet)
+	}
+
+	return sheets, nil
 }
 
 func (g *storeTimesheetGateway) PersistEntry(entry types.Entry) error {

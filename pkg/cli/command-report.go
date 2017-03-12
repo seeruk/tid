@@ -52,7 +52,7 @@ func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetG
 		def.AddOption(
 			parameters.NewStringValue(&format),
 			"-f, --format=FORMAT",
-			"Format string, uses Go templates.",
+			"Output formatting string. Uses Go templates.",
 		)
 
 		def.AddOption(
@@ -147,7 +147,7 @@ func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetG
 				out.Entry = entry
 				out.Status = status
 
-				tmpl := template.Must(template.New("status").Parse(format))
+				tmpl := template.Must(template.New("report").Parse(format))
 				tmpl.Execute(output.Writer, out)
 
 				// Always end with a new line...
