@@ -9,6 +9,7 @@ import (
 	"github.com/SeerUK/tid/pkg/cli"
 	"github.com/SeerUK/tid/pkg/state/bolt"
 	"github.com/SeerUK/tid/pkg/state/migrate"
+	"github.com/SeerUK/tid/pkg/tracking"
 
 	boltdb "github.com/boltdb/bolt"
 )
@@ -22,7 +23,7 @@ func main() {
 	// Initialise the backend, preparing it for use, ensuring it's up-to-date.
 	migrate.Backend(backend)
 
-	factory := cli.NewStandardTrackingFactory(backend)
+	factory := tracking.NewStandardFactory(backend)
 	kernel := cli.NewTidKernel(backend, factory)
 
 	application := cli.CreateApplication()
