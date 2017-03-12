@@ -8,6 +8,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
+// WriteTableOfEntries writes the given entries to a writer as a table.
 func WriteTableOfEntries(entries []types.Entry, writer io.Writer) {
 	table := tablewriter.NewWriter(writer)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)

@@ -1,12 +1,29 @@
 package cli
 
 import (
-	"github.com/SeerUK/tid/pkg/cli/command/entry"
+	"github.com/SeerUK/tid/pkg/tid/cli/command/entry"
 	"github.com/eidolon/console"
 )
 
-// GetCommands gets all of the commands registered in the application.
-func GetCommands(kernel *TidKernel) []*console.Command {
+// CreateApplication builds the console application instance. Providing it with some basic
+// information like the name and version.
+func CreateApplication(kernel *TidKernel) *console.Application {
+	application := console.NewApplication("tid", "0.2.0-alpha.1")
+	application.Logo = `
+######## ### #######
+   ###   ###       ##
+   ###   ###  ###  ##
+   ###   ###  ###  ##
+   ###   ###  ######
+`
+
+	application.AddCommands(buildCommands(kernel))
+
+	return application
+}
+
+// buildCommands instantiates all of the commands registered in the application.
+func buildCommands(kernel *TidKernel) []*console.Command {
 	// @todo: Shouldn't need these when refactoring is complete, we pass in the factory.
 	trackingSysGateway := kernel.TrackingFactory.BuildSysGateway()
 	trackingTimesheetGateway := kernel.TrackingFactory.BuildTimesheetGateway()
@@ -14,7 +31,7 @@ func GetCommands(kernel *TidKernel) []*console.Command {
 	return []*console.Command{
 		// Entry commands
 		entry.RootCommand().AddCommands([]*console.Command{
-			entry.ListCommand(kernel.TrackingFactory), // @todo: Write this
+			entry.ListCommand(kernel.TrackingFactory),
 			entry.CreateCommand(kernel.TrackingFactory),
 			entry.UpdateCommand(kernel.TrackingFactory),
 			entry.DeleteCommand(kernel.TrackingFactory),

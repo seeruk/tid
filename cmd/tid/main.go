@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"os/user"
 
-	"github.com/SeerUK/tid/pkg/cli"
 	"github.com/SeerUK/tid/pkg/state/bolt"
 	"github.com/SeerUK/tid/pkg/state/migrate"
+	"github.com/SeerUK/tid/pkg/tid"
+	"github.com/SeerUK/tid/pkg/tid/cli"
 	"github.com/SeerUK/tid/pkg/tracking"
 
 	boltdb "github.com/boltdb/bolt"
@@ -26,16 +25,16 @@ func main() {
 	factory := tracking.NewStandardFactory(backend)
 	kernel := cli.NewTidKernel(backend, factory)
 
-	application := cli.CreateApplication()
-	application.AddCommands(cli.GetCommands(kernel))
-
-	os.Exit(application.Run(os.Args[1:]))
+	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:]))
 }
 
 // getBoltDB gets a Bolt DB instance.
 func getBoltDB() *boltdb.DB {
+	dir, err := tid.GetLocalDirectory()
+	fatal(err)
+
 	// Open Bolt database.
-	db, err := bolt.Open(lookupTidDir())
+	db, err := bolt.Open(dir)
 	fatal(err)
 
 	return db
@@ -46,14 +45,4 @@ func fatal(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-// lookupTidDir returns the location to store all tid files.
-func lookupTidDir() string {
-	// @todo: Does this belong in here?
-
-	usr, err := user.Current()
-	fatal(err)
-
-	return fmt.Sprintf("%s/.tid", usr.HomeDir)
 }

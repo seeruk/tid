@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/SeerUK/tid/pkg/cli/display"
+	"github.com/SeerUK/tid/pkg/tid/cli/display"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
