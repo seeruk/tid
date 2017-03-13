@@ -3,6 +3,8 @@ package bolt
 import (
 	"github.com/SeerUK/tid/pkg/state"
 
+	"bytes"
+
 	boltdb "github.com/boltdb/bolt"
 )
 
@@ -91,32 +93,56 @@ func (b *boltBackend) Delete(bucket string, key string) error {
 }
 
 func (b *boltBackend) ForEach(bucket string, fn func(key string, val []byte) error) error {
-	// @todo: This is horrific, but works. We can't call `fn` in the update / bucket's ForEach
-	// because we end up locking the database when reading and can't perform writes like we might
-	// want to when we call this method. A solution similar to this might be necessary, but surely
-	// we can be more efficient and still do it one at a time... right? The problem is more to do
-	// with loading the values into memory than the keys in our case at least.
+	// Load each key individually, get the value for the key, move onto next if there is any. This
+	// should held ensure databases with large sets of keys are handled without crashing.
 
-	var keys [][]byte
-	var vals [][]byte
+	var first []byte
+	var next []byte
+	var last []byte
+	var value []byte
 
+	// Fetch initial values for iteration
 	err := b.db.View(func(tx *boltdb.Tx) error {
 		bucket := tx.Bucket([]byte(bucket))
+		cursor := bucket.Cursor()
 
-		return bucket.ForEach(func(k, v []byte) error {
-			keys = append(keys, k)
-			vals = append(vals, v)
+		first, value = cursor.First()
+		last, _ = cursor.Last()
 
-			return nil
-		})
+		next = first
+
+		return nil
 	})
 
 	if err != nil {
 		return err
 	}
 
-	for i, key := range keys {
-		err := fn(string(key), vals[i])
+	if first == nil || value == nil {
+		// No data?
+		return nil
+	}
+
+	// As long as we've not hit the end...
+	for !bytes.Equal(next, last) {
+		// Run the user-defined function the item we're iterating over
+		err := fn(string(next), value)
+		if err != nil {
+			return err
+		}
+
+		// Get next values
+		err = b.db.View(func(tx *boltdb.Tx) error {
+			bucket := tx.Bucket([]byte(bucket))
+			cursor := bucket.Cursor()
+
+			cursor.Seek(next)
+
+			next, value = cursor.Next()
+
+			return nil
+		})
+
 		if err != nil {
 			return err
 		}
