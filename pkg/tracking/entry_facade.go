@@ -41,11 +41,11 @@ func (f *EntryFacade) Create(start time.Time, dur time.Duration, note string) (t
 	sheet.AppendEntry(entry)
 
 	errs := errhandling.NewErrorStack()
-	errs.Add(f.tsGateway.PersistEntry(entry))
 	errs.Add(f.tsGateway.PersistTimesheet(sheet))
+	errs.Add(f.tsGateway.PersistEntry(entry))
 
-	if err = errs.Errors(); err != nil {
-		return entry, err
+	if !errs.Empty() {
+		return entry, errs.Errors()
 	}
 
 	return entry, nil

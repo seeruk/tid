@@ -51,7 +51,5 @@ func migrateMonoBucketTimesheet(backend state.Backend) error {
 		return errs.Errors()
 	}
 
-	return nil
-
-	//return backend.DeleteBucket(state.BackendBucketTimesheet)
+	return backend.DeleteBucket(state.BackendBucketTimesheet)
 }
