@@ -20,7 +20,8 @@ func main() {
 	backend := bolt.NewBoltBackend(db)
 
 	// Initialise the backend, preparing it for use, ensuring it's up-to-date.
-	migrate.Backend(backend)
+	err := migrate.Backend(backend)
+	fatal(err)
 
 	factory := tracking.NewStandardFactory(backend)
 	kernel := cli.NewTidKernel(backend, factory)

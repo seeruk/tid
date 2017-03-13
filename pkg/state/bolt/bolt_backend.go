@@ -73,11 +73,13 @@ func (b *boltBackend) Read(bucket string, key string) ([]byte, error) {
 }
 
 func (b *boltBackend) Write(bucket string, key string, value []byte) error {
-	return b.db.Update(func(tx *boltdb.Tx) error {
+	err := b.db.Update(func(tx *boltdb.Tx) error {
 		bucket := tx.Bucket([]byte(bucket))
 
 		return bucket.Put([]byte(key), value)
 	})
+
+	return err
 }
 
 func (b *boltBackend) Delete(bucket string, key string) error {
@@ -89,17 +91,36 @@ func (b *boltBackend) Delete(bucket string, key string) error {
 }
 
 func (b *boltBackend) ForEach(bucket string, fn func(key string, val []byte) error) error {
-	return b.db.View(func(tx *boltdb.Tx) error {
+	// @todo: This is horrific, but works. We can't call `fn` in the update / bucket's ForEach
+	// because we end up locking the database when reading and can't perform writes like we might
+	// want to when we call this method. A solution similar to this might be necessary, but surely
+	// we can be more efficient and still do it one at a time... right? The problem is more to do
+	// with loading the values into memory than the keys in our case at least.
+
+	var keys [][]byte
+	var vals [][]byte
+
+	err := b.db.View(func(tx *boltdb.Tx) error {
 		bucket := tx.Bucket([]byte(bucket))
-		cursor := bucket.Cursor()
 
-		for k, v := cursor.First(); k != nil; k, v = cursor.Next() {
-			err := fn(string(k), v)
-			if err != nil {
-				return err
-			}
-		}
+		return bucket.ForEach(func(k, v []byte) error {
+			keys = append(keys, k)
+			vals = append(vals, v)
 
-		return nil
+			return nil
+		})
 	})
+
+	if err != nil {
+		return err
+	}
+
+	for i, key := range keys {
+		err := fn(string(key), vals[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

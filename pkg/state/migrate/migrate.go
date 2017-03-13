@@ -33,7 +33,7 @@ func migrateMonoBucketTimesheet(backend state.Backend) error {
 
 	errs := errhandling.NewErrorStack()
 
-	backend.ForEach(state.BackendBucketTimesheet, func(key string, val []byte) error {
+	err := backend.ForEach(state.BackendBucketTimesheet, func(key string, val []byte) error {
 		if key == tracking.KeyStatus {
 			errs.Add(backend.Write(state.BackendBucketSys, key, val))
 		} else {
@@ -43,7 +43,15 @@ func migrateMonoBucketTimesheet(backend state.Backend) error {
 		return nil
 	})
 
-	errs.Add(backend.DeleteBucket(state.BackendBucketTimesheet))
+	if err != nil {
+		return err
+	}
 
-	return errs.Errors()
+	if !errs.Empty() {
+		return errs.Errors()
+	}
+
+	return nil
+
+	//return backend.DeleteBucket(state.BackendBucketTimesheet)
 }
