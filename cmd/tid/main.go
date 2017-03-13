@@ -6,13 +6,11 @@ import (
 
 	"github.com/SeerUK/tid/pkg/state/bolt"
 	"github.com/SeerUK/tid/pkg/state/migrate"
+	_ "github.com/SeerUK/tid/pkg/state/migrate/versions"
 	"github.com/SeerUK/tid/pkg/tid"
 	"github.com/SeerUK/tid/pkg/tid/cli"
 	"github.com/SeerUK/tid/pkg/util"
-
 	boltdb "github.com/boltdb/bolt"
-
-	_ "github.com/SeerUK/tid/pkg/state/migrate/versions"
 )
 
 func main() {
