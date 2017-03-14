@@ -11,6 +11,8 @@ import (
 	"github.com/SeerUK/tid/pkg/tracking"
 
 	boltdb "github.com/boltdb/bolt"
+
+	_ "github.com/SeerUK/tid/pkg/state/migrate/versions"
 )
 
 func main() {

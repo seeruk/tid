@@ -1,24 +1,24 @@
 package tracking
 
 import (
+	"errors"
 	"time"
 
-	"errors"
-
 	"github.com/SeerUK/tid/pkg/errhandling"
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/types"
 )
 
 // EntryFacade provides a simpler interface for common Entry-related tasks.
 type EntryFacade struct {
 	// sysGateway is a SysGateway used for accessing system storage.
-	sysGateway SysGateway
+	sysGateway state.SysGateway
 	// tsGateway is a TimesheetGateway used for accessing timesheet storage.
-	tsGateway TimesheetGateway
+	tsGateway state.TimesheetGateway
 }
 
 // NewEntryFacade creates a new EntryFacade instance.
-func NewEntryFacade(sysGateway SysGateway, timesheetGateway TimesheetGateway) *EntryFacade {
+func NewEntryFacade(sysGateway state.SysGateway, timesheetGateway state.TimesheetGateway) *EntryFacade {
 	return &EntryFacade{
 		sysGateway: sysGateway,
 		tsGateway:  timesheetGateway,

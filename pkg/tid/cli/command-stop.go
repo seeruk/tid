@@ -2,12 +2,12 @@ package cli
 
 import (
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/eidolon/console"
 )
 
 // StopCommand creates a command to stop timers.
-func StopCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
+func StopCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {

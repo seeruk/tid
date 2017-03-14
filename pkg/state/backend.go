@@ -36,7 +36,8 @@ type Backend interface {
 	Write(bucket string, key string, val []byte) error
 	// Delete a value with a given key from the store.
 	Delete(bucket string, key string) error
-	// ForEach loops over keys in the given bucket. Given buckets can contain different data types
-	// we resort to using byte arrays for values.
-	ForEach(bucket string, fn func(key string, val []byte) error) error
+	// ForEachSingle loops over each key/value pair individually in the given bucket. As buckets can
+	// contain different data types we resort to using byte arrays for values.
+	ForEachSingle(bucket string, fn func(key string, val []byte) error) error
+	// @todo: ForEachBatch? May be more appropriate for some things.
 }

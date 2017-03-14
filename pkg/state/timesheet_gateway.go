@@ -1,4 +1,4 @@
-package tracking
+package state
 
 import (
 	"errors"
@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/SeerUK/tid/proto"
 )
@@ -47,13 +46,13 @@ type TimesheetGateway interface {
 // storeTimesheetGateway is a functional TimesheetGateway.
 type storeTimesheetGateway struct {
 	// An underlying store to access.
-	store state.Store
+	store Store
 	// A SysGateway to lookup system info.
 	sysGateway SysGateway
 }
 
 // NewStoreTimesheetGateway creates a new timesheet gateway.
-func NewStoreTimesheetGateway(store state.Store, sysGateway SysGateway) TimesheetGateway {
+func NewStoreTimesheetGateway(store Store, sysGateway SysGateway) TimesheetGateway {
 	return &storeTimesheetGateway{
 		store:      store,
 		sysGateway: sysGateway,
@@ -144,7 +143,7 @@ func (g *storeTimesheetGateway) FindOrCreateTimesheet(sheetKey string) (types.Ti
 	message := &proto.TrackingTimesheet{}
 
 	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), message)
-	if err != nil && err != state.ErrStoreNilResult {
+	if err != nil && err != ErrStoreNilResult {
 		return sheet, err
 	}
 
@@ -170,11 +169,11 @@ func (g *storeTimesheetGateway) FindTimesheetsInDateRange(start time.Time, end t
 		key := current.Format(types.TimesheetKeyDateFmt)
 
 		sheet, err := g.FindTimesheet(key)
-		if err != nil && err != state.ErrStoreNilResult {
+		if err != nil && err != ErrStoreNilResult {
 			return sheets, err
 		}
 
-		if err == state.ErrStoreNilResult {
+		if err == ErrStoreNilResult {
 			continue
 		}
 

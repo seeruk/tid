@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/state"
-	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
@@ -19,11 +18,11 @@ const ReportDateFmt = "2006-01-02"
 // reportOutputItem represents the formattable source of an item in the report command output.
 type reportOutputItem struct {
 	Entry  types.Entry
-	Status types.Status
+	Status types.TrackingStatus
 }
 
 // ReportCommand creates a command to view a timesheet report.
-func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
+func ReportCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
 	var start time.Time
 	var end time.Time
 	var date time.Time
@@ -202,7 +201,7 @@ func ReportCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetG
 
 // forEachEntry runs the given function on each entry in each timesheet in the given array of
 // timesheets. This uses the database.
-func forEachEntry(gw tracking.TimesheetGateway, ss []types.Timesheet, fn func(types.Entry)) error {
+func forEachEntry(gw state.TimesheetGateway, ss []types.Timesheet, fn func(types.Entry)) error {
 	for _, sheet := range ss {
 		for _, hash := range sheet.Entries {
 			entry, err := gw.FindEntry(hash)
@@ -218,7 +217,7 @@ func forEachEntry(gw tracking.TimesheetGateway, ss []types.Timesheet, fn func(ty
 }
 
 // getTimesheetsByKeys returns all of the timesheets that exist from an array of keys to try.
-func getTimesheetsByKeys(gateway tracking.TimesheetGateway, keys []string) ([]types.Timesheet, error) {
+func getTimesheetsByKeys(gateway state.TimesheetGateway, keys []string) ([]types.Timesheet, error) {
 	sheets := []types.Timesheet{}
 
 	for _, key := range keys {

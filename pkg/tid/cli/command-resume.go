@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // ResumeCommand creates a command to resume timers.
-func ResumeCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
+func ResumeCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
 	var hash string
 
 	configure := func(def *console.Definition) {

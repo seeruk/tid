@@ -2,14 +2,14 @@ package cli
 
 import (
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // StartCommand creates a command to start timers.
-func StartCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
+func StartCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {

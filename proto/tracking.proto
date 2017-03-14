@@ -2,9 +2,15 @@ syntax = "proto3";
 
 package proto;
 
-// TrackingStatus keeps hold of information about the current "state" of tracking, i.e. whether or
-// not a timer is running, and which timer we last modified.
-message SysStatus {
+// SysMigrationsStatus represents the current state of backend migrations.
+message SysMigrationsStatus {
+    // The versions that have been applied.
+    repeated uint64 versions = 1;
+}
+
+// SysTrackingStatus represents the current state of tracking, i.e. whether or not a timer is
+// running, or which timer we last modified.
+message SysTrackingStatus {
     // Whether or not a (any) timer is running.
     bool is_running = 1;
     // The date of the timesheet currently being tracked.

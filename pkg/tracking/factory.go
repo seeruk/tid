@@ -6,14 +6,16 @@ import (
 	"github.com/SeerUK/tid/pkg/state"
 )
 
+// @todo: Make state.Factory for gateways and backend?
+
 // Factory abstracts the creation of tracking-related services.
 type Factory interface {
 	// BuildEntryFacade builds an EntryFacade instance.
 	BuildEntryFacade() *EntryFacade
 	// BuildSysGateway builds a SysGateway instance.
-	BuildSysGateway() SysGateway
+	BuildSysGateway() state.SysGateway
 	// BuildTimesheetGateway builds a TimesheetGateway instance.
-	BuildTimesheetGateway() TimesheetGateway
+	BuildTimesheetGateway() state.TimesheetGateway
 }
 
 // standardFactory provides a standard, simple, functional implementation of the
@@ -22,9 +24,9 @@ type standardFactory struct {
 	// backend keeps the reference to the storage backend to re-use.
 	backend state.Backend
 	// sysGateway keeps the reference to a SysGateway instance to re-use.
-	sysGateway SysGateway
+	sysGateway state.SysGateway
 	// timesheetGateway keeps the reference to a TimesheetGateway to re-use.
-	timesheetGateway TimesheetGateway
+	timesheetGateway state.TimesheetGateway
 }
 
 // NewStandardFactory creates a new Factory instance.
@@ -38,13 +40,13 @@ func (f *standardFactory) BuildEntryFacade() *EntryFacade {
 	return NewEntryFacade(f.BuildSysGateway(), f.BuildTimesheetGateway())
 }
 
-func (f *standardFactory) BuildSysGateway() SysGateway {
+func (f *standardFactory) BuildSysGateway() state.SysGateway {
 	sysStore := f.getStore(f.backend, state.BackendBucketSys)
 
-	return NewStoreSysGateway(sysStore)
+	return state.NewStoreSysGateway(sysStore)
 }
 
-func (f *standardFactory) BuildTimesheetGateway() TimesheetGateway {
+func (f *standardFactory) BuildTimesheetGateway() state.TimesheetGateway {
 	sysGateway := f.BuildSysGateway()
 
 	status, err := sysGateway.FindOrCreateStatus()
@@ -57,7 +59,7 @@ func (f *standardFactory) BuildTimesheetGateway() TimesheetGateway {
 		status.Workspace,
 	))
 
-	return NewStoreTimesheetGateway(tsStore, sysGateway)
+	return state.NewStoreTimesheetGateway(tsStore, sysGateway)
 }
 
 // getStore gets the application data store.

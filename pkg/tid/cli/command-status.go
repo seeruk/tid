@@ -5,7 +5,6 @@ import (
 	"text/template"
 
 	"github.com/SeerUK/tid/pkg/state"
-	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
@@ -15,11 +14,11 @@ import (
 // statusOutput represents the formattable source of the status command output.
 type statusOutput struct {
 	Entry  types.Entry
-	Status types.Status
+	Status types.TrackingStatus
 }
 
 // StatusCommand creates a command to view the status of the current timer.
-func StatusCommand(sysGateway tracking.SysGateway, tsGateway tracking.TimesheetGateway) *console.Command {
+func StatusCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
 	var format string
 	var hash string
 
