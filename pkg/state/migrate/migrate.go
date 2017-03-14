@@ -40,7 +40,18 @@ func Backend(backend state.Backend) error {
 		return migrations[i].Version() < migrations[j].Version()
 	})
 
-	for _, migration := range migrations {
+	currentVersion := status.CurrentVersion()
+	missingVersions := migrations
+
+	if currentVersion != 0 {
+		index := indexOf(len(migrations), func(i int) bool {
+			return migrations[i].Version() == currentVersion
+		})
+
+		missingVersions = migrations[index+1:]
+	}
+
+	for _, migration := range missingVersions {
 		err := migration.Migrate(backend)
 		if err != nil {
 			return err
@@ -49,5 +60,18 @@ func Backend(backend state.Backend) error {
 		status.Versions = append(status.Versions, migration.Version())
 	}
 
+	store.Write(state.KeyMigrations, status.ToMessage())
+
 	return nil
+}
+
+// indexOf uses the callback to find the index for some value.
+func indexOf(limit int, predicate func(i int) bool) int {
+	for i := 0; i < limit; i++ {
+		if predicate(i) {
+			return i
+		}
+	}
+
+	return -1
 }

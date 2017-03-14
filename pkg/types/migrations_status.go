@@ -35,8 +35,8 @@ func (m *MigrationsStatus) ToMessage() *proto.SysMigrationsStatus {
 	return &message
 }
 
-// LatestVersion gets the latest applied migration version.
-func (m *MigrationsStatus) LatestVersion() uint {
+// CurrentVersion gets the latest applied migration version.
+func (m *MigrationsStatus) CurrentVersion() uint {
 	versions := make([]uint, len(m.Versions))
 
 	copy(versions, m.Versions)
