@@ -20,11 +20,6 @@ _cgo_export.*
 _testmain.go
 
 *.exe
+*.out
 *.test
 *.prof
-
-/cmd/tid/*
-!/cmd/tid/main.go
-
-/cmd/tiddate/*
-!/cmd/tiddate/main.go

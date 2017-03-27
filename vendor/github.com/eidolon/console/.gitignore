@@ -20,11 +20,11 @@ _cgo_export.*
 _testmain.go
 
 *.exe
+*.out
 *.test
 *.prof
 
-/cmd/tid/*
-!/cmd/tid/main.go
+_examples/*
+!_examples/*.go
 
-/cmd/tiddate/*
-!/cmd/tiddate/main.go
+coverage.html
