@@ -3,7 +3,7 @@ import:
 - package: github.com/boltdb/bolt
   version: ^1.3.0
 - package: github.com/eidolon/console
-  version: ^0.1.0-alpha.3
+  version: development
   subpackages:
   - parameters
 - package: github.com/golang/protobuf
