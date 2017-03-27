@@ -1,0 +1,25 @@
+hash: 4dc3b540a8ff39dc8e1eec57a789405cdf0f0e2ca046fafc444e3f77a16acc28
+updated: 2017-03-27T20:08:36.324281812+01:00
+imports:
+- name: github.com/boltdb/bolt
+  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/eidolon/console
+  version: 3773a17b59323e57a0d82a6f51d1eeb6be541cba
+  subpackages:
+  - parameters
+  - specification
+- name: github.com/eidolon/wordwrap
+  version: e0f54129b8bb1d473949f54546a365468435aeaf
+- name: github.com/golang/protobuf
+  version: c9c7427a2a70d2eb3bafa0ab2dc163e45f143317
+  subpackages:
+  - proto
+- name: github.com/mattn/go-runewidth
+  version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
+- name: github.com/olekukonko/tablewriter
+  version: febf2d34b54a69ce7530036c7503b1c9fbfdf0bb
+- name: golang.org/x/sys
+  version: afadfcc7779c1f4db0f6f6438afcb108d9c9c7cd
+  subpackages:
+  - unix
+testImports: []
