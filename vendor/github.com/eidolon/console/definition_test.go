@@ -26,9 +26,20 @@ func TestDefinition(t *testing.T) {
 			var s3 string
 
 			definition := console.NewDefinition()
-			definition.AddArgument(parameters.NewStringValue(&s1), "S1", "")
-			definition.AddArgument(parameters.NewStringValue(&s2), "S2", "")
-			definition.AddArgument(parameters.NewStringValue(&s3), "S3", "")
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "S1",
+			})
+
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s2),
+				Spec:  "S2",
+			})
+
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s3),
+				Spec:  "S3",
+			})
 
 			arguments := definition.Arguments()
 
@@ -51,9 +62,20 @@ func TestDefinition(t *testing.T) {
 			var s3 string
 
 			definition := console.NewDefinition()
-			definition.AddOption(parameters.NewStringValue(&s1), "--s1", "")
-			definition.AddOption(parameters.NewStringValue(&s2), "--s2", "")
-			definition.AddOption(parameters.NewStringValue(&s3), "--s3", "")
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "--s1",
+			})
+
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s2),
+				Spec:  "--s2",
+			})
+
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s3),
+				Spec:  "--s3",
+			})
 
 			options := definition.Options()
 
@@ -71,7 +93,10 @@ func TestDefinition(t *testing.T) {
 			var s1 string
 
 			definition := console.NewDefinition()
-			definition.AddArgument(parameters.NewStringValue(&s1), "!!! S1", "")
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "!!! S1",
+			})
 		})
 
 		t.Run("should error if an argument with the same name exists", func(t *testing.T) {
@@ -84,8 +109,15 @@ func TestDefinition(t *testing.T) {
 			var s2 string
 
 			definition := console.NewDefinition()
-			definition.AddArgument(parameters.NewStringValue(&s1), "S1", "")
-			definition.AddArgument(parameters.NewStringValue(&s2), "S1", "")
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "S1",
+			})
+
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s2),
+				Spec:  "S1",
+			})
 		})
 
 		t.Run("should add an argument", func(t *testing.T) {
@@ -94,7 +126,11 @@ func TestDefinition(t *testing.T) {
 			definition := console.NewDefinition()
 			assert.Equal(t, 0, len(definition.Arguments()))
 
-			definition.AddArgument(parameters.NewStringValue(&s1), "S1", "")
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "S1",
+			})
+
 			assert.Equal(t, 1, len(definition.Arguments()))
 		})
 	})
@@ -109,7 +145,10 @@ func TestDefinition(t *testing.T) {
 			var s1 string
 
 			definition := console.NewDefinition()
-			definition.AddOption(parameters.NewStringValue(&s1), "!!! S1", "")
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "!!! S1",
+			})
 		})
 
 		t.Run("should error if an option with the same name exists", func(t *testing.T) {
@@ -122,8 +161,15 @@ func TestDefinition(t *testing.T) {
 			var s2 string
 
 			definition := console.NewDefinition()
-			definition.AddOption(parameters.NewStringValue(&s1), "--s1", "")
-			definition.AddOption(parameters.NewStringValue(&s2), "--s1", "")
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "--s1",
+			})
+
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s2),
+				Spec:  "--s1",
+			})
 		})
 
 		t.Run("should add an option", func(t *testing.T) {
@@ -132,7 +178,11 @@ func TestDefinition(t *testing.T) {
 			definition := console.NewDefinition()
 			assert.Equal(t, 0, len(definition.Options()))
 
-			definition.AddOption(parameters.NewStringValue(&s1), "--s1", "")
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "--s1",
+			})
+
 			assert.Equal(t, 1, len(definition.Options()))
 		})
 	})

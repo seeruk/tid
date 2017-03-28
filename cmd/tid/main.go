@@ -28,7 +28,7 @@ func main() {
 	factory := tracking.NewStandardFactory(backend)
 	kernel := cli.NewTidKernel(backend, factory)
 
-	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:]))
+	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:], os.Environ()))
 }
 
 // getBoltDB gets a Bolt DB instance.

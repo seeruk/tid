@@ -30,6 +30,9 @@ func RegisterMigration(migration Migration) {
 func Backend(backend state.Backend) error {
 	message := proto.SysMigrationsStatus{}
 
+	// This may not always exist, and will cause a panic if it doesn't otherwise.
+	backend.CreateBucketIfNotExists(state.BackendBucketSys)
+
 	store := state.NewBackendStore(backend, state.BackendBucketSys)
 	store.Read(state.KeyMigrations, &message)
 

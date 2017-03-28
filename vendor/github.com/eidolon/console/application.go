@@ -46,7 +46,7 @@ func NewApplication(name string, version string) *Application {
 }
 
 // Run runs the configured application, with the given input.
-func (a *Application) Run(params []string) int {
+func (a *Application) Run(params []string, env []string) int {
 	// Create input and output.
 	input := ParseInput(params)
 	output := NewOutput(a.Writer)
@@ -75,7 +75,7 @@ func (a *Application) Run(params []string) int {
 		return 100
 	}
 
-	err := MapInput(definition, input)
+	err := MapInput(definition, input, env)
 	if err != nil {
 		output.Println(err)
 		output.Printf("Try '%s --help' for more information.\n", a.UsageName)
@@ -158,7 +158,12 @@ func (a *Application) hasHelpOption() bool {
 // preConfigure configures pre-defined parameters. This is solely defined for help output.
 func (a *Application) preConfigure(definition *Definition) {
 	var help bool
-	definition.AddOption(parameters.NewBoolValue(&help), "-h, --help", "Display contextual help?")
+
+	definition.AddOption(OptionDefinition{
+		Value: parameters.NewBoolValue(&help),
+		Spec:  "-h, --help",
+		Desc:  "Display contextual help?",
+	})
 }
 
 // showHelp shows contextual help.

@@ -23,17 +23,17 @@ func StatusCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway
 	var hash string
 
 	configure := func(def *console.Definition) {
-		def.AddArgument(
-			parameters.NewStringValue(&hash),
-			"[HASH]",
-			"A short or long hash for an entry.",
-		)
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewStringValue(&hash),
+			Spec:  "[HASH]",
+			Desc:  "A short or long hash for an entry.",
+		})
 
-		def.AddOption(
-			parameters.NewStringValue(&format),
-			"-f, --format=FORMAT",
-			"Output formatting string. Uses Go templates.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewStringValue(&format),
+			Spec:  "-f, --format=FORMAT",
+			Desc:  "Output formatting string. Uses Go templates.",
+		})
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {

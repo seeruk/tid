@@ -32,8 +32,15 @@ func TestApplication(t *testing.T) {
 		return &console.Command{
 			Name: "test",
 			Configure: func(definition *console.Definition) {
-				definition.AddArgument(parameters.NewStringValue(a), "STRINGARG", "")
-				definition.AddOption(parameters.NewIntValue(b), "--int-opt=VALUE", "")
+				definition.AddArgument(console.ArgumentDefinition{
+					Value: parameters.NewStringValue(a),
+					Spec:  "STRINGARG",
+				})
+
+				definition.AddOption(console.OptionDefinition{
+					Value: parameters.NewIntValue(b),
+					Spec:  "--int-opt=VALUE",
+				})
 			},
 			Execute: func(input *console.Input, output *console.Output) error {
 				output.Printf("STRINGARG = %s", *a)
@@ -47,7 +54,7 @@ func TestApplication(t *testing.T) {
 		t.Run("should return exit code 2 if no command was asked for", func(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
-			code := application.Run([]string{})
+			code := application.Run([]string{}, []string{})
 
 			assert.Equal(t, 100, code)
 		})
@@ -55,7 +62,7 @@ func TestApplication(t *testing.T) {
 		t.Run("should return exit code 2 if no command was found", func(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
-			code := application.Run([]string{"foo"})
+			code := application.Run([]string{"foo"}, []string{})
 
 			assert.Equal(t, 100, code)
 		})
@@ -63,7 +70,7 @@ func TestApplication(t *testing.T) {
 		t.Run("should return exit code 100 if the help flag is set", func(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
-			code := application.Run([]string{"--help"})
+			code := application.Run([]string{"--help"}, []string{})
 
 			assert.Equal(t, 100, code)
 		})
@@ -71,7 +78,7 @@ func TestApplication(t *testing.T) {
 		t.Run("should show application help if the help flag is set", func(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
-			application.Run([]string{"--help"})
+			application.Run([]string{"--help"}, []string{})
 
 			output := writer.String()
 			containsUsage := strings.Contains(output, "USAGE:")
@@ -89,7 +96,7 @@ func TestApplication(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
 			application.AddCommand(createTestCommand(&a, &b))
-			application.Run([]string{"test", "--help"})
+			application.Run([]string{"test", "--help"}, []string{})
 
 			output := writer.String()
 			containsUsage := strings.Contains(output, "USAGE:")
@@ -108,7 +115,7 @@ func TestApplication(t *testing.T) {
 			application := createApplication(&writer)
 			application.AddCommand(createTestCommand(&a, &b))
 
-			code := application.Run([]string{"test", "aval", "--int-opt=384"})
+			code := application.Run([]string{"test", "aval", "--int-opt=384"}, []string{})
 
 			assert.Equal(t, 0, code)
 		})
@@ -121,7 +128,7 @@ func TestApplication(t *testing.T) {
 			application := createApplication(&writer)
 			application.AddCommand(createTestCommand(&a, &b))
 
-			code := application.Run([]string{"test", "aval", "--int-opt=hello"})
+			code := application.Run([]string{"test", "aval", "--int-opt=hello"}, []string{})
 
 			assert.Equal(t, 101, code)
 		})
@@ -136,7 +143,7 @@ func TestApplication(t *testing.T) {
 				},
 			})
 
-			code := application.Run([]string{"test", "aval", "--int-opt=hello"})
+			code := application.Run([]string{"test", "aval", "--int-opt=hello"}, []string{})
 
 			assert.Equal(t, 102, code)
 		})
@@ -149,11 +156,14 @@ func TestApplication(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
 			application.Configure = func(definition *console.Definition) {
-				definition.AddOption(parameters.NewStringValue(&foo), "--foo=FOO", "")
+				definition.AddOption(console.OptionDefinition{
+					Value: parameters.NewStringValue(&foo),
+					Spec:  "--foo=FOO",
+				})
 			}
 
 			application.AddCommand(createTestCommand(&a, &b))
-			application.Run([]string{"test", "aval", "--foo=bar"})
+			application.Run([]string{"test", "aval", "--foo=bar"}, []string{})
 
 			assert.Equal(t, "bar", foo)
 		})
@@ -175,7 +185,7 @@ func TestApplication(t *testing.T) {
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
 			application.AddCommand(&command)
-			application.Run([]string{"command", "subcommand"})
+			application.Run([]string{"command", "subcommand"}, []string{})
 
 			assert.True(t, strings.Contains(writer.String(), message), "Expected subcommand to run")
 		})

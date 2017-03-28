@@ -52,7 +52,11 @@ func TestDescribeApplication(t *testing.T) {
 
 		application := console.NewApplication("eidolon/console", "1.2.3+testing")
 		application.Configure = func(definition *console.Definition) {
-			definition.AddOption(parameters.NewStringValue(&s1), "--s1", "S1 option for testing.")
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "--s1",
+				Desc:  "S1 option for testing.",
+			})
 		}
 
 		result := console.DescribeApplication(application)

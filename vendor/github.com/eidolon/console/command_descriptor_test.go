@@ -69,8 +69,15 @@ func TestDescribeCommand(t *testing.T) {
 		command := console.Command{
 			Name: "test-command-name",
 			Configure: func(definition *console.Definition) {
-				definition.AddArgument(parameters.NewStringValue(&s1), "STRING_ARG_S1", "")
-				definition.AddArgument(parameters.NewStringValue(&s2), "STRING_ARG_S2", "")
+				definition.AddArgument(console.ArgumentDefinition{
+					Value: parameters.NewStringValue(&s1),
+					Spec:  "STRING_ARG_S1",
+				})
+
+				definition.AddArgument(console.ArgumentDefinition{
+					Value: parameters.NewStringValue(&s2),
+					Spec:  "STRING_ARG_S2",
+				})
 			},
 		}
 
@@ -88,8 +95,15 @@ func TestDescribeCommand(t *testing.T) {
 		command := console.Command{
 			Name: "test-command-name",
 			Configure: func(definition *console.Definition) {
-				definition.AddArgument(parameters.NewStringValue(&s1), "[STRING_ARG_S1]", "")
-				definition.AddArgument(parameters.NewStringValue(&s2), "[STRING_ARG_S2]", "")
+				definition.AddArgument(console.ArgumentDefinition{
+					Value: parameters.NewStringValue(&s1),
+					Spec:  "[STRING_ARG_S1]",
+				})
+
+				definition.AddArgument(console.ArgumentDefinition{
+					Value: parameters.NewStringValue(&s2),
+					Spec:  "[STRING_ARG_S2]",
+				})
 			},
 		}
 
@@ -105,13 +119,19 @@ func TestDescribeCommand(t *testing.T) {
 
 		application := console.NewApplication("eidolon/console", "1.2.3+testing")
 		application.Configure = func(definition *console.Definition) {
-			definition.AddOption(parameters.NewStringValue(&s1), "--s1=VALUE", "")
+			definition.AddOption(console.OptionDefinition{
+				Value: parameters.NewStringValue(&s1),
+				Spec:  "--s1=VALUE",
+			})
 		}
 
 		command := console.Command{
 			Name: "test-command-name",
 			Configure: func(definition *console.Definition) {
-				definition.AddOption(parameters.NewStringValue(&s2), "--s2=VALUE", "")
+				definition.AddOption(console.OptionDefinition{
+					Value: parameters.NewStringValue(&s2),
+					Spec:  "--s2=VALUE",
+				})
 			},
 		}
 

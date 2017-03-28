@@ -15,23 +15,23 @@ func CreateCommand(factory tracking.Factory) *console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
-		def.AddArgument(
-			parameters.NewDateValue(&started),
-			"STARTED",
-			"When did you start working?",
-		)
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewDateValue(&started),
+			Spec:  "STARTED",
+			Desc:  "When did you start working?",
+		})
 
-		def.AddArgument(
-			parameters.NewDurationValue(&duration),
-			"DURATION",
-			"How long did you spend on what you want to add?",
-		)
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewDurationValue(&duration),
+			Spec:  "DURATION",
+			Desc:  "How long did you spend on what you want to add?",
+		})
 
-		def.AddArgument(
-			parameters.NewStringValue(&note),
-			"NOTE",
-			"What were you working on?",
-		)
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewStringValue(&note),
+			Spec:  "NOTE",
+			Desc:  "What were you working on?",
+		})
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {

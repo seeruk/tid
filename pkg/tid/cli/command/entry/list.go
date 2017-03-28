@@ -1,7 +1,7 @@
 package entry
 
 import (
-	"html/template"
+	"text/template"
 	"time"
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
@@ -21,29 +21,29 @@ func ListCommand(factory tracking.Factory) *console.Command {
 	var start time.Time
 
 	configure := func(def *console.Definition) {
-		def.AddOption(
-			parameters.NewDateValue(&date),
-			"-d, --date=DATE",
-			"The exact date of a timesheet to show a report for.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&date),
+			Spec:  "-d, --date=DATE",
+			Desc:  "The exact date of a timesheet to show a report for.",
+		})
 
-		def.AddOption(
-			parameters.NewDateValue(&end),
-			"-e, --end=END",
-			"The end date of the report.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&end),
+			Spec:  "-e, --end=END",
+			Desc:  "The end date of the report.",
+		})
 
-		def.AddOption(
-			parameters.NewStringValue(&format),
-			"-f, --format=FORMAT",
-			"Output formatting string. Uses Go templates.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewStringValue(&format),
+			Spec:  "-f, --format=FORMAT",
+			Desc:  "Output formatting string. Uses Go templates.",
+		})
 
-		def.AddOption(
-			parameters.NewDateValue(&start),
-			"-s, --start=START",
-			"The start date of the report.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&start),
+			Spec:  "-s, --start=START",
+			Desc:  "The start date of the report.",
+		})
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {

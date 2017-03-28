@@ -30,35 +30,35 @@ func ReportCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway
 	var noSummary bool
 
 	configure := func(def *console.Definition) {
-		def.AddOption(
-			parameters.NewDateValue(&start),
-			"-s, --start=START",
-			"The start date of the report.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&start),
+			Spec:  "-s, --start=START",
+			Desc:  "The start date of the report.",
+		})
 
-		def.AddOption(
-			parameters.NewDateValue(&end),
-			"-e, --end=END",
-			"The end date of the report.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&end),
+			Spec:  "-e, --end=END",
+			Desc:  "The end date of the report.",
+		})
 
-		def.AddOption(
-			parameters.NewDateValue(&date),
-			"-d, --date=DATE",
-			"The exact date of a timesheet to show a report for.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&date),
+			Spec:  "-d, --date=DATE",
+			Desc:  "The exact date of a timesheet to show a report for.",
+		})
 
-		def.AddOption(
-			parameters.NewStringValue(&format),
-			"-f, --format=FORMAT",
-			"Output formatting string. Uses Go templates.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewStringValue(&format),
+			Spec:  "-f, --format=FORMAT",
+			Desc:  "Output formatting string. Uses Go templates.",
+		})
 
-		def.AddOption(
-			parameters.NewBoolValue(&noSummary),
-			"--no-summary",
-			"Hide the summary?",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewBoolValue(&noSummary),
+			Spec:  "--no-summary",
+			Desc:  "Hide the summary?",
+		})
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {

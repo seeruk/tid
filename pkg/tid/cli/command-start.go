@@ -13,11 +13,11 @@ func StartCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway)
 	var note string
 
 	configure := func(def *console.Definition) {
-		def.AddArgument(
-			parameters.NewStringValue(&note),
-			"NOTE",
-			"What are you working on?",
-		)
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewStringValue(&note),
+			Spec:  "NOTE",
+			Desc:  "What are you working on?",
+		})
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {

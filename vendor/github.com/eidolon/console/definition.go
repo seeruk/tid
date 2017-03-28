@@ -27,6 +27,28 @@ func NewDefinition() *Definition {
 	return &definition
 }
 
+// ArgumentDefinition is a struct that represents the entire configuration of a CLI argument.
+type ArgumentDefinition struct {
+	// The value to reference.
+	Value parameters.Value
+	// The specification of the argument.
+	Spec string
+	// The description of the argument.
+	Desc string
+}
+
+// OptionDefinition is a struct that represents the entire configuration of a CLI option.
+type OptionDefinition struct {
+	// The value to reference.
+	Value parameters.Value
+	// The specification of the option.
+	Spec string
+	// The description of the option.
+	Desc string
+	// The name of an environment variable to read an option value from.
+	EnvVar string
+}
+
 // Arguments gets all of the arguments in this Definition.
 func (d *Definition) Arguments() []parameters.Argument {
 	arguments := []parameters.Argument{}
@@ -45,15 +67,15 @@ func (d *Definition) Options() []parameters.Option {
 
 // AddArgument creates a parameters.Argument and adds it to the Definition. Duplicate argument names
 // will result in an error.
-func (d *Definition) AddArgument(value parameters.Value, spec string, desc string) {
-	arg, err := specification.ParseArgumentSpecification(spec)
+func (d *Definition) AddArgument(definition ArgumentDefinition) {
+	arg, err := specification.ParseArgumentSpecification(definition.Spec)
 
 	if err != nil {
 		panic(fmt.Errorf("Error parsing argument specification: '%s'.", err.Error()))
 	}
 
-	arg.Value = value
-	arg.Description = desc
+	arg.Description = definition.Desc
+	arg.Value = definition.Value
 
 	if _, ok := d.arguments[arg.Name]; ok {
 		panic(fmt.Errorf("Cannot redeclare argument with name '%s'.", arg.Name))
@@ -65,15 +87,16 @@ func (d *Definition) AddArgument(value parameters.Value, spec string, desc strin
 
 // AddOption creates a parameters.Option and adds it to the Definition. Duplicate option names will
 // result in an error.
-func (d *Definition) AddOption(value parameters.Value, spec string, desc string) {
-	opt, err := specification.ParseOptionSpecification(spec)
+func (d *Definition) AddOption(definition OptionDefinition) {
+	opt, err := specification.ParseOptionSpecification(definition.Spec)
 
 	if err != nil {
 		panic(fmt.Errorf("Error parsing option specification: '%s'.", err.Error()))
 	}
 
-	opt.Value = value
-	opt.Description = desc
+	opt.Description = definition.Desc
+	opt.EnvVar = definition.EnvVar
+	opt.Value = definition.Value
 
 	for _, name := range opt.Names {
 		if _, ok := d.options[name]; ok {

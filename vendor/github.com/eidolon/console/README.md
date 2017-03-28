@@ -13,21 +13,21 @@ has great support for making these types of applications built into the standard
 flags package, but it doesn't really facilitate the development of complex command line 
 applications.
 
-This library is designed to help make more complex, type-safe console applications, in a consistent,
-simple, and easy to use way. It's designed to be lightweight and simple, but powerful and 
-configurable. Another goal of this library is to make it so that commands are easily testable.
+This library is designed to help make more complex, safe console applications, in a consistent,
+simple, and easy to use way. It's designed to be lightweight, but powerful and configurable. Another 
+goal of this library is to make it so that commands are easily testable.
 
 ## Todo List
 
-Consider this library pre-v1.0. In other words, there may be backwards compatibility breaking 
-changes. If this bothers you, use vendoring.
+There are still some things I'd like to get done with this library, as is reflected by the pre-v1.0
+state. Here's a priority ordered todo list:
 
-* Better usage documentation.
-* Better overall application testing. Although all of the code is covered, there are still a few 
-more tests that could be written.
-* More helpful `Input` type (but one that still maintains testability).
-* Command testing helpers. Currently commands can be tested, however the tests can be a little 
-verbose. I need to plan around how I can make command tests a little easier to write.
+* Documentation.
+* Mutually exclusive options.
+* More complete set of tests.
+* More helpful `Input` type.
+* Test helpers.
+* Multiple environment variables per-option.
 
 ## License
 

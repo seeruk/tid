@@ -23,22 +23,23 @@ func main() {
                                                    #
 `
 
-	application.AddCommand(console.Command{
+	application.AddCommand(&console.Command{
 		Name:        "greet:example",
 		Description: "Greet's the given user, or the world.",
 		Help:        "You don't have to specify a name.",
 		Configure: func(definition *console.Definition) {
-			definition.AddOption(
-				parameters.NewStringValue(&name),
-				"-n, --name=NAME",
-				"Provide a name for the greeting.",
-			)
+			definition.AddOption(console.OptionDefinition{
+				Value:  parameters.NewStringValue(&name),
+				Spec:   "-n, --name=NAME",
+				Desc:   "Provide a name for the greeting.",
+				EnvVar: "EXAMPLE_NAME",
+			})
 
-			definition.AddArgument(
-				parameters.NewIntValue(&favNum),
-				"FAVOURITE_NUMBER",
-				"Provide your favourite number.",
-			)
+			definition.AddArgument(console.ArgumentDefinition{
+				Value: parameters.NewIntValue(&favNum),
+				Spec:  "FAVOURITE_NUMBER",
+				Desc:  "Provide your favourite number.",
+			})
 		},
 		Execute: func(input *console.Input, output *console.Output) error {
 			output.Printf("Hello, %s!\n", name)
@@ -47,7 +48,7 @@ func main() {
 		},
 	})
 
-	code := application.Run(os.Args[1:])
+	code := application.Run(os.Args[1:], os.Environ())
 
 	os.Exit(code)
 }

@@ -16,6 +16,8 @@ type Option struct {
 	Names []string
 	// The description of this option.
 	Description string
+	// The name of an environment variable to read an option value from.
+	EnvVar string
 	// The value that this option references.
 	Value Value
 	// Does this option take a value? Is it optional, or required?

@@ -2,17 +2,22 @@ package console
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/eidolon/console/parameters"
 )
 
 // MapInput maps the values of input to their corresponding reference values.
-func MapInput(definition *Definition, input *Input) error {
+func MapInput(definition *Definition, input *Input, env []string) error {
 	if err := mapArguments(definition.Arguments(), input); err != nil {
 		return err
 	}
 
 	if err := mapOptions(definition.Options(), input); err != nil {
+		return err
+	}
+
+	if err := mapEnv(definition.Options(), env); err != nil {
 		return err
 	}
 
@@ -55,23 +60,66 @@ func mapOptions(opts []parameters.Option, input *Input) error {
 			continue
 		}
 
-		name := inputOpt.Name
-		value := inputOpt.Value
+		err := setOptionValue(opt, inputOpt.Name, inputOpt.Value)
+		if err != nil {
+			return err
+		}
+	}
 
-		if opt.ValueMode == parameters.OptionValueRequired && value == "" {
-			return fmt.Errorf("Option '%s' requires a value.", name)
+	return nil
+}
+
+// mapEnv maps the values of environment variables into their corresponding option references.
+func mapEnv(opts []parameters.Option, env []string) error {
+	envMap := make(map[string]string)
+
+	// Split array of option key and values into map.
+	for _, ev := range env {
+		pair := strings.Split(ev, "=")
+
+		envMap[pair[0]] = pair[1]
+	}
+
+	for _, opt := range opts {
+		name := ""
+		value := ""
+
+		for ek, ev := range envMap {
+			if ek == opt.EnvVar {
+				name = ek
+				value = ev
+			}
 		}
 
-		isEmptyOptional := opt.ValueMode == parameters.OptionValueOptional && value == ""
+		if name == "" {
+			continue
+		}
 
-		// If we have a flag option, and we received no value, then we should use the preset flag
-		// value for if the flag is present.
-		if ov, ok := opt.Value.(parameters.FlagValue); value == "" && ok {
-			ov.Set(ov.FlagValue())
-		} else if !isEmptyOptional {
-			if err := opt.Value.Set(value); err != nil {
-				return fmt.Errorf("Invalid value '%s' for option '%s'. Error: %s.", value, name, err)
-			}
+		err := setOptionValue(opt, name, value)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// setOptionValue sets the value of an option, and handles potential error cases.
+func setOptionValue(opt parameters.Option, name string, value string) error {
+	if opt.ValueMode == parameters.OptionValueRequired && value == "" {
+		return fmt.Errorf("Option '%s' requires a value.", name)
+	}
+
+	isEmptyOptional := opt.ValueMode == parameters.OptionValueOptional && value == ""
+
+	// If we have a flag option, and we received no value, then we should use the preset flag
+	// value for if the flag is present.
+	if ov, ok := opt.Value.(parameters.FlagValue); value == "" && ok {
+		ov.Set(ov.FlagValue())
+	} else if !isEmptyOptional {
+		err := opt.Value.Set(value)
+		if err != nil {
+			return fmt.Errorf("Invalid value '%s' for option '%s'. Error: %s.", value, name, err)
 		}
 	}
 

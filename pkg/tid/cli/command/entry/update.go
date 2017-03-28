@@ -18,29 +18,29 @@ func UpdateCommand(factory tracking.Factory) *console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
-		def.AddArgument(
-			parameters.NewStringValue(&hash),
-			"HASH",
-			"A short or long hash for an entry.",
-		)
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewStringValue(&hash),
+			Spec:  "HASH",
+			Desc:  "A short or long hash for an entry.",
+		})
 
-		def.AddOption(
-			parameters.NewDurationValue(&duration),
-			"-d, --duration=DURATION",
-			"A new duration to set on the entry. Mutually exclusive with offset.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDurationValue(&duration),
+			Spec:  "-d, --duration=DURATION",
+			Desc:  "A new duration to set on the entry. Mutually exclusive with offset.",
+		})
 
-		def.AddOption(
-			parameters.NewStringValue(&note),
-			"-n, --note=NOTE",
-			"A new note to set on the entry.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewStringValue(&note),
+			Spec:  "-n, --note=NOTE",
+			Desc:  "A new note to set on the entry.",
+		})
 
-		def.AddOption(
-			parameters.NewDurationValue(&offset),
-			"-o, --offset=OFFSET",
-			"An offset to modify the duration by (can be negative). Mutually exclusive with duration.",
-		)
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDurationValue(&offset),
+			Spec:  "-o, --offset=OFFSET",
+			Desc:  "An offset to modify the duration by (can be negative). Mutually exclusive with duration.",
+		})
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
