@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/SeerUK/tid/pkg/tid/cli/command"
 	"github.com/SeerUK/tid/pkg/tid/cli/command/entry"
 	"github.com/eidolon/console"
 )
@@ -49,9 +50,10 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 		//
 		// }),
 
+		command.ReportCommand(kernel.TrackingFactory),
+
 		// Top-level tracking commands
 		// @todo: These should come from the `command` package.
-		ReportCommand(trackingSysGateway, trackingTimesheetGateway),
 		ResumeCommand(trackingSysGateway, trackingTimesheetGateway),
 		StartCommand(trackingSysGateway, trackingTimesheetGateway),
 		StatusCommand(trackingSysGateway, trackingTimesheetGateway),

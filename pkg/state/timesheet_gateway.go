@@ -86,6 +86,10 @@ func (g *storeTimesheetGateway) FindEntry(hash string) (types.Entry, error) {
 	entry.FromMessage(message)
 	entry.IsRunning = status.IsRunning && status.Entry == entry.Hash
 
+	if entry.IsRunning {
+		entry.UpdateDuration()
+	}
+
 	return entry, nil
 }
 
