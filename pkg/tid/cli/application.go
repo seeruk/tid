@@ -51,12 +51,12 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 		// }),
 
 		command.ReportCommand(kernel.TrackingFactory),
+		command.StatusCommand(kernel.TrackingFactory),
 
 		// Top-level tracking commands
 		// @todo: These should come from the `command` package.
 		ResumeCommand(trackingSysGateway, trackingTimesheetGateway),
 		StartCommand(trackingSysGateway, trackingTimesheetGateway),
-		StatusCommand(trackingSysGateway, trackingTimesheetGateway),
 		StopCommand(trackingSysGateway, trackingTimesheetGateway),
 	}
 }
