@@ -10,17 +10,11 @@ import (
 
 // CreateCommand creates a command to add timesheet entries.
 func CreateCommand(factory tracking.Factory) *console.Command {
-	var started time.Time
 	var duration time.Duration
 	var note string
+	var started time.Time
 
 	configure := func(def *console.Definition) {
-		def.AddArgument(console.ArgumentDefinition{
-			Value: parameters.NewDateValue(&started),
-			Spec:  "STARTED",
-			Desc:  "When did you start working?",
-		})
-
 		def.AddArgument(console.ArgumentDefinition{
 			Value: parameters.NewDurationValue(&duration),
 			Spec:  "DURATION",
@@ -31,6 +25,12 @@ func CreateCommand(factory tracking.Factory) *console.Command {
 			Value: parameters.NewStringValue(&note),
 			Spec:  "NOTE",
 			Desc:  "What were you working on?",
+		})
+
+		def.AddOption(console.OptionDefinition{
+			Value: parameters.NewDateValue(&started),
+			Spec:  "-d, --date=DATE",
+			Desc:  "When did you start working?",
 		})
 	}
 

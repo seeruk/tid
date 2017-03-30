@@ -117,7 +117,7 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "report",
-		Description: "Display a tabular timesheet report.",
+		Description: "Display a timesheet report.",
 		Configure:   configure,
 		Execute:     execute,
 	}

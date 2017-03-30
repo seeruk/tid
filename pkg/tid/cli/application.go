@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/SeerUK/tid/pkg/tid/cli/command"
 	"github.com/SeerUK/tid/pkg/tid/cli/command/entry"
+	"github.com/SeerUK/tid/pkg/tid/cli/command/timesheet"
 	"github.com/eidolon/console"
 )
 
@@ -36,9 +37,7 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 
 		// Timesheet commands
 		// @todo: Write these
-		// timesheet.RootCommand().AddCommands([]*console.Command{
-		//
-		// }),
+		timesheet.RootCommand().AddCommands([]*console.Command{}),
 
 		// Workspace commands
 		// @todo: Write these
@@ -51,5 +50,7 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 		command.StartCommand(kernel.TrackingFactory),
 		command.StatusCommand(kernel.TrackingFactory),
 		command.StopCommand(kernel.TrackingFactory),
+
+		// @todo: Alias `entry create` and `entry update` as `add` and `edit`.
 	}
 }
