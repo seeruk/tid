@@ -25,10 +25,6 @@ func CreateApplication(kernel *TidKernel) *console.Application {
 
 // buildCommands instantiates all of the commands registered in the application.
 func buildCommands(kernel *TidKernel) []*console.Command {
-	// @todo: Shouldn't need these when refactoring is complete, we pass in the factory.
-	trackingSysGateway := kernel.TrackingFactory.BuildSysGateway()
-	trackingTimesheetGateway := kernel.TrackingFactory.BuildTimesheetGateway()
-
 	return []*console.Command{
 		// Entry commands
 		entry.RootCommand().AddCommands([]*console.Command{
@@ -52,11 +48,8 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 
 		command.ReportCommand(kernel.TrackingFactory),
 		command.ResumeCommand(kernel.TrackingFactory),
+		command.StartCommand(kernel.TrackingFactory),
 		command.StatusCommand(kernel.TrackingFactory),
-
-		// Top-level tracking commands
-		// @todo: These should come from the `command` package.
-		StartCommand(trackingSysGateway, trackingTimesheetGateway),
-		StopCommand(trackingSysGateway, trackingTimesheetGateway),
+		command.StopCommand(kernel.TrackingFactory),
 	}
 }
