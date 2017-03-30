@@ -69,7 +69,7 @@ func StatusCommand(factory tracking.Factory) *console.Command {
 			return nil
 		}
 
-		display.WriteTableOfEntries([]types.Entry{entry}, output.Writer)
+		display.WriteEntriesTable([]types.Entry{entry}, output.Writer)
 
 		return nil
 	}

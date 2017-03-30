@@ -110,7 +110,7 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 			return nil
 		}
 
-		display.WriteTableOfEntries(entries, output.Writer)
+		display.WriteEntriesTable(entries, output.Writer)
 
 		return nil
 	}
