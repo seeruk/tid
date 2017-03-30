@@ -24,13 +24,13 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&date),
 			Spec:  "-d, --date=DATE",
-			Desc:  "The exact date of a timesheet to show a report for.",
+			Desc:  "The exact date of a timesheet to show a listing for.",
 		})
 
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&end),
 			Spec:  "-e, --end=END",
-			Desc:  "The end date of the report.",
+			Desc:  "The end date of the listing. (Default: today)",
 		})
 
 		def.AddOption(console.OptionDefinition{
@@ -42,7 +42,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&start),
 			Spec:  "-s, --start=START",
-			Desc:  "The start date of the report.",
+			Desc:  "The start date of the listing. (Default: today)",
 		})
 	}
 

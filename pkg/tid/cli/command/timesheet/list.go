@@ -4,8 +4,8 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/SeerUK/tid/pkg/tid/cli/display"
 	"github.com/SeerUK/tid/pkg/tracking"
-	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
@@ -23,7 +23,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&end),
 			Spec:  "-e, --end=END",
-			Desc:  "The end date of the report.",
+			Desc:  "The end date of the listing. (Default: today)",
 		})
 
 		def.AddOption(console.OptionDefinition{
@@ -35,7 +35,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&start),
 			Spec:  "-s, --start=START",
-			Desc:  "The start date of the report.",
+			Desc:  "The start date of the listing. (Default: 1 year ago)",
 		})
 	}
 
@@ -52,22 +52,15 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		}
 
 		if !hasStart {
-			start = now
+			start = now.AddDate(-1, 0, 0)
 		}
 
 		if !hasEnd {
 			end = now
 		}
 
-		var ts []types.Timesheet
-
 		// Lets be flexible... we'll get all by default, or we can use a range to limit output.
-		if hasStart || hasEnd {
-			ts, err = trGateway.FindTimesheetsInDateRange(start, end)
-		} else {
-			ts, err = trGateway.FindTimesheets()
-		}
-
+		ts, err := trGateway.FindTimesheetsInDateRange(start, end)
 		if err != nil {
 			return err
 		}
@@ -88,7 +81,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 			return nil
 		}
 
-		output.Println(ts)
+		display.WriteTimesheetsTable(ts, output.Writer)
 
 		return nil
 	}

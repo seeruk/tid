@@ -117,14 +117,7 @@ func (g *storeTrackingGateway) FindEntriesInDateRange(start time.Time, end time.
 	}
 
 	for _, sheet := range timesheets {
-		for _, hash := range sheet.Entries {
-			entry, err := g.FindEntry(hash)
-			if err != nil {
-				return entries, err
-			}
-
-			entries = append(entries, entry)
-		}
+		entries = append(entries, sheet.Entries...)
 	}
 
 	return entries, nil
@@ -132,6 +125,8 @@ func (g *storeTrackingGateway) FindEntriesInDateRange(start time.Time, end time.
 
 func (g *storeTrackingGateway) FindTimesheet(sheetKey string) (types.Timesheet, error) {
 	sheet := types.NewTimesheet()
+	sheet.Key = sheetKey
+
 	message := &proto.TrackingTimesheet{}
 
 	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), message)
@@ -139,24 +134,26 @@ func (g *storeTrackingGateway) FindTimesheet(sheetKey string) (types.Timesheet, 
 		return sheet, err
 	}
 
-	sheet.FromMessage(message)
+	var entries []types.Entry
+
+	for _, hash := range message.Entries {
+		entry, err := g.FindEntry(hash)
+		if err != nil {
+			return sheet, err
+		}
+
+		entries = append(entries, entry)
+	}
+
+	sheet.FromMessageWithEntries(message, entries)
 
 	return sheet, nil
 }
 
 func (g *storeTrackingGateway) FindOrCreateTimesheet(sheetKey string) (types.Timesheet, error) {
-	sheet := types.NewTimesheet()
-	sheet.Key = sheetKey
-
-	message := &proto.TrackingTimesheet{}
-
-	err := g.store.Read(fmt.Sprintf(KeyTimesheetFmt, sheetKey), message)
+	sheet, err := g.FindTimesheet(sheetKey)
 	if err != nil && err != ErrStoreNilResult {
 		return sheet, err
-	}
-
-	if err == nil {
-		sheet.FromMessage(message)
 	}
 
 	return sheet, nil

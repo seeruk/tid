@@ -13,8 +13,8 @@ const TimesheetKeyDateFmt = "2006-01-02"
 type Timesheet struct {
 	// The date of the timesheet.
 	Key string
-	// An array of the hashes of entries that belong in this timesheet.
-	Entries []string
+	// An array of entries that belong in this timesheet.
+	Entries []Entry
 }
 
 // NewTimesheet create a new instance of Timesheet.
@@ -24,31 +24,37 @@ func NewTimesheet() Timesheet {
 	}
 }
 
-// FromMessage reads a `proto.TrackingTimesheet` message into this Timesheet.
-func (t *Timesheet) FromMessage(message *proto.TrackingTimesheet) {
+// FromMessageWithEntries reads a `proto.TrackingTimesheet` message into this Timesheet.
+func (t *Timesheet) FromMessageWithEntries(message *proto.TrackingTimesheet, entries []Entry) {
 	t.Key = message.Key
-	t.Entries = message.Entries
+	t.Entries = entries
 }
 
 // ToMessage converts this Timesheet to a `proto.TrackingTimesheet`.
 func (t *Timesheet) ToMessage() *proto.TrackingTimesheet {
+	var entryKeys []string
+
+	for _, entry := range t.Entries {
+		entryKeys = append(entryKeys, entry.Hash)
+	}
+
 	return &proto.TrackingTimesheet{
 		Key:     t.Key,
-		Entries: t.Entries,
+		Entries: entryKeys,
 	}
 }
 
 // AppendEntry appends a reference to an entry to the timesheet.
 func (t *Timesheet) AppendEntry(entry Entry) {
-	t.Entries = append(t.Entries, entry.Hash)
+	t.Entries = append(t.Entries, entry)
 }
 
 // RemoveEntry removes a reference to an entry from the timesheet.
 func (t *Timesheet) RemoveEntry(entry Entry) {
 	index := -1
 
-	for idx, hash := range t.Entries {
-		if hash == entry.Hash {
+	for idx, tsEntry := range t.Entries {
+		if tsEntry.Hash == entry.Hash {
 			index = idx
 			break
 		}
