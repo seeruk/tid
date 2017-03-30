@@ -7,15 +7,19 @@ import (
 )
 
 // @todo: Make state.Factory for gateways and backend?
+// @todo: Use same instances once they're created. Is this a factory then? Seems more like a
+// service locator...
 
 // Factory abstracts the creation of tracking-related services.
 type Factory interface {
 	// BuildEntryFacade builds an EntryFacade instance.
 	BuildEntryFacade() *EntryFacade
+	// BuildFacade builds a Facade instance.
+	BuildFacade() *Facade
 	// BuildSysGateway builds a SysGateway instance.
 	BuildSysGateway() state.SysGateway
 	// BuildTimesheetGateway builds a TimesheetGateway instance.
-	BuildTimesheetGateway() state.TimesheetGateway
+	BuildTimesheetGateway() state.TrackingGateway
 }
 
 // standardFactory provides a standard, simple, functional implementation of the
@@ -25,8 +29,8 @@ type standardFactory struct {
 	backend state.Backend
 	// sysGateway keeps the reference to a SysGateway instance to re-use.
 	sysGateway state.SysGateway
-	// timesheetGateway keeps the reference to a TimesheetGateway to re-use.
-	timesheetGateway state.TimesheetGateway
+	// trackingGateway keeps the reference to a TimesheetGateway to re-use.
+	trackingGateway state.TrackingGateway
 }
 
 // NewStandardFactory creates a new Factory instance.
@@ -40,13 +44,17 @@ func (f *standardFactory) BuildEntryFacade() *EntryFacade {
 	return NewEntryFacade(f.BuildSysGateway(), f.BuildTimesheetGateway())
 }
 
+func (f *standardFactory) BuildFacade() *Facade {
+	return NewFacade(f.BuildSysGateway(), f.BuildTimesheetGateway())
+}
+
 func (f *standardFactory) BuildSysGateway() state.SysGateway {
 	sysStore := f.getStore(f.backend, state.BackendBucketSys)
 
 	return state.NewStoreSysGateway(sysStore)
 }
 
-func (f *standardFactory) BuildTimesheetGateway() state.TimesheetGateway {
+func (f *standardFactory) BuildTimesheetGateway() state.TrackingGateway {
 	sysGateway := f.BuildSysGateway()
 
 	status, err := sysGateway.FindOrCreateStatus()
@@ -59,7 +67,7 @@ func (f *standardFactory) BuildTimesheetGateway() state.TimesheetGateway {
 		status.Workspace,
 	))
 
-	return state.NewStoreTimesheetGateway(tsStore, sysGateway)
+	return state.NewStoreTrackingGateway(tsStore, sysGateway)
 }
 
 // getStore gets the application data store.

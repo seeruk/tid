@@ -17,8 +17,10 @@ const (
 	KeyTimesheetFmt = "sheet:%s"
 )
 
-// TimesheetGateway provides access to timesheet data in the database.
-type TimesheetGateway interface {
+// @todo: Consider splitting this up, we have facades for common tasks more granularly than this.
+
+// TrackingGateway provides access to timesheet data in the database.
+type TrackingGateway interface {
 	// FindEntry attempts to find an entry with the given key.
 	FindEntry(hash string) (types.Entry, error)
 	// FindEntryHashByShortHash attempts to find an entry's hash by it's short hash.
@@ -44,22 +46,22 @@ type TimesheetGateway interface {
 }
 
 // storeTimesheetGateway is a functional TimesheetGateway.
-type storeTimesheetGateway struct {
+type storeTrackingGateway struct {
 	// An underlying store to access.
 	store Store
 	// A SysGateway to lookup system info.
 	sysGateway SysGateway
 }
 
-// NewStoreTimesheetGateway creates a new timesheet gateway.
-func NewStoreTimesheetGateway(store Store, sysGateway SysGateway) TimesheetGateway {
-	return &storeTimesheetGateway{
+// NewStoreTrackingGateway creates a new timesheet gateway.
+func NewStoreTrackingGateway(store Store, sysGateway SysGateway) TrackingGateway {
+	return &storeTrackingGateway{
 		store:      store,
 		sysGateway: sysGateway,
 	}
 }
 
-func (g *storeTimesheetGateway) FindEntry(hash string) (types.Entry, error) {
+func (g *storeTrackingGateway) FindEntry(hash string) (types.Entry, error) {
 	entry := types.NewEntry()
 
 	status, err := g.sysGateway.FindOrCreateStatus()
@@ -93,7 +95,7 @@ func (g *storeTimesheetGateway) FindEntry(hash string) (types.Entry, error) {
 	return entry, nil
 }
 
-func (g *storeTimesheetGateway) FindEntryHashByShortHash(hash string) (string, error) {
+func (g *storeTrackingGateway) FindEntryHashByShortHash(hash string) (string, error) {
 	var ref proto.TrackingEntryRef
 
 	err := g.store.Read(fmt.Sprintf(KeyEntryFmt, hash), &ref)
@@ -104,7 +106,7 @@ func (g *storeTimesheetGateway) FindEntryHashByShortHash(hash string) (string, e
 	return ref.Entry, nil
 }
 
-func (g *storeTimesheetGateway) FindEntriesInDateRange(start time.Time, end time.Time) ([]types.Entry, error) {
+func (g *storeTrackingGateway) FindEntriesInDateRange(start time.Time, end time.Time) ([]types.Entry, error) {
 	var entries []types.Entry
 
 	timesheets, err := g.FindTimesheetsInDateRange(start, end)
@@ -126,7 +128,7 @@ func (g *storeTimesheetGateway) FindEntriesInDateRange(start time.Time, end time
 	return entries, nil
 }
 
-func (g *storeTimesheetGateway) FindTimesheet(sheetKey string) (types.Timesheet, error) {
+func (g *storeTrackingGateway) FindTimesheet(sheetKey string) (types.Timesheet, error) {
 	sheet := types.NewTimesheet()
 	message := &proto.TrackingTimesheet{}
 
@@ -140,7 +142,7 @@ func (g *storeTimesheetGateway) FindTimesheet(sheetKey string) (types.Timesheet,
 	return sheet, nil
 }
 
-func (g *storeTimesheetGateway) FindOrCreateTimesheet(sheetKey string) (types.Timesheet, error) {
+func (g *storeTrackingGateway) FindOrCreateTimesheet(sheetKey string) (types.Timesheet, error) {
 	sheet := types.NewTimesheet()
 	sheet.Key = sheetKey
 
@@ -158,11 +160,11 @@ func (g *storeTimesheetGateway) FindOrCreateTimesheet(sheetKey string) (types.Ti
 	return sheet, nil
 }
 
-func (g *storeTimesheetGateway) FindOrCreateTodaysTimesheet() (types.Timesheet, error) {
+func (g *storeTrackingGateway) FindOrCreateTodaysTimesheet() (types.Timesheet, error) {
 	return g.FindOrCreateTimesheet(time.Now().Local().Format(types.TimesheetKeyDateFmt))
 }
 
-func (g *storeTimesheetGateway) FindTimesheetsInDateRange(start time.Time, end time.Time) ([]types.Timesheet, error) {
+func (g *storeTrackingGateway) FindTimesheetsInDateRange(start time.Time, end time.Time) ([]types.Timesheet, error) {
 	var sheets []types.Timesheet
 
 	if start.After(end) {
@@ -187,11 +189,15 @@ func (g *storeTimesheetGateway) FindTimesheetsInDateRange(start time.Time, end t
 	return sheets, nil
 }
 
-func (g *storeTimesheetGateway) PersistEntry(entry types.Entry) error {
+func (g *storeTrackingGateway) PersistEntry(entry types.Entry) error {
 	entryRef := &proto.TrackingEntryRef{
 		Key:   entry.ShortHash(),
 		Entry: entry.Hash,
 	}
+
+	// Every time we do anything to an entry, we should update when it was updated. This helps keep
+	// things properly in sync.
+	entry.Updated = time.Now()
 
 	// Persisting an entry is a 2-step process, as we need to also store the short-key so we can
 	// look up the long key.
@@ -202,11 +208,11 @@ func (g *storeTimesheetGateway) PersistEntry(entry types.Entry) error {
 	return errs.Errors()
 }
 
-func (g *storeTimesheetGateway) PersistTimesheet(sheet types.Timesheet) error {
+func (g *storeTrackingGateway) PersistTimesheet(sheet types.Timesheet) error {
 	return g.store.Write(fmt.Sprintf(KeyTimesheetFmt, sheet.Key), sheet.ToMessage())
 }
 
-func (g *storeTimesheetGateway) DeleteEntry(entry types.Entry) error {
+func (g *storeTrackingGateway) DeleteEntry(entry types.Entry) error {
 	errs := errhandling.NewErrorStack()
 	errs.Add(g.store.Delete(fmt.Sprintf(KeyEntryFmt, entry.ShortHash())))
 	errs.Add(g.store.Delete(fmt.Sprintf(KeyEntryFmt, entry.Hash)))

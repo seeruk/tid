@@ -32,7 +32,7 @@ func StatusCommand(factory tracking.Factory) *console.Command {
 
 	execute := func(input *console.Input, output *console.Output) error {
 		sysGateway := factory.BuildSysGateway()
-		tsGateway := factory.BuildTimesheetGateway()
+		trGateway := factory.BuildTimesheetGateway()
 
 		hasFormat := input.HasOption([]string{"f", "format"})
 
@@ -50,7 +50,7 @@ func StatusCommand(factory tracking.Factory) *console.Command {
 			hash = status.Entry
 		}
 
-		entry, err := tsGateway.FindEntry(hash)
+		entry, err := trGateway.FindEntry(hash)
 		if err != nil && err != state.ErrStoreNilResult {
 			return err
 		}

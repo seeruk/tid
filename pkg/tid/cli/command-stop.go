@@ -7,7 +7,7 @@ import (
 )
 
 // StopCommand creates a command to stop timers.
-func StopCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
+func StopCommand(sysGateway state.SysGateway, trGateway state.TrackingGateway) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		status, err := sysGateway.FindOrCreateStatus()
 		if err != nil {
@@ -19,7 +19,7 @@ func StopCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) 
 			return nil
 		}
 
-		entry, err := tsGateway.FindEntry(status.Entry)
+		entry, err := trGateway.FindEntry(status.Entry)
 		if err != nil {
 			return err
 		}
@@ -30,7 +30,7 @@ func StopCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) 
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(sysGateway.PersistStatus(status))
-		errs.Add(tsGateway.PersistEntry(entry))
+		errs.Add(trGateway.PersistEntry(entry))
 
 		if err = errs.Errors(); err != nil {
 			return err

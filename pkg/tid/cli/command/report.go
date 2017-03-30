@@ -88,7 +88,7 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 		}
 
 		if len(entries) == 0 {
-			output.Println("list: No entries within the given time period")
+			output.Println("report: No entries within the given time period")
 			return nil
 		}
 

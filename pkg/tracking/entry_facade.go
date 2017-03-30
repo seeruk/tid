@@ -13,15 +13,15 @@ import (
 type EntryFacade struct {
 	// sysGateway is a SysGateway used for accessing system storage.
 	sysGateway state.SysGateway
-	// tsGateway is a TimesheetGateway used for accessing timesheet storage.
-	tsGateway state.TimesheetGateway
+	// trGateway is a TimesheetGateway used for accessing timesheet storage.
+	trGateway state.TrackingGateway
 }
 
 // NewEntryFacade creates a new EntryFacade instance.
-func NewEntryFacade(sysGateway state.SysGateway, timesheetGateway state.TimesheetGateway) *EntryFacade {
+func NewEntryFacade(sysGateway state.SysGateway, trackingGateway state.TrackingGateway) *EntryFacade {
 	return &EntryFacade{
 		sysGateway: sysGateway,
-		tsGateway:  timesheetGateway,
+		trGateway:  trackingGateway,
 	}
 }
 
@@ -29,7 +29,7 @@ func NewEntryFacade(sysGateway state.SysGateway, timesheetGateway state.Timeshee
 func (f *EntryFacade) Create(start time.Time, dur time.Duration, note string) (types.Entry, error) {
 	entry := types.NewEntry()
 
-	sheet, err := f.tsGateway.FindOrCreateTimesheet(start.Format(types.TimesheetKeyDateFmt))
+	sheet, err := f.trGateway.FindOrCreateTimesheet(start.Format(types.TimesheetKeyDateFmt))
 	if err != nil {
 		return entry, err
 	}
@@ -41,8 +41,8 @@ func (f *EntryFacade) Create(start time.Time, dur time.Duration, note string) (t
 	sheet.AppendEntry(entry)
 
 	errs := errhandling.NewErrorStack()
-	errs.Add(f.tsGateway.PersistTimesheet(sheet))
-	errs.Add(f.tsGateway.PersistEntry(entry))
+	errs.Add(f.trGateway.PersistTimesheet(sheet))
+	errs.Add(f.trGateway.PersistEntry(entry))
 
 	if !errs.Empty() {
 		return entry, errs.Errors()
@@ -53,7 +53,7 @@ func (f *EntryFacade) Create(start time.Time, dur time.Duration, note string) (t
 
 // UpdateDuration updates an entry with the given hash with the given duration.
 func (f *EntryFacade) UpdateDuration(hash string, duration time.Duration) (types.Entry, error) {
-	entry, err := f.tsGateway.FindEntry(hash)
+	entry, err := f.trGateway.FindEntry(hash)
 	if err != nil {
 		return entry, err
 	}
@@ -64,13 +64,13 @@ func (f *EntryFacade) UpdateDuration(hash string, duration time.Duration) (types
 
 	entry.Duration = duration
 
-	return entry, f.tsGateway.PersistEntry(entry)
+	return entry, f.trGateway.PersistEntry(entry)
 }
 
 // UpdateDurationByOffset updates an entry with the given hash, offsetting the duration by the given
 // offset duration.
 func (f *EntryFacade) UpdateDurationByOffset(hash string, offset time.Duration) (types.Entry, error) {
-	entry, err := f.tsGateway.FindEntry(hash)
+	entry, err := f.trGateway.FindEntry(hash)
 	if err != nil {
 		return entry, err
 	}
@@ -91,19 +91,19 @@ func (f *EntryFacade) UpdateDurationByOffset(hash string, offset time.Duration) 
 
 // UpdateNote updates an entry with the given hash with the given note.
 func (f *EntryFacade) UpdateNote(hash string, note string) (types.Entry, error) {
-	entry, err := f.tsGateway.FindEntry(hash)
+	entry, err := f.trGateway.FindEntry(hash)
 	if err != nil {
 		return entry, err
 	}
 
 	entry.Note = note
 
-	return entry, f.tsGateway.PersistEntry(entry)
+	return entry, f.trGateway.PersistEntry(entry)
 }
 
 // Delete deletes persisted data for a timesheet entry with the given hash.
 func (f *EntryFacade) Delete(hash string) (types.Entry, error) {
-	entry, err := f.tsGateway.FindEntry(hash)
+	entry, err := f.trGateway.FindEntry(hash)
 	if err != nil {
 		return entry, err
 	}
@@ -119,7 +119,7 @@ func (f *EntryFacade) Delete(hash string) (types.Entry, error) {
 	}
 
 	// Remove from timesheet
-	sheet, err := f.tsGateway.FindOrCreateTimesheet(entry.Timesheet)
+	sheet, err := f.trGateway.FindOrCreateTimesheet(entry.Timesheet)
 	if err != nil {
 		return entry, err
 	}
@@ -128,13 +128,13 @@ func (f *EntryFacade) Delete(hash string) (types.Entry, error) {
 
 	errs := errhandling.NewErrorStack()
 	errs.Add(f.sysGateway.PersistStatus(status))
-	errs.Add(f.tsGateway.PersistTimesheet(sheet))
+	errs.Add(f.trGateway.PersistTimesheet(sheet))
 
 	if !errs.Empty() {
 		return entry, errs.Errors()
 	}
 
-	err = f.tsGateway.DeleteEntry(entry)
+	err = f.trGateway.DeleteEntry(entry)
 	if err != nil {
 		return entry, err
 	}

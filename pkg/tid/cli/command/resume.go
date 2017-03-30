@@ -1,1 +1,41 @@
 package command
+
+import (
+	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/eidolon/console"
+	"github.com/eidolon/console/parameters"
+)
+
+// ResumeCommand creates a command to resume timers.
+func ResumeCommand(factory tracking.Factory) *console.Command {
+	var hash string
+
+	configure := func(def *console.Definition) {
+		def.AddArgument(console.ArgumentDefinition{
+			Value: parameters.NewStringValue(&hash),
+			Spec:  "[HASH]",
+			Desc:  "A short or long hash for an entry.",
+		})
+	}
+
+	execute := func(input *console.Input, output *console.Output) error {
+		facade := factory.BuildFacade()
+
+		entry, err := facade.Resume(hash)
+		if err != nil {
+			return err
+		}
+
+		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
+		output.Printf("Resumed timer for '%s' (%s)\n", entry.Note, entry.ShortHash())
+
+		return nil
+	}
+
+	return &console.Command{
+		Name:        "resume",
+		Description: "Resume an existing timer.",
+		Configure:   configure,
+		Execute:     execute,
+	}
+}

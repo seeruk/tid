@@ -9,7 +9,7 @@ import (
 )
 
 // StartCommand creates a command to start timers.
-func StartCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway) *console.Command {
+func StartCommand(sysGateway state.SysGateway, trGateway state.TrackingGateway) *console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
@@ -31,7 +31,7 @@ func StartCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway)
 			return nil
 		}
 
-		sheet, err := tsGateway.FindOrCreateTodaysTimesheet()
+		sheet, err := trGateway.FindOrCreateTodaysTimesheet()
 		if err != nil {
 			return err
 		}
@@ -46,8 +46,8 @@ func StartCommand(sysGateway state.SysGateway, tsGateway state.TimesheetGateway)
 
 		errs := errhandling.NewErrorStack()
 		errs.Add(sysGateway.PersistStatus(status))
-		errs.Add(tsGateway.PersistEntry(entry))
-		errs.Add(tsGateway.PersistTimesheet(sheet))
+		errs.Add(trGateway.PersistEntry(entry))
+		errs.Add(trGateway.PersistTimesheet(sheet))
 
 		if err = errs.Errors(); err != nil {
 			return err
