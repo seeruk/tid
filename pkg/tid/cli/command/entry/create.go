@@ -12,7 +12,7 @@ import (
 func CreateCommand(factory tracking.Factory) *console.Command {
 	var duration time.Duration
 	var note string
-	var started time.Time
+	var started = time.Now()
 
 	configure := func(def *console.Definition) {
 		def.AddArgument(console.ArgumentDefinition{
@@ -30,7 +30,7 @@ func CreateCommand(factory tracking.Factory) *console.Command {
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&started),
 			Spec:  "-d, --date=DATE",
-			Desc:  "When did you start working?",
+			Desc:  "When did you start working? (Default: today)",
 		})
 	}
 
