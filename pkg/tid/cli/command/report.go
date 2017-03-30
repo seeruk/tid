@@ -56,7 +56,7 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		gateway := factory.BuildTimesheetGateway()
+		gateway := factory.BuildTrackingGateway()
 
 		hasDate := input.HasOption([]string{"d", "date"})
 		hasEnd := input.HasOption([]string{"e", "end"})

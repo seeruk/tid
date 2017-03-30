@@ -47,14 +47,13 @@ func ListCommand(factory tracking.Factory) *console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		gateway := factory.BuildTimesheetGateway()
+		gateway := factory.BuildTrackingGateway()
 
 		hasDate := input.HasOption([]string{"d", "date"})
 		hasEnd := input.HasOption([]string{"e", "end"})
 		hasFormat := input.HasOption([]string{"f", "format"})
 		hasStart := input.HasOption([]string{"s", "start"})
 
-		// We need to get the current date, this is a little hacky, but we need it without any time
 		now, err := time.Parse(ListDateFmt, time.Now().Format(ListDateFmt))
 		if err != nil {
 			return err

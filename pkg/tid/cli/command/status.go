@@ -32,7 +32,7 @@ func StatusCommand(factory tracking.Factory) *console.Command {
 
 	execute := func(input *console.Input, output *console.Output) error {
 		sysGateway := factory.BuildSysGateway()
-		trGateway := factory.BuildTimesheetGateway()
+		trGateway := factory.BuildTrackingGateway()
 
 		hasFormat := input.HasOption([]string{"f", "format"})
 

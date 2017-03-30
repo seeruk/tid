@@ -18,8 +18,8 @@ type Factory interface {
 	BuildFacade() *Facade
 	// BuildSysGateway builds a SysGateway instance.
 	BuildSysGateway() state.SysGateway
-	// BuildTimesheetGateway builds a TimesheetGateway instance.
-	BuildTimesheetGateway() state.TrackingGateway
+	// BuildTrackingGateway builds a TimesheetGateway instance.
+	BuildTrackingGateway() state.TrackingGateway
 }
 
 // standardFactory provides a standard, simple, functional implementation of the
@@ -41,11 +41,11 @@ func NewStandardFactory(backend state.Backend) Factory {
 }
 
 func (f *standardFactory) BuildEntryFacade() *EntryFacade {
-	return NewEntryFacade(f.BuildSysGateway(), f.BuildTimesheetGateway())
+	return NewEntryFacade(f.BuildSysGateway(), f.BuildTrackingGateway())
 }
 
 func (f *standardFactory) BuildFacade() *Facade {
-	return NewFacade(f.BuildSysGateway(), f.BuildTimesheetGateway())
+	return NewFacade(f.BuildSysGateway(), f.BuildTrackingGateway())
 }
 
 func (f *standardFactory) BuildSysGateway() state.SysGateway {
@@ -54,7 +54,7 @@ func (f *standardFactory) BuildSysGateway() state.SysGateway {
 	return state.NewStoreSysGateway(sysStore)
 }
 
-func (f *standardFactory) BuildTimesheetGateway() state.TrackingGateway {
+func (f *standardFactory) BuildTrackingGateway() state.TrackingGateway {
 	sysGateway := f.BuildSysGateway()
 
 	status, err := sysGateway.FindOrCreateStatus()

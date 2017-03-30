@@ -37,6 +37,8 @@ type TrackingGateway interface {
 	FindOrCreateTodaysTimesheet() (types.Timesheet, error)
 	// FindTimesheetsInDateRange attempts to find all timesheets within a given start and end date.
 	FindTimesheetsInDateRange(start time.Time, end time.Time) ([]types.Timesheet, error)
+	// FindTimesheets attempts to find all timesheets.
+	FindTimesheets() ([]types.Timesheet, error)
 	// PersistEntry persists a given entry to the store.
 	PersistEntry(entry types.Entry) error
 	// PersistTimesheet persists a given timesheet to the store.
@@ -185,6 +187,12 @@ func (g *storeTrackingGateway) FindTimesheetsInDateRange(start time.Time, end ti
 
 		sheets = append(sheets, sheet)
 	}
+
+	return sheets, nil
+}
+
+func (g *storeTrackingGateway) FindTimesheets() ([]types.Timesheet, error) {
+	var sheets []types.Timesheet
 
 	return sheets, nil
 }
