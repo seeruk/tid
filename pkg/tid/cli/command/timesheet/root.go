@@ -6,6 +6,7 @@ import "github.com/eidolon/console"
 func RootCommand() *console.Command {
 	return &console.Command{
 		Name:        "timesheet",
+		Alias:       "t",
 		Description: "Manage timesheets.",
 	}
 }
