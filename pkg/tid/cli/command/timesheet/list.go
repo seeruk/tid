@@ -33,7 +33,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		def.AddOption(console.OptionDefinition{
 			Value: parameters.NewDateValue(&start),
 			Spec:  "-s, --start=START",
-			Desc:  "The start date of the listing. (Default: 1 year ago)",
+			Desc:  "The start date of the listing. (Default: last monday)",
 		})
 	}
 
@@ -47,7 +47,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		now := timeutil.Date(time.Now())
 
 		if !hasStart {
-			start = now.AddDate(-1, 0, 0)
+			start = timeutil.LastWeekday(time.Monday)
 		}
 
 		if !hasEnd {

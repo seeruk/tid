@@ -18,5 +18,11 @@ func Date(datetime time.Time) time.Time {
 
 // LastWeekday finds the last date for the given weekday.
 func LastWeekday(weekday time.Weekday) time.Time {
-	return time.Now()
+	date := Date(time.Now())
+
+	for date.Weekday() != weekday {
+		date = date.AddDate(0, 0, -1)
+	}
+
+	return date
 }
