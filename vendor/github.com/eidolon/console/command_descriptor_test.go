@@ -217,4 +217,19 @@ func TestDescribeCommands(t *testing.T) {
 
 		assert.True(t, fooIdx > barIdx, "Expected foo-cmd to come after bar-cmd.")
 	})
+
+	t.Run("should show command aliases", func(t *testing.T) {
+		result := console.DescribeCommands([]*console.Command{
+			{
+				Name:  "foo-cmd",
+				Alias: "f",
+			},
+			{
+				Name: "bar-cmd",
+			},
+		})
+
+		assert.True(t, strings.Contains(result, "(Alias: f)"), "Expected command description.")
+		assert.False(t, strings.Contains(result, "(Alias: b"), "Expected no command description.")
+	})
 }

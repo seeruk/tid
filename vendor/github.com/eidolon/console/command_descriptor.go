@@ -71,9 +71,14 @@ func DescribeCommands(commands []*Command) string {
 		// Get space for the right-side of the command name.
 		spacing := width - len(name)
 
+		cmdDesc := cmd.Description
+		if cmd.Alias != "" {
+			cmdDesc = cmdDesc + fmt.Sprintf(" (Alias: %s)", cmd.Alias)
+		}
+
 		// Wrap the description onto new lines if necessary.
 		wrapper := wordwrap.Wrapper(78-width, true)
-		wrapped := wrapper(cmd.Description)
+		wrapped := wrapper(cmdDesc)
 
 		// Indent and prefix to produce the result.
 		prefix := fmt.Sprintf("  %s%s", cmd.Name, strings.Repeat(" ", spacing))
