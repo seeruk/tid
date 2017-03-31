@@ -3,12 +3,11 @@ package console_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
+	"math/rand"
 	"strings"
 	"testing"
-
-	"fmt"
-	"math/rand"
 
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/assert"
@@ -30,7 +29,8 @@ func TestApplication(t *testing.T) {
 
 	createTestCommand := func(a *string, b *int) *console.Command {
 		return &console.Command{
-			Name: "test",
+			Name:  "test",
+			Alias: "t",
 			Configure: func(definition *console.Definition) {
 				definition.AddArgument(console.ArgumentDefinition{
 					Value: parameters.NewStringValue(a),
@@ -120,6 +120,19 @@ func TestApplication(t *testing.T) {
 			assert.Equal(t, 0, code)
 		})
 
+		t.Run("should return exit code 0 if a command with an alias was found, and ran OK", func(t *testing.T) {
+			var a string
+			var b int
+
+			writer := bytes.Buffer{}
+			application := createApplication(&writer)
+			application.AddCommand(createTestCommand(&a, &b))
+
+			code := application.Run([]string{"t", "aval", "--int-opt=384"}, []string{})
+
+			assert.Equal(t, 0, code)
+		})
+
 		t.Run("should return exit code 101 if mapping input fails", func(t *testing.T) {
 			var a string
 			var b int
@@ -168,11 +181,11 @@ func TestApplication(t *testing.T) {
 			assert.Equal(t, "bar", foo)
 		})
 
-		t.Run("should work with subcommands", func(t *testing.T) {
-			message := fmt.Sprintf("Subcommand: %d", rand.Int())
+		t.Run("should work with sub-commands", func(t *testing.T) {
+			message := fmt.Sprintf("sub-command: %d", rand.Int())
 
-			subcommand := console.Command{
-				Name: "subcommand",
+			subCommand := console.Command{
+				Name: "subCommand",
 				Execute: func(input *console.Input, output *console.Output) error {
 					output.Println(message)
 					return nil
@@ -180,14 +193,14 @@ func TestApplication(t *testing.T) {
 			}
 
 			command := console.Command{Name: "command"}
-			command.AddCommand(&subcommand)
+			command.AddCommand(&subCommand)
 
 			writer := bytes.Buffer{}
 			application := createApplication(&writer)
 			application.AddCommand(&command)
-			application.Run([]string{"command", "subcommand"}, []string{})
+			application.Run([]string{"command", "subCommand"}, []string{})
 
-			assert.True(t, strings.Contains(writer.String(), message), "Expected subcommand to run")
+			assert.True(t, strings.Contains(writer.String(), message), "Expected sub-command to run")
 		})
 	})
 

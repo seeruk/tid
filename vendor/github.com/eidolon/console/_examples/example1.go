@@ -25,6 +25,7 @@ func main() {
 
 	application.AddCommand(&console.Command{
 		Name:        "greet:example",
+		Alias:       "g",
 		Description: "Greet's the given user, or the world.",
 		Help:        "You don't have to specify a name.",
 		Configure: func(definition *console.Definition) {

@@ -140,7 +140,7 @@ func TestDescribeCommand(t *testing.T) {
 		assert.True(t, strings.Contains(result, "[OPTIONS...]"), "Expected options.")
 	})
 
-	t.Run("should show that there are subcommands if there are any", func(t *testing.T) {
+	t.Run("should show that there are sub-commands if there are any", func(t *testing.T) {
 		application := console.NewApplication("eidolon/console", "1.2.3+testing")
 
 		command := console.Command{
@@ -148,8 +148,8 @@ func TestDescribeCommand(t *testing.T) {
 		}
 
 		subCommand := console.Command{
-			Name:        "test-subcommand-name",
-			Description: "Test subcommand description.",
+			Name:        "test-subCommand-name",
+			Description: "Test sub-command description.",
 		}
 
 		command.AddCommand(&subCommand)
@@ -157,8 +157,8 @@ func TestDescribeCommand(t *testing.T) {
 		result := console.DescribeCommand(application, &command, []string{command.Name})
 
 		assert.True(t, strings.Contains(result, "COMMANDS:"), "Expected commands")
-		assert.True(t, strings.Contains(result, subCommand.Name), "Expected subcommand name")
-		assert.True(t, strings.Contains(result, subCommand.Description), "Expected subcommand desc")
+		assert.True(t, strings.Contains(result, subCommand.Name), "Expected sub-command name")
+		assert.True(t, strings.Contains(result, subCommand.Description), "Expected sub-command desc")
 	})
 }
 

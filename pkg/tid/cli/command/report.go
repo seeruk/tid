@@ -6,14 +6,12 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
+	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
-
-// ReportDateFmt is the date format for report date ranges.
-const ReportDateFmt = "2006-01-02"
 
 // ReportCommand creates a command to view a timesheet report.
 func ReportCommand(factory tracking.Factory) *console.Command {
@@ -64,10 +62,7 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 		hasStart := input.HasOption([]string{"s", "start"})
 
 		// We need to get the current date, this is a little hacky, but we need it without any time
-		now, err := time.Parse(ReportDateFmt, time.Now().Format(ReportDateFmt))
-		if err != nil {
-			return err
-		}
+		now := timeutil.Date(time.Now())
 
 		if !hasStart {
 			start = now
@@ -125,10 +120,10 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 
 func getDateRange(start time.Time, end time.Time) string {
 	if start.Equal(end) {
-		return end.Format(ReportDateFmt)
+		return end.Format(timeutil.DateFmt)
 	}
 
-	return fmt.Sprintf("%s to %s", start.Format(ReportDateFmt), end.Format(ReportDateFmt))
+	return fmt.Sprintf("%s to %s", start.Format(timeutil.DateFmt), end.Format(timeutil.DateFmt))
 }
 
 func getDurationForEntries(entries []types.Entry) time.Duration {

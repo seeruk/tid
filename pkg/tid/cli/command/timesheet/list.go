@@ -5,13 +5,11 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
+	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
-
-// ListDateFmt is the date format for report date ranges.
-const ListDateFmt = "2006-01-02"
 
 // ListCommand creates a command to list timesheets.
 func ListCommand(factory tracking.Factory) *console.Command {
@@ -46,10 +44,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 		hasFormat := input.HasOption([]string{"f", "format"})
 		hasStart := input.HasOption([]string{"s", "start"})
 
-		now, err := time.Parse(ListDateFmt, time.Now().Format(ListDateFmt))
-		if err != nil {
-			return err
-		}
+		now := timeutil.Date(time.Now())
 
 		if !hasStart {
 			start = now.AddDate(-1, 0, 0)
@@ -88,6 +83,7 @@ func ListCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "list",
+		Alias:       "ls",
 		Description: "List timesheets.",
 		Configure:   configure,
 		Execute:     execute,

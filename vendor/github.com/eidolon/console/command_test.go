@@ -11,7 +11,7 @@ import (
 
 func TestCommand(t *testing.T) {
 	t.Run("AddCommands()", func(t *testing.T) {
-		t.Run("should add all of the given subcommands", func(t *testing.T) {
+		t.Run("should add all of the given sub-commands", func(t *testing.T) {
 			inCommands := []*console.Command{
 				{
 					Name: fmt.Sprintf("test%d", rand.Int()),
@@ -33,7 +33,7 @@ func TestCommand(t *testing.T) {
 	})
 
 	t.Run("AddCommand()", func(t *testing.T) {
-		t.Run("should add a given subcommand", func(t *testing.T) {
+		t.Run("should add a given sub-command", func(t *testing.T) {
 			inCommand := &console.Command{
 				Name: fmt.Sprintf("test%d", rand.Int()),
 			}
@@ -47,7 +47,7 @@ func TestCommand(t *testing.T) {
 	})
 
 	t.Run("Commands()", func(t *testing.T) {
-		t.Run("should return all subcommands", func(t *testing.T) {
+		t.Run("should return all sub-commands", func(t *testing.T) {
 			inCommands := []*console.Command{
 				{
 					Name: fmt.Sprintf("test%d", rand.Int()),

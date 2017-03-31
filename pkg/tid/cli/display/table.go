@@ -3,7 +3,6 @@ package display
 import (
 	"fmt"
 	"io"
-
 	"time"
 
 	"github.com/SeerUK/tid/pkg/types"
@@ -39,6 +38,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
 }
 
 // WriteTimesheetsTable writes the given timesheets to a writer as a table.
+// @todo: Total in footer?
 func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 	table := createTable(writer)
 	table.SetHeader([]string{
@@ -47,6 +47,9 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 		"Duration",
 	})
 
+	var totalDuration time.Duration
+	var totalEntries int
+
 	for _, sheet := range sheets {
 		var duration time.Duration
 
@@ -54,12 +57,22 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 			duration = duration + e.Duration
 		}
 
+		totalDuration = totalDuration + duration
+		totalEntries = totalEntries + len(sheet.Entries)
+
 		table.Append([]string{
 			sheet.Key,
 			fmt.Sprintf("%d", len(sheet.Entries)),
 			duration.String(),
 		})
 	}
+
+	// Footer, without affecting value formats
+	table.Append([]string{
+		"TOTAL",
+		fmt.Sprintf("%d", totalEntries),
+		totalDuration.String(),
+	})
 
 	table.Render()
 }

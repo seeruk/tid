@@ -102,7 +102,7 @@ func (a *Application) AddCommand(command *Command) {
 	a.commands = append(a.commands, command)
 }
 
-// Commands gets the subcommands on an application.
+// Commands gets the sub-commands on an application.
 func (a *Application) Commands() []*Command {
 	return a.commands
 }
@@ -119,7 +119,10 @@ func (a *Application) findCommandInInput() (*Command, []string) {
 
 		var command *Command
 		for _, cmd := range container.Commands() {
-			if cmd.Name == a.input.Arguments[0].Value {
+			isNameMatch := cmd.Name == a.input.Arguments[0].Value
+			isAliasMatch := cmd.Alias == a.input.Arguments[0].Value
+
+			if isNameMatch || isAliasMatch {
 				command = cmd
 				// Add to breadcrumb trail...
 				path = append(path, cmd.Name)
@@ -130,10 +133,10 @@ func (a *Application) findCommandInInput() (*Command, []string) {
 		if command != nil {
 			a.input.Arguments = a.input.Arguments[1:]
 
-			subcommand := loop(depth+1, command)
+			subCommand := loop(depth+1, command)
 
-			if subcommand != nil {
-				command = subcommand
+			if subCommand != nil {
+				command = subCommand
 			}
 		}
 
