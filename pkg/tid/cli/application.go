@@ -4,6 +4,7 @@ import (
 	"github.com/SeerUK/tid/pkg/tid/cli/command"
 	"github.com/SeerUK/tid/pkg/tid/cli/command/entry"
 	"github.com/SeerUK/tid/pkg/tid/cli/command/timesheet"
+	"github.com/SeerUK/tid/pkg/tid/cli/command/workspace"
 	"github.com/eidolon/console"
 )
 
@@ -43,9 +44,7 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 
 		// Workspace commands
 		// @todo: Write these
-		// workspace.RootCommand().AddCommands([]*console.Command{
-		//
-		// }),
+		workspace.RootCommand().AddCommands([]*console.Command{}),
 
 		command.ReportCommand(kernel.TrackingFactory),
 		command.ResumeCommand(kernel.TrackingFactory),

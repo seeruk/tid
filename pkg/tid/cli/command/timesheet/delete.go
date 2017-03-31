@@ -28,8 +28,6 @@ func DeleteCommand(factory tracking.Factory) *console.Command {
 			return err
 		}
 
-		// @todo: Handle no timesheet found.
-
 		output.Printf("Deleted timesheet '%s'\n", sheet.Key)
 
 		return nil
