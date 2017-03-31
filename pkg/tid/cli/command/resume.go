@@ -34,6 +34,7 @@ func ResumeCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "resume",
+		Alias:       "res",
 		Description: "Resume an existing timer.",
 		Configure:   configure,
 		Execute:     execute,

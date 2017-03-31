@@ -112,6 +112,7 @@ func ReportCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "report",
+		Alias:       "rep",
 		Description: "Display a timesheet report.",
 		Configure:   configure,
 		Execute:     execute,
