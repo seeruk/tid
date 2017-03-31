@@ -76,6 +76,7 @@ func StatusCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "status",
+		Alias:       "st",
 		Description: "View the current status.",
 		Configure:   configure,
 		Execute:     execute,
