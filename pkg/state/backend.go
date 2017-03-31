@@ -39,5 +39,4 @@ type Backend interface {
 	// ForEachSingle loops over each key/value pair individually in the given bucket. As buckets can
 	// contain different data types we resort to using byte arrays for values.
 	ForEachSingle(bucket string, fn func(key string, val []byte) error) error
-	// @todo: ForEachBatch? May be more appropriate for some things.
 }

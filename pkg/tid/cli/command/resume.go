@@ -26,7 +26,6 @@ func ResumeCommand(factory tracking.Factory) *console.Command {
 			return err
 		}
 
-		// @todo: Consider adding onSuccess / postExecute to eidolon/console.
 		output.Printf("Resumed timer for '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil

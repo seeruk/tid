@@ -8,9 +8,6 @@ import (
 	"github.com/SeerUK/tid/pkg/types"
 )
 
-// @todo: Should we have more things being returned from these methods? It's not just about entries
-// hence the separate facade.
-
 // Facade provides a simpler interface for common general tracking-related tasks.
 type Facade struct {
 	// sysGateway is a SysGateway used for accessing system storage.

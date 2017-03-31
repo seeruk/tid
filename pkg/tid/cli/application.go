@@ -52,7 +52,5 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 		command.StartCommand(kernel.TrackingFactory),
 		command.StatusCommand(kernel.TrackingFactory),
 		command.StopCommand(kernel.TrackingFactory),
-
-		// @todo: Alias `entry create` and `entry update` as `add` and `edit`.
 	}
 }

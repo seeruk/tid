@@ -6,9 +6,7 @@ import (
 	"github.com/SeerUK/tid/pkg/state"
 )
 
-// @todo: Make state.Factory for gateways and backend?
-// @todo: Use same instances once they're created. Is this a factory then? Seems more like a
-// service locator...
+// @todo: Use same instances once they're created. Is this a factory then though?
 
 // Factory abstracts the creation of tracking-related services.
 type Factory interface {

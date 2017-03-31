@@ -38,7 +38,6 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
 }
 
 // WriteTimesheetsTable writes the given timesheets to a writer as a table.
-// @todo: Total in footer?
 func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 	table := createTable(writer)
 	table.SetHeader([]string{
