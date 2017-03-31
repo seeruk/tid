@@ -49,6 +49,7 @@ func CreateCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "create",
+		Alias:       "c",
 		Description: "Create a new timesheet entry.",
 		Configure:   configure,
 		Execute:     execute,

@@ -85,6 +85,7 @@ func UpdateCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "update",
+		Alias:       "u",
 		Description: "Update a timesheet entry.",
 		Configure:   configure,
 		Execute:     execute,

@@ -33,6 +33,7 @@ func DeleteCommand(factory tracking.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "delete",
+		Alias:       "d",
 		Description: "Delete a timesheet entry.",
 		Configure:   configure,
 		Execute:     execute,
