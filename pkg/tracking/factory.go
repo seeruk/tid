@@ -12,6 +12,8 @@ import (
 type Factory interface {
 	// BuildEntryFacade builds an EntryFacade instance.
 	BuildEntryFacade() *EntryFacade
+	// BuildTimesheetFacade builds an TimesheetFacade instance.
+	BuildTimesheetFacade() *TimesheetFacade
 	// BuildFacade builds a Facade instance.
 	BuildFacade() *Facade
 	// BuildSysGateway builds a SysGateway instance.
@@ -40,6 +42,10 @@ func NewStandardFactory(backend state.Backend) Factory {
 
 func (f *standardFactory) BuildEntryFacade() *EntryFacade {
 	return NewEntryFacade(f.BuildSysGateway(), f.BuildTrackingGateway())
+}
+
+func (f *standardFactory) BuildTimesheetFacade() *TimesheetFacade {
+	return NewTimesheetFacade(f.BuildTrackingGateway(), f.BuildEntryFacade())
 }
 
 func (f *standardFactory) BuildFacade() *Facade {

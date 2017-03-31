@@ -43,8 +43,10 @@ type TrackingGateway interface {
 	PersistEntry(entry types.Entry) error
 	// PersistTimesheet persists a given timesheet to the store.
 	PersistTimesheet(timesheet types.Timesheet) error
-	// DeleteEntry attempts to delete and entry from the store.
+	// DeleteEntry attempts to delete an entry from the store.
 	DeleteEntry(entry types.Entry) error
+	// DeleteTimesheet attempts to delete a timesheet from the store.
+	DeleteTimesheet(sheet types.Timesheet) error
 }
 
 // storeTimesheetGateway is a functional TimesheetGateway.
@@ -223,4 +225,8 @@ func (g *storeTrackingGateway) DeleteEntry(entry types.Entry) error {
 	errs.Add(g.store.Delete(fmt.Sprintf(KeyEntryFmt, entry.Hash)))
 
 	return errs.Errors()
+}
+
+func (g *storeTrackingGateway) DeleteTimesheet(sheet types.Timesheet) error {
+	return g.store.Delete(fmt.Sprintf(KeyTimesheetFmt, sheet.Key))
 }

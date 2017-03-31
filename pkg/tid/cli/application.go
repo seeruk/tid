@@ -36,9 +36,9 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 		}),
 
 		// Timesheet commands
-		// @todo: Write these
 		timesheet.RootCommand().AddCommands([]*console.Command{
 			timesheet.ListCommand(kernel.TrackingFactory),
+			timesheet.DeleteCommand(kernel.TrackingFactory),
 		}),
 
 		// Workspace commands

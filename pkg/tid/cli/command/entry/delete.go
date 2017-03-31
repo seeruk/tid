@@ -26,6 +26,8 @@ func DeleteCommand(factory tracking.Factory) *console.Command {
 			return err
 		}
 
+		// @todo: Handle no entry found.
+
 		output.Printf("Deleted entry '%s' (%s)\n", entry.Note, entry.ShortHash())
 
 		return nil
