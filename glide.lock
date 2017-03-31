@@ -1,10 +1,10 @@
 hash: 4ff7b5b5136f0eb56dc447abe4ec83bc3d34fed380616d2d9789f0b672e0394b
-updated: 2017-03-28T13:44:12.543004345+01:00
+updated: 2017-03-31T11:47:52.320997308+01:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
 - name: github.com/eidolon/console
-  version: 0f251a6ce1ab92a098b8961d638bf99a2c61a678
+  version: 78364caa5d0a1c732c9c607a6c012b1bb374a88c
   subpackages:
   - parameters
   - specification

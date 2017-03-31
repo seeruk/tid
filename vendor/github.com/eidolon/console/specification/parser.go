@@ -47,13 +47,13 @@ func (p *parser) unscan() {
 
 // expectedButActual is a helper for creating parser errors with an expected and actual value.
 func (p *parser) expected(expected string, actual string) error {
-	return fmt.Errorf("Expected %s, found '%s'.", expected, actual)
+	return fmt.Errorf("specification: Expected %s, found '%s'", expected, actual)
 }
 
 // expectedLen is a helper for creating parser errors for string lengths.
 func (p *parser) expectedLen(expected string, expectedLen int, actualLen int) error {
 	return fmt.Errorf(
-		"Expected %s to be %d character(s), was %d character(s).",
+		"specification: Expected %s to be %d character(s), was %d character(s)",
 		expected,
 		expectedLen,
 		actualLen,
