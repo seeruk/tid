@@ -13,7 +13,7 @@ storage backend, and does not require an active daemon.
 $ go get -u -v github.com/SeerUK/tid/...
 ```
 
-## Usage
+## Usage
 
 Full usage information can be seen by using the built-in contextual help. This can accessed by
 running:
@@ -77,7 +77,7 @@ Entry Count: 1
 +------------+---------+------------+-----------+-----------------+----------+---------+
 ```
 
-### Starting an Entry Timer
+### Starting an Entry Timer
 
 ```
 $ tid start "A note"
