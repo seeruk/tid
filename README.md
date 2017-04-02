@@ -5,7 +5,7 @@
 # tid
 
 A simple, CLI-based time tracking utility for personal time tracking. `tid` uses [Bolt][1] as a
-storage backend, and does not use any kind of active daemon.
+storage backend, and does not require an active daemon.
 
 ## Installation
 
@@ -22,6 +22,18 @@ running:
 $ tid --help
 $ # Or for command help:
 $ tid start --help
+```
+
+Tid has sub-commands in some places, for example:
+
+```
+$ tid entry create 1h10m "Resolving live issue"
+```
+
+And also has short aliases for some commands:
+
+```
+$ tid e c 1h10m "Resolving live isssue"
 ```
 
 Here's some simple general usage:
