@@ -49,3 +49,36 @@ func (f *WorkspaceFacade) Create(name string) error {
 
 	return f.sysGateway.PersistWorkspaceIndex(index)
 }
+
+// Delete attempts to delete a workspace.
+func (f *WorkspaceFacade) Delete(name string) error {
+	index, err := f.sysGateway.FindWorkspaceIndex()
+	if err != nil {
+		return err
+	}
+
+	exists := false
+
+	// Remove the workspace from the index.
+	for i, ws := range index.Workspaces {
+		if ws == name {
+			index.Workspaces = append(index.Workspaces[:i], index.Workspaces[i+1:]...)
+			exists = true
+			break
+		}
+	}
+
+	if !exists {
+		return fmt.Errorf("util: Workspace '%s' does not exist", name)
+	}
+
+	err = f.sysGateway.PersistWorkspaceIndex(index)
+	if err != nil {
+		return err
+	}
+
+	return f.backend.DeleteBucket(fmt.Sprintf(
+		state.BackendBucketWorkspaceFmt,
+		name,
+	))
+}
