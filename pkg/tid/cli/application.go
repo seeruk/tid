@@ -43,11 +43,11 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 		}),
 
 		// Workspace commands
-		// @todo: Write these
 		workspace.RootCommand().AddCommands([]*console.Command{
 			workspace.CreateCommand(kernel.Factory),
 			workspace.DeleteCommand(kernel.Factory),
 			workspace.ListCommand(kernel.Factory),
+			workspace.SwitchCommand(kernel.Factory),
 		}),
 
 		command.ReportCommand(kernel.Factory),

@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 
+	"github.com/SeerUK/tid/pkg/errhandling"
 	"github.com/SeerUK/tid/pkg/state"
 )
 
@@ -81,4 +82,35 @@ func (f *WorkspaceFacade) Delete(name string) error {
 		state.BackendBucketWorkspaceFmt,
 		name,
 	))
+}
+
+// Switch attempts to switch to another workspace.
+func (f *WorkspaceFacade) Switch(name string) error {
+	index, err1 := f.sysGateway.FindWorkspaceIndex()
+	status, err2 := f.sysGateway.FindOrCreateStatus()
+
+	errs := errhandling.NewErrorStack()
+	errs.Add(err1)
+	errs.Add(err2)
+
+	if !errs.Empty() {
+		return errs.Errors()
+	}
+
+	exists := false
+
+	for _, workspace := range index.Workspaces {
+		if workspace == name {
+			exists = true
+			break
+		}
+	}
+
+	if !exists {
+		return fmt.Errorf("util: Workspace '%s' does not exist", name)
+	}
+
+	status.Workspace = name
+
+	return f.sysGateway.PersistStatus(status)
 }
