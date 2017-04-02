@@ -44,7 +44,9 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 
 		// Workspace commands
 		// @todo: Write these
-		workspace.RootCommand().AddCommands([]*console.Command{}),
+		workspace.RootCommand().AddCommands([]*console.Command{
+			workspace.ListCommand(kernel.TrackingFactory),
+		}),
 
 		command.ReportCommand(kernel.TrackingFactory),
 		command.ResumeCommand(kernel.TrackingFactory),

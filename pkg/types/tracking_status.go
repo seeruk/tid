@@ -4,7 +4,8 @@ import (
 	"github.com/SeerUK/tid/proto"
 )
 
-// TrackingStatusDefaultWorkspace is the default workspace to fallback on if one isn't present in the DB.
+// TrackingStatusDefaultWorkspace is the default workspace to fallback on if one isn't present in
+// the DB, or if the currently active workspace is deleted.
 const TrackingStatusDefaultWorkspace = "default"
 
 // TrackingStatus represents the status of what is being tracked currently.
@@ -19,7 +20,7 @@ type TrackingStatus struct {
 	Workspace string
 }
 
-// NewTrackingStatus create a new instance of TrackingStatus.
+// NewTrackingStatus creates a new instance of TrackingStatus.
 func NewTrackingStatus() TrackingStatus {
 	return TrackingStatus{}
 }

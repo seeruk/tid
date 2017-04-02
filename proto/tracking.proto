@@ -21,6 +21,11 @@ message SysTrackingStatus {
     string workspace = 4;
 }
 
+// SysWorkspaceIndex keeps track of all created workspaces.
+message SysWorkspaceIndex {
+    repeated string workspaces = 1;
+}
+
 // TrackingTimesheet represents a timesheet. It contains all of the entries for a time period.
 message TrackingTimesheet {
     // The key of this timesheet.
