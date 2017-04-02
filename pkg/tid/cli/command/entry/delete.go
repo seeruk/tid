@@ -1,13 +1,13 @@
 package entry
 
 import (
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // DeleteCommand creates a command that is used to delete timesheet entries.
-func DeleteCommand(factory tracking.Factory) *console.Command {
+func DeleteCommand(factory util.Factory) *console.Command {
 	var hash string
 
 	configure := func(def *console.Definition) {

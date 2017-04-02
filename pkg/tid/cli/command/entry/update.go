@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // UpdateCommand creates a command to updated timesheet entries.
-func UpdateCommand(factory tracking.Factory) *console.Command {
+func UpdateCommand(factory util.Factory) *console.Command {
 	var duration time.Duration
 	var hash string
 	var offset time.Duration

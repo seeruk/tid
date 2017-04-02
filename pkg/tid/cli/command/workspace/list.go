@@ -2,12 +2,12 @@ package workspace
 
 import (
 	"github.com/SeerUK/tid/pkg/errhandling"
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 )
 
 // ListCommand creates a command to list available workspaces.
-func ListCommand(factory tracking.Factory) *console.Command {
+func ListCommand(factory util.Factory) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		sysGateway := factory.BuildSysGateway()
 

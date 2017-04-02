@@ -3,13 +3,13 @@ package timesheet
 import (
 	"time"
 
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // DeleteCommand creates a command that is used to delete timesheets.
-func DeleteCommand(factory tracking.Factory) *console.Command {
+func DeleteCommand(factory util.Factory) *console.Command {
 	var date time.Time
 
 	configure := func(def *console.Definition) {

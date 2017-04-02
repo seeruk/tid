@@ -5,14 +5,14 @@ import (
 
 	"github.com/SeerUK/tid/pkg/state"
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
-	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // StatusCommand creates a command to view the status of the current timer.
-func StatusCommand(factory tracking.Factory) *console.Command {
+func StatusCommand(factory util.Factory) *console.Command {
 	var format string
 	var hash string
 

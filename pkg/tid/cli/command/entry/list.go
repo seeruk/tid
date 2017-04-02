@@ -6,13 +6,13 @@ import (
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
 	"github.com/SeerUK/tid/pkg/timeutil"
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // ListCommand creates a command to list timesheet entries.
-func ListCommand(factory tracking.Factory) *console.Command {
+func ListCommand(factory util.Factory) *console.Command {
 	var date time.Time
 	var end time.Time
 	var format string

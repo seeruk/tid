@@ -8,7 +8,7 @@ import (
 	"github.com/SeerUK/tid/pkg/state/migrate"
 	"github.com/SeerUK/tid/pkg/tid"
 	"github.com/SeerUK/tid/pkg/tid/cli"
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 
 	boltdb "github.com/boltdb/bolt"
 
@@ -25,7 +25,7 @@ func main() {
 	err := migrate.Backend(backend)
 	fatal(err)
 
-	factory := tracking.NewStandardFactory(backend)
+	factory := util.NewStandardFactory(backend)
 	kernel := cli.NewTidKernel(backend, factory)
 
 	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:], os.Environ()))

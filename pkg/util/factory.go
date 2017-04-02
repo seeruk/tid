@@ -1,4 +1,4 @@
-package tracking
+package util
 
 import (
 	"fmt"
@@ -6,16 +6,14 @@ import (
 	"github.com/SeerUK/tid/pkg/state"
 )
 
-// @todo: Use same instances once they're created. Is this a factory then though?
-
-// Factory abstracts the creation of tracking-related services.
+// Factory abstracts the creation of services.
 type Factory interface {
 	// BuildEntryFacade builds an EntryFacade instance.
 	BuildEntryFacade() *EntryFacade
 	// BuildTimesheetFacade builds an TimesheetFacade instance.
 	BuildTimesheetFacade() *TimesheetFacade
-	// BuildFacade builds a Facade instance.
-	BuildFacade() *Facade
+	// BuildTrackingFacade builds a TrackingFacade instance.
+	BuildTrackingFacade() *TrackingFacade
 	// BuildSysGateway builds a SysGateway instance.
 	BuildSysGateway() state.SysGateway
 	// BuildTrackingGateway builds a TimesheetGateway instance.
@@ -23,7 +21,7 @@ type Factory interface {
 }
 
 // standardFactory provides a standard, simple, functional implementation of the
-// TrackingFactory interface.
+// Factory interface.
 type standardFactory struct {
 	// backend keeps the reference to the storage backend to re-use.
 	backend state.Backend
@@ -48,8 +46,8 @@ func (f *standardFactory) BuildTimesheetFacade() *TimesheetFacade {
 	return NewTimesheetFacade(f.BuildTrackingGateway(), f.BuildEntryFacade())
 }
 
-func (f *standardFactory) BuildFacade() *Facade {
-	return NewFacade(f.BuildSysGateway(), f.BuildTrackingGateway())
+func (f *standardFactory) BuildTrackingFacade() *TrackingFacade {
+	return NewTrackingFacade(f.BuildSysGateway(), f.BuildTrackingGateway())
 }
 
 func (f *standardFactory) BuildSysGateway() state.SysGateway {

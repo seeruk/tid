@@ -3,13 +3,13 @@ package entry
 import (
 	"time"
 
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // CreateCommand creates a command to add timesheet entries.
-func CreateCommand(factory tracking.Factory) *console.Command {
+func CreateCommand(factory util.Factory) *console.Command {
 	var duration time.Duration
 	var note string
 	var started = time.Now()

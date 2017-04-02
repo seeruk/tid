@@ -7,14 +7,14 @@ import (
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
 	"github.com/SeerUK/tid/pkg/timeutil"
-	"github.com/SeerUK/tid/pkg/tracking"
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // ReportCommand creates a command to view a timesheet report.
-func ReportCommand(factory tracking.Factory) *console.Command {
+func ReportCommand(factory util.Factory) *console.Command {
 	var date time.Time
 	var end time.Time
 	var format string

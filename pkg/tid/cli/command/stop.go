@@ -1,14 +1,14 @@
 package command
 
 import (
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 )
 
 // StopCommand creates a command to stop timers.
-func StopCommand(factory tracking.Factory) *console.Command {
+func StopCommand(factory util.Factory) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
-		facade := factory.BuildFacade()
+		facade := factory.BuildTrackingFacade()
 
 		entry, err := facade.Stop()
 		if err != nil {

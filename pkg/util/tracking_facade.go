@@ -1,4 +1,4 @@
-package tracking
+package util
 
 import (
 	"errors"
@@ -8,24 +8,24 @@ import (
 	"github.com/SeerUK/tid/pkg/types"
 )
 
-// Facade provides a simpler interface for common general tracking-related tasks.
-type Facade struct {
+// TrackingFacade provides a simpler interface for common general tracking-related tasks.
+type TrackingFacade struct {
 	// sysGateway is a SysGateway used for accessing system storage.
 	sysGateway state.SysGateway
 	// trGateway is a TrackingGateway used for accessing tracking storage.
 	trGateway state.TrackingGateway
 }
 
-// NewFacade creates a new TrackingFacade instance.
-func NewFacade(sysGateway state.SysGateway, trGateway state.TrackingGateway) *Facade {
-	return &Facade{
+// NewTrackingFacade creates a new TrackingFacade instance.
+func NewTrackingFacade(sysGateway state.SysGateway, trGateway state.TrackingGateway) *TrackingFacade {
+	return &TrackingFacade{
 		sysGateway: sysGateway,
 		trGateway:  trGateway,
 	}
 }
 
 // Start a new entry, with the given details.
-func (f *Facade) Start(note string) (types.Entry, error) {
+func (f *TrackingFacade) Start(note string) (types.Entry, error) {
 	var entry types.Entry
 
 	status, err := f.sysGateway.FindOrCreateStatus()
@@ -63,7 +63,7 @@ func (f *Facade) Start(note string) (types.Entry, error) {
 }
 
 // Stop the currently active entry.
-func (f *Facade) Stop() (types.Entry, error) {
+func (f *TrackingFacade) Stop() (types.Entry, error) {
 	var entry types.Entry
 
 	status, err := f.sysGateway.FindOrCreateStatus()
@@ -95,7 +95,7 @@ func (f *Facade) Stop() (types.Entry, error) {
 
 // Resume an entry with the given hash. If an empty hash is given, resume the currently active
 // timer. If no timer is active, error.
-func (f *Facade) Resume(hash string) (types.Entry, error) {
+func (f *TrackingFacade) Resume(hash string) (types.Entry, error) {
 	var entry types.Entry
 
 	status, err := f.sysGateway.FindOrCreateStatus()

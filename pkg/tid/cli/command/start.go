@@ -1,13 +1,13 @@
 package command
 
 import (
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // StartCommand creates a command to start timers.
-func StartCommand(factory tracking.Factory) *console.Command {
+func StartCommand(factory util.Factory) *console.Command {
 	var note string
 
 	configure := func(def *console.Definition) {
@@ -19,7 +19,7 @@ func StartCommand(factory tracking.Factory) *console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		facade := factory.BuildFacade()
+		facade := factory.BuildTrackingFacade()
 
 		entry, err := facade.Start(note)
 		if err != nil {

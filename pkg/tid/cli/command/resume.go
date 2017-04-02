@@ -1,13 +1,13 @@
 package command
 
 import (
-	"github.com/SeerUK/tid/pkg/tracking"
+	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // ResumeCommand creates a command to resume timers.
-func ResumeCommand(factory tracking.Factory) *console.Command {
+func ResumeCommand(factory util.Factory) *console.Command {
 	var hash string
 
 	configure := func(def *console.Definition) {
@@ -19,7 +19,7 @@ func ResumeCommand(factory tracking.Factory) *console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		facade := factory.BuildFacade()
+		facade := factory.BuildTrackingFacade()
 
 		entry, err := facade.Resume(hash)
 		if err != nil {
