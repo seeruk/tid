@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"strings"
+
 	"github.com/eidolon/console/parameters"
 )
 
@@ -68,6 +70,16 @@ func (a *Application) Run(params []string, env []string) int {
 	command, path := a.findCommandInInput()
 	if command != nil && command.Configure != nil {
 		command.Configure(definition)
+	}
+
+	if a.hasIsAtPathOption() {
+		isAtPath := a.input.GetOptionValue([]string{"ecint-is-at-path"})
+
+		if isAtPath == strings.Join(path, " ") {
+			return 0
+		}
+
+		return 1
 	}
 
 	if a.hasHelpOption() || (command == nil || command.Execute == nil) {
@@ -151,6 +163,18 @@ func (a *Application) findCommandInInput() (*Command, []string) {
 func (a *Application) hasHelpOption() bool {
 	for _, opt := range a.input.Options {
 		if opt.Name == "help" || opt.Name == "h" {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasIsAtPathOption checks to see if the internal "is at path" option is passed. This option is
+// used to check if the current input would result in a given command path. Useful for completions.
+func (a *Application) hasIsAtPathOption() bool {
+	for _, opt := range a.input.Options {
+		if opt.Name == "ecint-is-at-path" {
 			return true
 		}
 	}

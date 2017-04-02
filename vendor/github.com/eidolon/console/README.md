@@ -22,7 +22,7 @@ goal of this library is to make it so that commands are easily testable.
 There are still some things I'd like to get done with this library, as is reflected by the pre-v1.0
 state. Here's a priority ordered todo list:
 
-* Command aliases.
+* Command groups.
 * Documentation.
 * Mutually exclusive options.
 * More complete set of tests.

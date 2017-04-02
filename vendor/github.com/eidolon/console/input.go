@@ -20,6 +20,19 @@ type InputOption struct {
 	Value string
 }
 
+// GetOptionValue gets the an option with one of the given names' value./
+func (i *Input) GetOptionValue(names []string) string {
+	for _, name := range names {
+		for _, option := range i.Options {
+			if option.Name == name {
+				return option.Value
+			}
+		}
+	}
+
+	return ""
+}
+
 // HasOption checks to see if the given option exists by one of it's names.
 func (i *Input) HasOption(names []string) bool {
 	for _, name := range names {
@@ -35,5 +48,3 @@ func (i *Input) HasOption(names []string) bool {
 
 // @todo: Input (low priority):
 // @todo: - Add method for retrieving argument by index.
-// @todo: - Add method for retrieving option by name.
-// @todo: - Add method for retrieving option by names (first matching).

@@ -22,7 +22,7 @@ func StopCommand(factory util.Factory) *console.Command {
 
 	return &console.Command{
 		Name:        "stop",
-		Description: "Stop an existing timer.",
+		Description: "Stop the current timer.",
 		Execute:     execute,
 	}
 }
