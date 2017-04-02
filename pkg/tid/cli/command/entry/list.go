@@ -72,11 +72,6 @@ func ListCommand(factory util.Factory) *console.Command {
 			return err
 		}
 
-		if len(entries) == 0 {
-			output.Println("list: No entries within the given time period")
-			return nil
-		}
-
 		if hasFormat {
 			for _, entry := range entries {
 				tmpl := template.Must(template.New("entry-list").Parse(format))
@@ -85,6 +80,11 @@ func ListCommand(factory util.Factory) *console.Command {
 				output.Println()
 			}
 
+			return nil
+		}
+
+		if len(entries) == 0 {
+			output.Println("list: No entries within the given time period")
 			return nil
 		}
 
