@@ -14,6 +14,8 @@ type Factory interface {
 	BuildTimesheetFacade() *TimesheetFacade
 	// BuildTrackingFacade builds a TrackingFacade instance.
 	BuildTrackingFacade() *TrackingFacade
+	// BuildWorkspaceFacade builds a WorkspaceFacade instance.
+	BuildWorkspaceFacade() *WorkspaceFacade
 	// BuildSysGateway builds a SysGateway instance.
 	BuildSysGateway() state.SysGateway
 	// BuildTrackingGateway builds a TimesheetGateway instance.
@@ -48,6 +50,10 @@ func (f *standardFactory) BuildTimesheetFacade() *TimesheetFacade {
 
 func (f *standardFactory) BuildTrackingFacade() *TrackingFacade {
 	return NewTrackingFacade(f.BuildSysGateway(), f.BuildTrackingGateway())
+}
+
+func (f *standardFactory) BuildWorkspaceFacade() *WorkspaceFacade {
+	return NewWorkspaceFacade(f.backend, f.BuildSysGateway())
 }
 
 func (f *standardFactory) BuildSysGateway() state.SysGateway {

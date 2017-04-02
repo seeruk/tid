@@ -11,11 +11,10 @@ func ListCommand(factory util.Factory) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		sysGateway := factory.BuildSysGateway()
 
-		errs := errhandling.NewErrorStack()
-
 		index, err1 := sysGateway.FindWorkspaceIndex()
 		status, err2 := sysGateway.FindOrCreateStatus()
 
+		errs := errhandling.NewErrorStack()
 		errs.Add(err1)
 		errs.Add(err2)
 

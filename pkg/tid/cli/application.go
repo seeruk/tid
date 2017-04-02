@@ -30,21 +30,22 @@ func buildCommands(kernel *TidKernel) []*console.Command {
 	return []*console.Command{
 		// Entry commands
 		entry.RootCommand().AddCommands([]*console.Command{
-			entry.ListCommand(kernel.Factory),
 			entry.CreateCommand(kernel.Factory),
-			entry.UpdateCommand(kernel.Factory),
 			entry.DeleteCommand(kernel.Factory),
+			entry.ListCommand(kernel.Factory),
+			entry.UpdateCommand(kernel.Factory),
 		}),
 
 		// Timesheet commands
 		timesheet.RootCommand().AddCommands([]*console.Command{
-			timesheet.ListCommand(kernel.Factory),
 			timesheet.DeleteCommand(kernel.Factory),
+			timesheet.ListCommand(kernel.Factory),
 		}),
 
 		// Workspace commands
 		// @todo: Write these
 		workspace.RootCommand().AddCommands([]*console.Command{
+			workspace.CreateCommand(kernel.Factory),
 			workspace.ListCommand(kernel.Factory),
 		}),
 
