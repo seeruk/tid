@@ -41,13 +41,13 @@ func StatusCommand(factory util.Factory) *console.Command {
 			return err
 		}
 
-		if status.Entry == "" {
-			output.Println("status: No timer to check the status of")
-			return nil
+		if hash == "" {
+			hash = status.Entry
 		}
 
 		if hash == "" {
-			hash = status.Entry
+			output.Println("status: No timer to check the status of")
+			return nil
 		}
 
 		entry, err := trGateway.FindEntry(hash)
