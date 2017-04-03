@@ -166,7 +166,7 @@ $ tid entry list --date=(tiddate --days=-7)
 $ tid e ls 
 ```
 
-The `--format` options uses Go's `text/template` package, and is passed an [Entry][entry]. 
+The `--format` option uses Go's `text/template` package, and is passed an [Entry][entry]. 
 
 ##### Update `update|u`
 
@@ -187,35 +187,6 @@ $ tid e d c24543c
 ##### Delete `delete|d`
 ##### List `list|ls`
 ##### Switch `switch|s`
-
-### Adding an Entry
-
-```
-$ tid add 2001-01-01 24h "Welcome to the 21st century!"
-$ tid add (tiddate --days=-1) 1h10m "Call with Google"
-```
-
-### Editing an Entry
-
-```
-$ tid edit fdb6f0d --duration=30s
-$ tid edit fdb6f0d --note="Working on AI killer"
-$ tid edit fdb6f0d --offset=1m
-```
-
-People make mistakes, and you probably will when tracking your time too. You can update the note, or
-the duration of an entry easily with the edit command. If you specify an `--offset` it will add that
-to the duration (you can specify negative offsets to subtract time too, like `--offset=-12s`). You
-cannot specify both a duration and an offset at the same time.
-
-### Removing an Entry
-
-```
-$ tid remove fdb6f0d
-```
-
-Removing will permantently delete an entry. If the entry is running, you will be returned to a
-stopped state. If it was being tracked most recently, you will no longer have any entry to resume.
 
 ## Completions
 
