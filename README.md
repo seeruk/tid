@@ -59,8 +59,8 @@ Resumed timer for 'Working on AI' (fdb6f0d)
 
 # Forgot to add this!
 
-$ tid add (tiddate) 15m "Afternoon nap"
-Added entry 'Afternoon nap' (3d77f69)
+$ tid entry create 15m "Afternoon nap"
+Created entry 'Afternoon nap' (3d77f69)
 
 $ tid report
 Report for 2017-03-01.
@@ -77,7 +77,7 @@ Entry Count: 1
 +------------+---------+------------+-----------+-----------------+----------+---------+
 ```
 
-### Starting an Entry Timer
+### Starting an Entry Timer `start`
 
 ```
 $ tid start "A note"
@@ -87,7 +87,7 @@ The note is required, but can by any string value. It's used so when you view th
 report you know what you've been tracking. Try make it something identifiable. Maybe this will just
 be an issue ID from your issue tracker?
 
-### Stopping an Entry Timer
+### Stopping an Entry Timer `stop`
 
 ```
 $ tid stop
@@ -96,7 +96,7 @@ $ tid stop
 Stop always stops the currently active timer, if you don't have an active timer, it won't do
 anything.
 
-### Resuming an Entry Timer
+### Resuming an Entry Timer `resume|res`
 
 ```
 $ tid resume
@@ -107,30 +107,86 @@ The resume command allows you to resume the most recently stopped entry, or a sp
 passing in that entry's hash. If you don't have a most recently stopped entry then you would have to
 pass in an entry hash to use resume (e.g. if you remove the entry being tracked).
 
-### Status of an Entry
+### Status of an Entry `status|st`
 
 ```
 $ tid status
 $ tid status fdb6f0d
-$ tid status --format="{{.Entry.Duration}} on '{{.Entry.Note}}'"
+$ tid status --format="{{.Duration}} on '{{.Note}}'"
 ```
 
 You can view the status of the currently tracked entry (the most recently started or resumed entry)
 or you can view the status of a specific entry. The output is similar to the report output.
 
-### Report your Timesheet
+### Report your Timesheet `report|rep`
 
 ```
 $ tid report
 $ tid report --start=2017-02-01 --end=2017-02-28
 $ tid report --start=(tiddate --months=-6)
 $ tid report --no-summary
-$ tid report --format="{{.Entry.Hash}} {{.Entry.Note}}" --no-summary
+$ tid report --format="{{.Hash}} {{.Note}}" --no-summary
 ```
 
 The report command is quite powerful and gives you a lot of different ways to view timesheet data.
 By default the output will display a summary, and a table of the entries. You can control the output
 by passing other options like `--format` which is useful for scripting.
+
+### Management Commands
+
+#### Entries `entry|e`
+
+Sometimes you just forget to track something, and maybe it was a couple of days ago! Or maybe you
+realised you've tracked some additional time by mistake. The entry management commands let you 
+create new entries on the fly, or manage existing ones. There's also a listing that's similar to the
+report view, but without the summary.
+
+##### Create `create|c`
+
+```
+$ tid entry create <DURATION> <NOTE>
+$ tid entry create 10m "Hello, World"
+$ tid e c 10m "Hello, World"
+```
+
+##### Delete `delete|d`
+
+```
+$ tid entry delete <HASH>
+$ tid entry delete c24543c
+$ tid e d c24543c
+```
+
+##### List `list|ls`
+
+```
+$ tid entry list [OPTIONS]
+$ tid entry list --start=(tiddate --days=-7) --end=(tiddate) --format="{{.Hash}}"
+$ tid entry list --date=(tiddate --days=-7)
+$ tid e ls 
+```
+
+The `--format` options uses Go's `text/template` package, and is passed an [Entry][entry]. 
+
+##### Update `update|u`
+
+```
+$ tid entry delete <HASH>
+$ tid entry delete c24543c
+$ tid e d c24543c
+```
+
+#### Timesheets
+
+##### Delete `delete|d`
+##### List `list|ls`
+
+#### Workspaces
+
+##### Create `create|c`
+##### Delete `delete|d`
+##### List `list|ls`
+##### Switch `switch|s`
 
 ### Adding an Entry
 
@@ -138,10 +194,6 @@ by passing other options like `--format` which is useful for scripting.
 $ tid add 2001-01-01 24h "Welcome to the 21st century!"
 $ tid add (tiddate --days=-1) 1h10m "Call with Google"
 ```
-
-Sometimes you just forget to track something, and maybe it was a day ago! This command lets you add
-something on a specific timesheet. You can edit and remove just like normal anyway. You must always
-specify a timesheet date, a duration, and a note.
 
 ### Editing an Entry
 
@@ -177,27 +229,10 @@ $ cp completions/tid.fish ~/.config/fish/completions/
 
 Completion covers commands, options of commands, and entries where applicable.
 
-## Formatting Reference
-
-Both the `status` and `report` commands accept a `--format` option that uses Go's text templates. 
-The data that gets passed in has the following structure:
-
-```
-Entry.Timesheet   (string)         The timesheet date this entry belongs to.
-Entry.Hash        (string)         The hash of this entry.
-Entry.ShortHash   (string)         The short hash of this entry.
-Entry.Created     (time.Time)      The date/time this entry was created.
-Entry.Updated     (time.Time)      The date/time this entry was last updated.
-Entry.Note        (string)         The note of this entry.
-Entry.Duration    (time.Duration)  The duration logged against this entry.
-Entry.IsRunning   (bool)           True if this entry's timer is running.
-Status.Timesheet  (string)         The timesheet date for the currently active entry.
-Status.Entry      (string)         The entry hash for the currently active entry.
-Status.IsRunning  (bool)           True if a (any) entry's timer is running.
-```
-
 ## License
 
 MIT
 
 [1]: https://github.com/boltdb/bolt
+
+[entry]: pkg/types/entry.go
