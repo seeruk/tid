@@ -235,4 +235,4 @@ MIT
 
 [1]: https://github.com/boltdb/bolt
 
-[entry]: pkg/types/entry.go
+[entry]: pkg/types/entry.go#L19
