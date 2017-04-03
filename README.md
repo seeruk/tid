@@ -188,7 +188,7 @@ $ tid e d c24543c
 ##### List `list|ls`
 ##### Switch `switch|s`
 
-## Completions
+## Completions
 
 Completions are provided for Fish and are located with obvious names in the `completions/` 
 directory. Installation will probably look something like this:
