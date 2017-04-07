@@ -8,6 +8,16 @@ import (
 	"github.com/SeerUK/tid/pkg/types"
 )
 
+var (
+	// ErrNoTimerRunning is an error reported when an action is attempted that requires a timer to
+	// be running, but there is no timer running.
+	ErrNoTimerRunning = errors.New("tracking: There is no active timer running")
+	// ErrTimerRunning is an error reported when an action is attempted that requires that no timer
+	// is running, but there is one running.
+	ErrTimerRunning = errors.New("tracking: Stop your existing timer before starting a new one")
+)
+
+
 // TrackingFacade provides a simpler interface for common general tracking-related tasks.
 type TrackingFacade struct {
 	// sysGateway is a SysGateway used for accessing system storage.
@@ -34,7 +44,7 @@ func (f *TrackingFacade) Start(note string) (types.Entry, error) {
 	}
 
 	if status.IsRunning {
-		return entry, errors.New("tracking: Stop your existing timer before starting a new one")
+		return entry, ErrTimerRunning
 	}
 
 	sheet, err := f.trGateway.FindOrCreateTodaysTimesheet()
@@ -72,7 +82,7 @@ func (f *TrackingFacade) Stop() (types.Entry, error) {
 	}
 
 	if !status.IsRunning {
-		return entry, errors.New("tracking: There is no active timer running")
+		return entry, ErrNoTimerRunning
 	}
 
 	entry, err = f.trGateway.FindEntry(status.Entry)

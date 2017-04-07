@@ -22,7 +22,7 @@ func ResumeCommand(factory util.Factory) *console.Command {
 		facade := factory.BuildTrackingFacade()
 
 		_, err := facade.Stop()
-		if err != nil {
+		if err != nil && err != util.ErrNoTimerRunning {
 			return err
 		}
 
