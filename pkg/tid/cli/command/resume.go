@@ -21,6 +21,11 @@ func ResumeCommand(factory util.Factory) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		facade := factory.BuildTrackingFacade()
 
+		_, err := facade.Stop()
+		if err != nil {
+			return err
+		}
+
 		entry, err := facade.Resume(hash)
 		if err != nil {
 			return err
