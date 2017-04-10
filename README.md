@@ -163,7 +163,7 @@ $ tid e d c24543c
 $ tid entry list [OPTIONS]
 $ tid entry list --start=(tiddate --days=-7) --end=(tiddate) --format="{{.Hash}}"
 $ tid entry list --date=(tiddate --days=-7)
-$ tid e ls 
+$ tid e ls --date=(tiddate --days=-7)
 ```
 
 The `--format` option uses Go's `text/template` package, and is passed an [Entry][entry]. 
@@ -171,22 +171,78 @@ The `--format` option uses Go's `text/template` package, and is passed an [Entry
 ##### Update `update|u`
 
 ```
-$ tid entry delete <HASH>
-$ tid entry delete c24543c
-$ tid e d c24543c
+$ tid entry update <HASH> [OPTIONS]
+$ tid entry update c24543c --duration=10m --note="More CMS work..."
+$ tid entry update c24543c --offset=-2m12s
+$ tid e u c24543c --offset=-2m12s
 ```
+
+The `--duration` and `--offset` options are mutually exclusive. Offset accepts negative values for
+updating the duration by the amount given.
 
 #### Timesheets
 
 ##### Delete `delete|d`
+
+```
+$ tid timesheet delete <DATE>
+$ tid timesheet delete 2017-04-10
+$ tid t d 2017-04-10
+```
+
 ##### List `list|ls`
+
+```
+$ tid timesheet list [OPTIONS]
+$ tid timesheet list --start=(tiddate --days=-7) --end=(tiddate) --format="{{.Hash}}"
+$ tid timesheet list --date=(tiddate --days=-7)
+$ tid t ls --date=(tiddate --days=-7)
+```
 
 #### Workspaces
 
+Workspaces are separate time-tracking environments designed to segregate unrelated work. You can
+choose what that means, but one example could be tracking time for personal projects separately to
+work projects.
+
 ##### Create `create|c`
+
+```
+$ tid workspace create <NAME>
+$ tid workspace create freelance
+$ tid w c freelance
+```
+
 ##### Delete `delete|d`
+
+```
+$ tid workspace delete <NAME>
+$ tid workspace delete freelance
+$ tid w d freelance
+```
+
+Deleting a workspace will remove all timesheets and entries within it. There's no recovery from this
+unless you've backed up your database.
+
 ##### List `list|ls`
+
+```
+$ tid workspace list
+$ tid w ls
+```
+
+The active workspace will be denoted with an asterisk (e.g. `default *`).
+
 ##### Switch `switch|s`
+
+```
+$ tid workspace switch <NAME>
+$ tid workspace switch freelance
+$ tid w s freelance
+```
+
+Switching workspace will first stop any running timers, meaning you don't have to worry about time
+wracking up because you've forgotten to stop then switch!
 
 ## Completions
 
