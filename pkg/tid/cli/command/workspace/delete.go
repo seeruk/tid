@@ -8,12 +8,12 @@ import (
 
 // DeleteCommand creates a command that deletes workspaces.
 func DeleteCommand(factory util.Factory) *console.Command {
-	var workspace string
+	var name string
 
 	configure := func(def *console.Definition) {
 		def.AddArgument(console.ArgumentDefinition{
-			Value: parameters.NewStringValue(&workspace),
-			Spec:  "WORKSPACE",
+			Value: parameters.NewStringValue(&name),
+			Spec:  "NAME",
 			Desc:  "A workspace name.",
 		})
 	}
@@ -21,12 +21,12 @@ func DeleteCommand(factory util.Factory) *console.Command {
 	execute := func(input *console.Input, output *console.Output) error {
 		facade := factory.BuildWorkspaceFacade()
 
-		err := facade.Delete(workspace)
+		err := facade.Delete(name)
 		if err != nil {
 			return err
 		}
 
-		output.Printf("Deleted workspace '%s'\n", workspace)
+		output.Printf("Deleted workspace '%s'\n", name)
 
 		return nil
 	}

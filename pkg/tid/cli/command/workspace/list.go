@@ -22,14 +22,14 @@ func ListCommand(factory util.Factory) *console.Command {
 			return errs.Errors()
 		}
 
-		for _, workspace := range index.Workspaces {
+		for _, name := range index.Workspaces {
 			fmt := "%s\n"
 
-			if workspace == status.Workspace {
+			if name == status.Workspace {
 				fmt = "%s *\n"
 			}
 
-			output.Printf(fmt, workspace)
+			output.Printf(fmt, name)
 		}
 
 		return nil
