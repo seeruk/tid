@@ -97,6 +97,13 @@ func (f *WorkspaceFacade) Switch(name string) error {
 		return errs.Errors()
 	}
 
+	status, err := f.sysGateway.FindOrCreateStatus()
+	if err != nil {
+		return err
+	}
+
+	status.StopAndClear()
+
 	exists := false
 
 	for _, workspace := range index.Workspaces {
