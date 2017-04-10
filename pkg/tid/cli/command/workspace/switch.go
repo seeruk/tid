@@ -19,9 +19,15 @@ func SwitchCommand(factory util.Factory) *console.Command {
 	}
 
 	execute := func(input *console.Input, output *console.Output) error {
-		facade := factory.BuildWorkspaceFacade()
+		trFacade := factory.BuildTrackingFacade()
+		wsFacade := factory.BuildWorkspaceFacade()
 
-		err := facade.Switch(workspace)
+		_, err := trFacade.Stop()
+		if err != nil && err != util.ErrNoTimerRunning {
+			return err
+		}
+
+		err = wsFacade.Switch(workspace)
 		if err != nil {
 			return err
 		}
