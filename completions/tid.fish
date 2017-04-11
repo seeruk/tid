@@ -3,39 +3,25 @@
 # To install the completions:
 # $ mkdir -p ~/.config/fish/completions
 # $ cp tid.fish ~/.config/fish/completions
-# 
-# Aims to support commands, options, and entry hashes
 
-function __fish_tid_no_command --description 'Test if tid is yet to be given a subcommand'
-    for i in (commandline -opc)
-        if contains -- $i 'entry' 'e' 'report' 'rep' 'resume' 'res' 'start' 'status' 'st' 'stop' 'timesheet' 't' 'workspace' 'w'
-            return 1
-        end
-    end
-    return 0
-end
-
-# @todo:
 function __fish_tid_get_args --description 'Get tid args, throw away options. Echo on new lines'
-    echo "" > /tmp/fishy.log
+    if test (count (commandline -opc)) -lt 2
+        return 0
+    end
+
     for i in (commandline -opc)[2..-1]
         # Skip options (they start with "-")
         if test (string sub -s1 -l1 -- $i) = "-"
             continue
         end
 
-        echo "$i" >> /tmp/fishy.log
+        echo "$i"
     end
 end
 
-function __fish_tid_get_args_plc
-    echo "e"
-    echo "update"
-end
-
 function __fish_tid_paths
-    set -l path $argv[1] # $argv[1..-2]
-    set -l next $argv[2] # $argv[-1]
+    set -l path $argv[1]
+    set -l next $argv[2]
 
     switch $path
         # Root and it's subcommands
@@ -96,35 +82,32 @@ function __fish_tid_paths
                 case "*"
                     echo "$path"
             end
-        # Sub-commands don't need this? So, we only go to the level above the max?
         case "*"
             echo "$path"
     end
 end
 
-function __fish_tid_is_at_path2 --description 'Test if the current tid commandline is at the given path or aliast'
-    set -l args (__fish_tid_get_args_plc)
+function __fish_tid_is_at_path --description 'Test if the current tid commandline is at the given path or aliast'
+    set -l args (__fish_tid_get_args)
     set -l idx 1
+    set -l path ""
 
     # Build path in loop, we should be building full names. Make function that takes path, and next
     # path item, then works has a switch for all of the possible items below it? Maybe it returns
     # the new path?
     for a in $args
-        echo $idx
-        echo $a
-
-        set idx (math $idx + 1)
+        set path (__fish_tid_paths "$path" "$a")
     end
-end
 
-function __fish_tid_is_at_path --description 'Test if the current tid commandline is at the given path'
-    if test (count (commandline -opc)) -lt 2
+    echo "" > /tmp/fishy.log
+    echo "$path" >> /tmp/fishy.log
+    echo "$path" >> /tmp/fishy.log
+
+    if test "$path" = "$argv"
+        return 0
+    else
         return 1
     end
-
-    command tid (commandline -opc)[2..-1] --ecint-is-at-path="$argv"
-
-    return $status
 end
 
 # List entries from the last 6 months
@@ -143,14 +126,14 @@ function __fish_tid_workspaces
 end
 
 # No command:
-complete -c tid -n '__fish_tid_no_command' -a 'entry' -f -d 'Manage timesheet entries.'
-complete -c tid -n '__fish_tid_no_command' -a 'report' -f -d 'Display a timesheet report.'
-complete -c tid -n '__fish_tid_no_command' -a 'resume' -f -d 'Resume an existing timer.'
-complete -c tid -n '__fish_tid_no_command' -a 'start' -f -d 'Start a new timer.'
-complete -c tid -n '__fish_tid_no_command' -a 'status' -f -d 'View the current status.'
-complete -c tid -n '__fish_tid_no_command' -a 'stop' -f -d 'Stop an existing timer.'
-complete -c tid -n '__fish_tid_no_command' -a 'timesheet' -f -d 'Manage timesheets.'
-complete -c tid -n '__fish_tid_no_command' -a 'workspace' -f -d 'Manage workspaces.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'entry' -f -d 'Manage timesheet entries.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'report' -f -d 'Display a timesheet report.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'resume' -f -d 'Resume an existing timer.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'start' -f -d 'Start a new timer.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'status' -f -d 'View the current status.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'stop' -f -d 'Stop an existing timer.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'timesheet' -f -d 'Manage timesheets.'
+complete -c tid -n '__fish_tid_is_at_path ""' -a 'workspace' -f -d 'Manage workspaces.'
 
 # Commands
 # entry, e
