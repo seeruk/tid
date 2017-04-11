@@ -118,6 +118,8 @@ $ tid status --format="{{.Duration}} on '{{.Note}}'"
 You can view the status of the currently tracked entry (the most recently started or resumed entry)
 or you can view the status of a specific entry. The output is similar to the report output.
 
+The `--format` option uses Go's `text/template` package, and is passed an [Entry][entry].
+
 ### Report your Timesheet `report|rep`
 
 ```
@@ -132,12 +134,14 @@ The report command is quite powerful and gives you a lot of different ways to vi
 By default the output will display a summary, and a table of the entries. You can control the output
 by passing other options like `--format` which is useful for scripting.
 
+The `--format` option uses Go's `text/template` package, and is passed an [Entry][entry].
+
 ### Management Commands
 
 #### Entries `entry|e`
 
 Sometimes you just forget to track something, and maybe it was a couple of days ago! Or maybe you
-realised you've tracked some additional time by mistake. The entry management commands let you 
+realised you've tracked some additional time by mistake. The entry management commands let you
 create new entries on the fly, or manage existing ones. There's also a listing that's similar to the
 report view, but without the summary.
 
@@ -166,7 +170,7 @@ $ tid entry list --date=(tiddate --days=-7)
 $ tid e ls --date=(tiddate --days=-7)
 ```
 
-The `--format` option uses Go's `text/template` package, and is passed an [Entry][entry]. 
+The `--format` option uses Go's `text/template` package, and is passed an [Entry][entry].
 
 ##### Update `update|u`
 
@@ -198,6 +202,8 @@ $ tid timesheet list --start=(tiddate --days=-7) --end=(tiddate) --format="{{.Ha
 $ tid timesheet list --date=(tiddate --days=-7)
 $ tid t ls --date=(tiddate --days=-7)
 ```
+
+The `--format` option uses Go's `text/template` package, and is passed an [Timesheet][timesheet].
 
 #### Workspaces
 
@@ -246,7 +252,7 @@ wracking up because you've forgotten to stop then switch!
 
 ## Completions
 
-Completions are provided for Fish and are located with obvious names in the `completions/` 
+Completions are provided for Fish and are located with obvious names in the `completions/`
 directory. Installation will probably look something like this:
 
 ```
@@ -263,3 +269,4 @@ MIT
 [1]: https://github.com/boltdb/bolt
 
 [entry]: pkg/types/entry.go#L19
+[timesheet]: pkg/types/timesheet.go#L13
