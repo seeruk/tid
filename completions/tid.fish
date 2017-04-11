@@ -15,6 +15,18 @@ function __fish_tid_no_command --description 'Test if tid is yet to be given a s
     return 0
 end
 
+# @todo:
+function __fish_tid_get_args --description 'Get tid args, throw away options'
+    echo "" > /tmp/fishy.log
+    for i in (commandline -opc)[2..-1]
+        if test (string sub -s1 -l1 -- $i) = "-"
+            continue
+        end
+
+        echo "$i" >> /tmp/fishy.log
+    end
+end
+
 function __fish_tid_is_at_path --description 'Test if the current tid commandline is at the given path'
     if test (count (commandline -opc)) -lt 2
         return 1
