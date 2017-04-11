@@ -99,10 +99,6 @@ function __fish_tid_is_at_path --description 'Test if the current tid commandlin
         set path (__fish_tid_paths "$path" "$a")
     end
 
-    echo "" > /tmp/fishy.log
-    echo "$path" >> /tmp/fishy.log
-    echo "$path" >> /tmp/fishy.log
-
     if test "$path" = "$argv"
         return 0
     else
