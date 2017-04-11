@@ -38,7 +38,7 @@ function __fish_tid_paths
     set -l next $argv[2] # $argv[-1]
 
     switch $path
-        # Root
+        # Root and it's subcommands
         case ""
             switch $next
                 case "entry" "e"
@@ -57,13 +57,48 @@ function __fish_tid_paths
                     echo "timesheet"
                 case "workspace" "w"
                     echo "workspace"
+                case "*"
+                    echo "$path"
             end
-        # Commands
+        # Commands with subcommands
         case "entry"
-            echo "foo"
+            switch $next
+                case "create" "c"
+                    echo "$path create"
+                case "delete" "d"
+                    echo "$path delete"
+                case "list" "ls"
+                    echo "$path list"
+                case "update" "u"
+                    echo "$path update"
+                case "*"
+                    echo "$path"
+            end
+        case "timesheet"
+            switch $next
+                case "delete" "d"
+                    echo "$path delete"
+                case "list" "ls"
+                    echo "$path list"
+                case "*"
+                    echo "$path"
+            end
+        case "workspace"
+            switch $next
+                case "create" "c"
+                    echo "$path create"
+                case "delete" "d"
+                    echo "$path delete"
+                case "list" "ls"
+                    echo "$path list"
+                case "switch" "s"
+                    echo "$path switch"
+                case "*"
+                    echo "$path"
+            end
         # Sub-commands don't need this? So, we only go to the level above the max?
         case "*"
-            echo $path
+            echo "$path"
     end
 end
 
