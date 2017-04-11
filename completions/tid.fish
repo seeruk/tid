@@ -16,14 +16,69 @@ function __fish_tid_no_command --description 'Test if tid is yet to be given a s
 end
 
 # @todo:
-function __fish_tid_get_args --description 'Get tid args, throw away options'
+function __fish_tid_get_args --description 'Get tid args, throw away options. Echo on new lines'
     echo "" > /tmp/fishy.log
     for i in (commandline -opc)[2..-1]
+        # Skip options (they start with "-")
         if test (string sub -s1 -l1 -- $i) = "-"
             continue
         end
 
         echo "$i" >> /tmp/fishy.log
+    end
+end
+
+function __fish_tid_get_args_plc
+    echo "e"
+    echo "update"
+end
+
+function __fish_tid_paths
+    set -l path $argv[1] # $argv[1..-2]
+    set -l next $argv[2] # $argv[-1]
+
+    switch $path
+        # Root
+        case ""
+            switch $next
+                case "entry" "e"
+                    echo "entry"
+                case "report" "rep"
+                    echo "report"
+                case "resume" "res"
+                    echo "resume"
+                case "start"
+                    echo "start"
+                case "status" "st"
+                    echo "status"
+                case "stop"
+                    echo "stop"
+                case "timesheet" "t"
+                    echo "timesheet"
+                case "workspace" "w"
+                    echo "workspace"
+            end
+        # Commands
+        case "entry"
+            echo "foo"
+        # Sub-commands don't need this? So, we only go to the level above the max?
+        case "*"
+            echo $path
+    end
+end
+
+function __fish_tid_is_at_path2 --description 'Test if the current tid commandline is at the given path or aliast'
+    set -l args (__fish_tid_get_args_plc)
+    set -l idx 1
+
+    # Build path in loop, we should be building full names. Make function that takes path, and next
+    # path item, then works has a switch for all of the possible items below it? Maybe it returns
+    # the new path?
+    for a in $args
+        echo $idx
+        echo $a
+
+        set idx (math $idx + 1)
     end
 end
 
