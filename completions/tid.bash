@@ -132,9 +132,27 @@ _tid() {
 
     case "$(_tid_get_path)" in
         "")
-            opts="entry report resume start status stop timesheet workspace" ;;
+            case "$cur" in
+                -*)
+                    opts="--help" ;;
+                *)
+                    opts="entry report resume start status stop timesheet workspace" ;;
+            esac
+        ;;
         "entry")
             opts="create delete list update" ;;
+        "report")
+            opts="--date -d --end -e --format -f --no-summary --start -s" ;;
+        "resume")
+            opts="" # @todo: _tid_entries
+        "status")
+            case "$cur" in
+                -*)
+                    opts="--format -f" ;;
+                *)
+                    opts="" # @todo: _tid_entries
+            esac
+        ;;
         "timesheet")
             opts="delete list" ;;
         "workspace")
