@@ -252,15 +252,8 @@ wracking up because you've forgotten to stop then switch!
 
 ## Completions
 
-Completions are provided for Fish and are located with obvious names in the `completions/`
-directory. Installation will probably look something like this:
-
-```
-$ mkdir -p ~/.config/fish/completions/
-$ cp completions/tid.fish ~/.config/fish/completions/
-```
-
-Completion covers commands, options of commands, and entries where applicable.
+Completions are provided for Bash and Fish and are located with obvious names in the `completions/`
+directory.
 
 ## License
 
