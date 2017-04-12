@@ -3,6 +3,9 @@
 # To install the completions:
 # $ mkdir -p ~/.config/fish/completions
 # $ cp tid.fish ~/.config/fish/completions
+#
+# Supports all commands, subcommands, aliases, options, and fills in arguments for entry hashes,
+# timesheet dates, and workspace names.
 
 function __fish_tid_get_args --description 'Get tid args, throw away options. Echo on new lines'
     if test (count (commandline -opc)) -lt 2

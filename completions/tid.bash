@@ -2,13 +2,11 @@
 
 # tid.bash - tid completions for bash shell.
 # 
-# To install the completions:
-# @todo
+# Bash completion installation seems to be quite platform dependant, you might just have to Google
+# this one guys.
 #
-# Concerns in order:
-# - command and sub-command completion
-# - entry hash, timesheet date, and workspace name completion
-# - option completion
+# Supports all commands, subcommands, aliases, options, and fills in arguments for entry hashes,
+# timesheet dates, and workspace names.
 
 # _tid_get_args takes the current command line, throws away any options, throws away the tid command
 # name, and then echoes the resulting words on new lines for consumption with readarray.
@@ -122,6 +120,20 @@ _tid_get_path() {
     echo "$path"
 }
 
+_tid_entries() {
+    echo $(command tid entry list --start=$(command tiddate --months=-6) --end=$(command tiddate) \
+        --format="{{.ShortHash}}")
+}
+
+_tid_timesheets() {
+    echo $(command tid timesheet list --start=$(command tiddate --years=-1) --end=$(command tiddate) \
+        --format="{{.Key}}")
+}
+
+_tid_workspaces() {
+    echo $(command tid w ls | awk '{ print $1 }' | sort)
+}
+
 # _tid provides completions for tid.
 _tid() {
     local cur opts
@@ -131,6 +143,7 @@ _tid() {
     opts=""
 
     case "$(_tid_get_path)" in
+        # No command
         "")
             case "$cur" in
                 -*)
@@ -139,24 +152,48 @@ _tid() {
                     opts="entry report resume start status stop timesheet workspace" ;;
             esac
         ;;
+        # Commands
         "entry")
             opts="create delete list update" ;;
         "report")
             opts="--date -d --end -e --format -f --no-summary --start -s" ;;
         "resume")
-            opts="" # @todo: _tid_entries
+            opts="$(_tid_entries)" ;;
         "status")
             case "$cur" in
                 -*)
                     opts="--format -f" ;;
                 *)
-                    opts="" # @todo: _tid_entries
+                    opts="$(_tid_entries)" ;;
             esac
         ;;
         "timesheet")
             opts="delete list" ;;
         "workspace")
             opts="create delete list switch" ;;
+        # Sub-commands
+        "entry create")
+            opts="--date -d" ;;
+        "entry delete")
+            opts="$(_tid_entries)" ;;
+        "entry list")
+            opts="--date -d --end -e --format -f --start -s" ;;
+        "entry update")
+            case "$cur" in
+                -*)
+                    opts="--duration -d --note -n --offset -o" ;;
+                *)
+                    opts="$(_tid_entries)" ;;
+            esac
+        ;;
+        "timesheet delete")
+            opts="$(_tid_timesheets)" ;;
+        "timesheet list")
+            opts="--end -e --format -f --start -s" ;;
+        "workspace delete")
+            opts="$(_tid_workspaces)" ;;
+        "workspace switch")
+            opts="$(_tid_workspaces)" ;;
     esac
 
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
