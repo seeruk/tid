@@ -43,94 +43,72 @@ _tid_paths() {
         "")
             case "$next" in
                 "entry"|"e")
-                    echo "entry"
-                ;;
+                    echo "entry" ;;
                 "report"|"rep")
-                    echo "report"
-                ;;
+                    echo "report" ;;
                 "resume"|"res")
-                    echo "resume"
-                ;;
+                    echo "resume" ;;
                 "start")
-                    echo "start"
-                ;;
+                    echo "start" ;;
                 "status"|"st")
-                    echo "status"
-                ;;
+                    echo "status" ;;
                 "stop")
-                    echo "stop"
-                ;;
+                    echo "stop" ;;
                 "timesheet"|"t")
-                    echo "timesheet"
-                ;;
+                    echo "timesheet" ;;
                 "workspace"|"w")
-                    echo "workspace"
-                ;;
+                    echo "workspace" ;;
                 *)
-                    echo "$path"
-                ;;
+                    echo "$path" ;;
             esac
         ;;
         # Commands with subcommands
         "entry")
             case "$next" in
                 "create"|"c")
-                    echo "$path create"
-                ;;
+                    echo "$path create" ;;
                 "delete"|"d")
-                    echo "$path delete"
-                ;;
+                    echo "$path delete" ;;
                 "list"|"ls")
-                    echo "$path list"
-                ;;
+                    echo "$path list" ;;
                 "update"|"u")
-                    echo "$path update"
-                ;;
+                    echo "$path update" ;;
                 *)
-                    echo "$path"
-                ;;
+                    echo "$path" ;;
             esac
         ;;
         "timesheet")
             case "$next" in
                 "delete"|"d")
-                    echo "$path delete"
-                ;;
+                    echo "$path delete" ;;
                 "list"|"ls")
-                    echo "$path list"
-                ;;
+                    echo "$path list" ;;
                 *)
-                    echo "$path"
-                ;;
+                    echo "$path" ;;
             esac
         ;;
         "workspace")
             case "$next" in
                 "create"|"c")
-                    echo "$path create"
-                ;;
+                    echo "$path create" ;;
                 "delete"|"d")
-                    echo "$path delete"
-                ;;
+                    echo "$path delete" ;;
                 "list"|"ls")
-                    echo "$path list"
-                ;;
+                    echo "$path list" ;;
                 "switch"|"s")
-                    echo "$path switch"
-                ;;
+                    echo "$path switch" ;;
                 *)
-                    echo "$path"
-                ;;
+                    echo "$path" ;;
             esac
         ;;
+        # Fall back to current path
         *)
-            echo "$path"
-        ;;
+            echo "$path" ;;
     esac
 }
 
-_tid_is_at_path() {
-    local args idx path
+_tid_get_path() {
+    local idx path
 
     readarray -t args <<< "$(_tid_get_args)"
 
@@ -141,45 +119,31 @@ _tid_is_at_path() {
         path="$(_tid_paths "$path" "${args[$i]}")"
     done
 
-    if [ "$path" == "$1" ]; then
-        return 0
-    else
-        return 1
-    fi
+    echo "$path"
 }
 
 # _tid provides completions for tid.
 _tid() {
-    local cur prev
+    local cur opts
 
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts=""
 
-    readarray -t RAW_PATH <<< "$(_tid_get_args)"
+    case "$(_tid_get_path)" in
+        "")
+            opts="entry report resume start status stop timesheet workspace" ;;
+        "entry")
+            opts="create delete list update" ;;
+        "timesheet")
+            opts="delete list" ;;
+        "workspace")
+            opts="create delete list switch" ;;
+    esac
 
-    # At this point, RAW_PATH should only contain the things that aren't the current word we're on,
-    # or the command name itself, or any options. It should just be full arguments that are left.
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 
-    if $(_tid_is_at_path "entry update"); then
-        echo "AT PATH 'entry update'"
-    else
-        echo "NOT AT PATH 'entry update'"
-    fi
-
-    echo ""
-    echo "prev: $prev"
-    echo "cur: $cur"
-    echo "COMP_CWORD: $COMP_CWORD"
-    echo "COMP_LINE: $COMP_LINE"
-    echo "COMP_POINT: $COMP_POINT"
-    echo "COMP_WORDBREAKS: $COMP_WORDBREAKS"
-    echo "COMP_WORDS: $COMP_WORDS"
-    echo "RAW_PATH: ${RAW_PATH[@]}"
-
-    # case "${prev}" in
-    #
-    # esac
+    return 0
 }
 
 complete -F _tid tid

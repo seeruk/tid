@@ -82,6 +82,7 @@ function __fish_tid_paths
                 case "*"
                     echo "$path"
             end
+        # Fall back to current path
         case "*"
             echo "$path"
     end
