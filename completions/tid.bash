@@ -23,9 +23,9 @@ _tid_get_args() {
     fi
 
     # Remove options and echo result
-    for i in "${!RAW_PATH[@]}"; do
-        if [[ "${RAW_PATH[$i]}" != -* ]]; then
-            echo "${RAW_PATH[$i]}"
+    for item in "${RAW_PATH[@]}"; do
+        if [[ "$item" != -* ]]; then
+            echo "$item"
         fi
     done
 }
