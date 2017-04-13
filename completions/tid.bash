@@ -106,16 +106,13 @@ _tid_paths() {
 }
 
 _tid_get_path() {
-    local idx path
+    local path
 
-    readarray -t args <<< "$(_tid_get_args)"
-
-    idx=1
     path=""
 
-    for i in "${!args[@]}"; do
-        path="$(_tid_paths "$path" "${args[$i]}")"
-    done
+    while read line; do
+        path="$(_tid_paths "$path" "$line")"
+    done <<< "$(_tid_get_args)"
 
     echo "$path"
 }
