@@ -17,9 +17,12 @@ _tid_get_args() {
     # Remove `tid` part
     unset 'RAW_PATH[0]'
 
+    # Get index of last item, so we can remove it if necessary.
+    end=${#RAW_PATH[@]}
+
     # Remove current word if we're in the middle of typing something
-    if [ "$cur" != "" ] && [ "${RAW_PATH[-1]}" == "$cur" ]; then
-        unset 'RAW_PATH[-1]'
+    if [ "$cur" != "" ] && [ "${RAW_PATH[$end]}" == "$cur" ]; then
+        unset "RAW_PATH[$end]"
     fi
 
     # Remove options and echo result
