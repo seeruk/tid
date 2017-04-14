@@ -250,10 +250,17 @@ $ tid w s freelance
 Switching workspace will first stop any running timers, meaning you don't have to worry about time
 wracking up because you've forgotten to stop then switch!
 
-## Completions
+## Extras
 
-Completions are provided for Bash and Fish and are located with obvious names in the `completions/`
+### Completions
+
+Completions are provided for Bash and Fish and are located with obvious names in the `extras/completions/`
 directory.
+
+### BitBar
+
+A [BitBar](https://github.com/matryer/bitbar) plugin is available (with installation instructions) in the 
+`extras/bitbar` directory.
 
 ## License
 
