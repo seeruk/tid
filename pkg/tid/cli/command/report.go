@@ -84,6 +84,7 @@ func ReportCommand(factory util.Factory) *console.Command {
 
 		if len(entries) == 0 {
 			output.Println("report: No entries within the given time period")
+			output.SetExitCode(1)
 			return nil
 		}
 

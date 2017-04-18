@@ -161,6 +161,42 @@ func TestApplication(t *testing.T) {
 			assert.Equal(t, 102, code)
 		})
 
+		t.Run("should return exit code set on output during execute if execution succeeds", func(t *testing.T) {
+			exitCode := 200
+
+			writer := bytes.Buffer{}
+			application := createApplication(&writer)
+			application.AddCommand(&console.Command{
+				Name: "test",
+				Execute: func(input *console.Input, output *console.Output) error {
+					output.SetExitCode(exitCode)
+
+					return nil
+				},
+			})
+
+			code := application.Run([]string{"test", "aval", "--int-opt=hello"}, []string{})
+
+			assert.Equal(t, exitCode, code)
+		})
+
+		t.Run("should return exit code 102 if command execution fails even if exitCode is set", func(t *testing.T) {
+			writer := bytes.Buffer{}
+			application := createApplication(&writer)
+			application.AddCommand(&console.Command{
+				Name: "test",
+				Execute: func(input *console.Input, output *console.Output) error {
+					output.SetExitCode(400)
+
+					return errors.New("Testing errors")
+				},
+			})
+
+			code := application.Run([]string{"test", "aval", "--int-opt=hello"}, []string{})
+
+			assert.Equal(t, 102, code)
+		})
+
 		t.Run("should configure the application definition", func(t *testing.T) {
 			var a string
 			var b int

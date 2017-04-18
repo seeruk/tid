@@ -47,6 +47,7 @@ func StatusCommand(factory util.Factory) *console.Command {
 
 		if hash == "" {
 			output.Println("status: No timer to check the status of")
+			output.SetExitCode(1)
 			return nil
 		}
 
@@ -57,6 +58,7 @@ func StatusCommand(factory util.Factory) *console.Command {
 
 		if err == state.ErrStoreNilResult {
 			output.Printf("status: No entry with hash '%s'\n", hash)
+			output.SetExitCode(1)
 			return nil
 		}
 

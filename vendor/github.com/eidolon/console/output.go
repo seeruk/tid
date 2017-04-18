@@ -8,13 +8,15 @@ import (
 // Output abstracts application output. This is mainly useful for testing, as a different writer can
 // be passed to capture output in an easy to test manner.
 type Output struct {
-	Writer io.Writer
+	Writer   io.Writer
+	exitCode int
 }
 
 // NewOutput creates a new Output.
 func NewOutput(writer io.Writer) *Output {
 	return &Output{
-		Writer: writer,
+		Writer:   writer,
+		exitCode: 0,
 	}
 }
 
@@ -35,4 +37,9 @@ func (o *Output) Printf(format string, a ...interface{}) (int, error) {
 // encountered.
 func (o *Output) Println(a ...interface{}) (int, error) {
 	return fmt.Fprintln(o.Writer, a...)
+}
+
+// SetExitCode sets the exit code to a specific int. By default, the exit code is set to 0.
+func (o *Output) SetExitCode(code int) {
+	o.exitCode = code
 }

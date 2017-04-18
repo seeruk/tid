@@ -16,11 +16,19 @@
 
 # you may need to update TID to point to where your tid binary
 # is located if `which tid` provides no results
-TID=$(which tid || echo "$HOME/Projects/go/bin/tid")
+TID=$(which tid || echo "/usr/local/bin/tid")
 
 # keep 'note' at end of this string so we can be lazy and slice to the end of the array :P
 # without having to deal with spaces
 status=`$TID status -f="{{.ShortHash}} {{.Duration}} {{.IsRunning}} {{.Note}}"`
+
+if [ $? -ne 0 ]; then
+	echo "--:--"
+	echo "---"
+	echo "No timer running"
+	exit
+fi
+
 arr=($status)
 
 hash=${arr[0]}

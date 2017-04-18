@@ -50,6 +50,7 @@ func UpdateCommand(factory util.Factory) *console.Command {
 
 		if hasDuration && hasOffset {
 			output.Println("update: Duration and offset are mutually exclusive")
+			output.SetExitCode(1)
 			return nil
 		}
 
