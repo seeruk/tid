@@ -7,10 +7,11 @@ import (
 
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/olekukonko/tablewriter"
+	"strconv"
 )
 
 // WriteEntriesTable writes the given entries to a writer as a table.
-func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
+func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.TomlConfig) {
 	table := createTable(writer)
 	table.SetHeader([]string{
 		"Date",
@@ -29,7 +30,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
 			entry.Created.Format(entry.CreatedTimeFormat()),
 			entry.Updated.Format(entry.UpdatedTimeFormat()),
 			entry.Note,
-			entry.Duration.String(),
+			getTimeInRightFormat(entry.Duration, config.Display.TimeFormat),
 			fmt.Sprintf("%t", entry.IsRunning),
 		})
 	}
@@ -38,7 +39,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
 }
 
 // WriteTimesheetsTable writes the given timesheets to a writer as a table.
-func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
+func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config types.TomlConfig) {
 	table := createTable(writer)
 	table.SetHeader([]string{
 		"Date",
@@ -62,7 +63,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 		table.Append([]string{
 			sheet.Key,
 			fmt.Sprintf("%d", len(sheet.Entries)),
-			duration.String(),
+			getTimeInRightFormat(duration, config.Display.TimeFormat),
 		})
 	}
 
@@ -74,6 +75,15 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 	})
 
 	table.Render()
+}
+
+// getTimeInRightFormat prints the time using the format specified in config file.
+func getTimeInRightFormat(duration time.Duration, timeFormat string) string {
+	if (timeFormat == "decimal") {
+		return 	strconv.FormatFloat(duration.Hours(), 'f', 2, 64)
+	}
+
+	return duration.String()
 }
 
 // createTable creates the base table instance with some default options set.

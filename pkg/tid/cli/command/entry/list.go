@@ -9,10 +9,11 @@ import (
 	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
+	"github.com/SeerUK/tid/pkg/types"
 )
 
 // ListCommand creates a command to list timesheet entries.
-func ListCommand(factory util.Factory) *console.Command {
+func ListCommand(factory util.Factory, config types.TomlConfig) *console.Command {
 	var date time.Time
 	var end time.Time
 	var format string
@@ -88,7 +89,7 @@ func ListCommand(factory util.Factory) *console.Command {
 			return nil
 		}
 
-		display.WriteEntriesTable(entries, output.Writer)
+		display.WriteEntriesTable(entries, output.Writer, config)
 
 		return nil
 	}

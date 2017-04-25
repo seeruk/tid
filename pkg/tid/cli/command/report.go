@@ -14,7 +14,7 @@ import (
 )
 
 // ReportCommand creates a command to view a timesheet report.
-func ReportCommand(factory util.Factory) *console.Command {
+func ReportCommand(factory util.Factory, config types.TomlConfig) *console.Command {
 	var date time.Time
 	var end time.Time
 	var format string
@@ -105,7 +105,7 @@ func ReportCommand(factory util.Factory) *console.Command {
 			return nil
 		}
 
-		display.WriteEntriesTable(entries, output.Writer)
+		display.WriteEntriesTable(entries, output.Writer, config)
 
 		return nil
 	}
