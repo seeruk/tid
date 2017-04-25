@@ -10,10 +10,12 @@ import (
 	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
+	"github.com/SeerUK/tid/pkg/types"
+	"fmt"
 )
 
 // ListCommand creates a command to list timesheets.
-func ListCommand(factory util.Factory) *console.Command {
+func ListCommand(factory util.Factory, config types.TomlConfig) *console.Command {
 	var end time.Time
 	var format string
 	var start time.Time
@@ -48,7 +50,12 @@ func ListCommand(factory util.Factory) *console.Command {
 		now := timeutil.Date(time.Now())
 
 		if !hasStart {
-			start = timeutil.LastWeekday(time.Monday)
+			weekday, err := timeutil.StringToWeekday(config.Display.FirstWeekDay)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			start = timeutil.LastWeekday(weekday)
 		}
 
 		if !hasEnd {
@@ -76,7 +83,7 @@ func ListCommand(factory util.Factory) *console.Command {
 			return errors.New("list: No timesheets within the given time period")
 		}
 
-		display.WriteTimesheetsTable(ts, output.Writer)
+		display.WriteTimesheetsTable(ts, output.Writer, config)
 
 		return nil
 	}

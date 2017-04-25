@@ -21,8 +21,6 @@ func main() {
 	fatal(err)
 
 	tomlConfig := getTomlConfig(dir)
-	// then to use the unmarshaled config...
-	fmt.Println("Config name: ", tomlConfig.Owner.Name)
 
 	db := getBoltDB(dir)
 	defer db.Close()
@@ -34,7 +32,7 @@ func main() {
 	fatal(migErr)
 
 	factory := util.NewStandardFactory(backend)
-	kernel := cli.NewTidKernel(backend, factory)
+	kernel := cli.NewTidKernel(backend, factory, tomlConfig)
 
 	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:], os.Environ()))
 }

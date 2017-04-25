@@ -14,7 +14,7 @@ import (
 )
 
 // StatusCommand creates a command to view the status of the current timer.
-func StatusCommand(factory util.Factory) *console.Command {
+func StatusCommand(factory util.Factory, config types.TomlConfig) *console.Command {
 	var format string
 	var hash string
 
@@ -69,7 +69,7 @@ func StatusCommand(factory util.Factory) *console.Command {
 			return nil
 		}
 
-		display.WriteEntriesTable([]types.Entry{entry}, output.Writer)
+		display.WriteEntriesTable([]types.Entry{entry}, output.Writer, config)
 
 		return nil
 	}
