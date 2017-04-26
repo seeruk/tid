@@ -101,7 +101,7 @@ func (a *Application) Run(params []string, env []string) int {
 		return 102
 	}
 
-	return 0
+	return output.exitCode
 }
 
 // AddCommands adds commands to the application.

@@ -1,10 +1,10 @@
-hash: 4ff7b5b5136f0eb56dc447abe4ec83bc3d34fed380616d2d9789f0b672e0394b
-updated: 2017-04-02T18:22:18.147351043+01:00
+hash: 9613a586a43f05b1387dc296a83a0647069b11ef05bfd9b405efa6a58286364c
+updated: 2017-04-26T13:19:43.865176446+01:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
 - name: github.com/eidolon/console
-  version: 9cf5800df5353e5ca5d9446c9c47b6921c9ad6cb
+  version: 1db5440ff756bcce3db592399d21b8f77e32b5f1
   subpackages:
   - parameters
   - specification

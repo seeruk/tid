@@ -1,6 +1,7 @@
 package entry
 
 import (
+	"errors"
 	"time"
 
 	"github.com/SeerUK/tid/pkg/errhandling"
@@ -49,8 +50,7 @@ func UpdateCommand(factory util.Factory) *console.Command {
 		hasOffset := input.HasOption([]string{"o", "offset"})
 
 		if hasDuration && hasOffset {
-			output.Println("update: Duration and offset are mutually exclusive")
-			return nil
+			return errors.New("update: Duration and offset are mutually exclusive")
 		}
 
 		var entry types.Entry
