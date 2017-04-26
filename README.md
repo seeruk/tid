@@ -1,11 +1,12 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/SeerUK/tid/master/logo.png" height="256" />
+    <img src="./logo.png" height="256" /><br>
+    <a href="https://goreportcard.com/report/github.com/SeerUK/tid">
+        <img src="https://goreportcard.com/badge/github.com/SeerUK/tid" />
+    </a>
 </p>
 
-# tid
-
-A simple, CLI-based time tracking utility for personal time tracking. `tid` uses [Bolt][1] as a
-storage backend, and does not require an active daemon.
+A simple, CLI-based, personal time tracking utility. `tid` uses [Bolt][1] as a storage backend, and 
+does not require an active daemon to run.
 
 ## Installation
 
