@@ -17,7 +17,6 @@ var (
 	ErrTimerRunning = errors.New("tracking: Stop your existing timer before starting a new one")
 )
 
-
 // TrackingFacade provides a simpler interface for common general tracking-related tasks.
 type TrackingFacade struct {
 	// sysGateway is a SysGateway used for accessing system storage.

@@ -1,6 +1,8 @@
 package command
 
 import (
+	"errors"
+	"fmt"
 	"text/template"
 
 	"github.com/SeerUK/tid/pkg/state"
@@ -46,9 +48,7 @@ func StatusCommand(factory util.Factory) *console.Command {
 		}
 
 		if hash == "" {
-			output.Println("status: No timer to check the status of")
-			output.SetExitCode(1)
-			return nil
+			return errors.New("status: No timer to check the status of")
 		}
 
 		entry, err := trGateway.FindEntry(hash)
@@ -57,9 +57,7 @@ func StatusCommand(factory util.Factory) *console.Command {
 		}
 
 		if err == state.ErrStoreNilResult {
-			output.Printf("status: No entry with hash '%s'\n", hash)
-			output.SetExitCode(1)
-			return nil
+			return fmt.Errorf("status: No entry with hash '%s'\n", hash)
 		}
 
 		if hasFormat {
