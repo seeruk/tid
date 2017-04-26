@@ -3,6 +3,7 @@
     <a href="https://goreportcard.com/report/github.com/SeerUK/tid">
         <img src="https://goreportcard.com/badge/github.com/SeerUK/tid" />
     </a>
+    <img src="https://img.shields.io/github/release/SeerUK/tid.svg" />
 </p>
 
 A simple, CLI-based, personal time tracking utility. `tid` uses [Bolt][1] as a storage backend, and 
