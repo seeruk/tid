@@ -78,7 +78,9 @@ func UpdateCommand(factory util.Factory) *console.Command {
 			return errs.Errors()
 		}
 
-		output.Printf("Updated entry '%s' (%s)\n", entry.Note, entry.ShortHash())
+		if hasDuration || hasNote || hasOffset {
+			output.Printf("Updated entry '%s' (%s)\n", entry.Note, entry.ShortHash())
+		}
 
 		return nil
 	}
