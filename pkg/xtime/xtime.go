@@ -44,6 +44,7 @@ func (f *TimeFormat) UnmarshalTOML(bytes []byte) error {
 // A Weekday specifies a day of the week (Sunday = 0, ...).
 type Weekday time.Weekday
 
+// All possible Weekday values.
 const (
 	Sunday Weekday = iota
 	Monday
@@ -65,7 +66,7 @@ var weekdays = map[string]Weekday{
 }
 
 // TimeWeekday converts this Weekday to a standard library time.Weekday.
-func (w *Weekday) TimeWeekday() time.Weekday {
+func (w Weekday) TimeWeekday() time.Weekday {
 	return time.Weekday(w)
 }
 
