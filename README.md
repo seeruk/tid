@@ -73,7 +73,7 @@ $ tid report
 Report for 2017-03-01.
 
 Total Duration: 2h34m37s
-Entry Count: 1
+Entry Count: 2
 
 +------------+---------+------------+-----------+-----------------+----------+---------+
 |    DATE    |  HASH   |  CREATED   |  UPDATED  |      NOTE       | DURATION | RUNNING |
