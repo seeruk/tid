@@ -12,5 +12,6 @@ install:
 
 script:
 - goimports -l $(find . -type f -name '*.go' ! -path "./proto/*" ! -path "./vendor/*")
+- test $(goimports -l $(find . -type f -name '*.go' ! -path "./proto/*" ! -path "./vendor/*") | wc -l) -eq 0
 - golint -set_exit_status $(go list ./... | grep -v proto | grep -v vendor)
 - go vet $(go list ./... | grep -v proto | grep -v vendor)
