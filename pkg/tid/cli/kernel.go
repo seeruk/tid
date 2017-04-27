@@ -2,8 +2,8 @@ package cli
 
 import (
 	"github.com/SeerUK/tid/pkg/state"
-	"github.com/SeerUK/tid/pkg/util"
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/util"
 )
 
 // TidKernel is the core "container", and provider of services and information to the `tid` cli
@@ -21,7 +21,7 @@ type TidKernel struct {
 func NewTidKernel(backend state.Backend, factory util.Factory, config types.Config) *TidKernel {
 	return &TidKernel{
 		Backend: backend,
-		Config: config,
+		Config:  config,
 		Factory: factory,
 	}
 }
