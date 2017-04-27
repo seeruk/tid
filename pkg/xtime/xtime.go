@@ -7,23 +7,29 @@ import (
 	"time"
 )
 
-// TimeFormat is an "enum" of the different display time formats.
-type TimeFormat int
+// The xtime package contains types and functions that provide supplementary functionality to the
+// built in standard library 'time' package. It also provides some additional time-related
+// functionality and types that help things like output.
 
+// DurationFormat is an "enum" of the different display time formats. A DurationFormat can be used in
+// conjunction with FormatDuration to control how some output duration is displayed.
+type DurationFormat int
+
+// All possible duration formats.
 const (
-	// FormatDecimal format, e.g. 1.85
-	FormatDecimal TimeFormat = iota
-	// FormatText format, e.g. 1h51m0s
+	FormatDecimal DurationFormat = iota
 	FormatText
 )
 
-var formats = map[string]TimeFormat{
+var formats = map[string]DurationFormat{
 	"decimal": FormatDecimal,
 	"text":    FormatText,
 }
 
-// UnmarshalTOML takes a raw TOML time format value and attempts to parse the value as a TimeFormat.
-func (f *TimeFormat) UnmarshalTOML(bytes []byte) error {
+// UnmarshalTOML takes a raw TOML time format value and attempts to parse the value as a
+// DurationFormat. The value passed to this method should be a byte array of a quoted string (i.e.
+// the raw TOML value), the method will remove the quotes.
+func (f *DurationFormat) UnmarshalTOML(bytes []byte) error {
 	text, err := strconv.Unquote(string(bytes))
 	if err != nil {
 		return err
@@ -33,7 +39,7 @@ func (f *TimeFormat) UnmarshalTOML(bytes []byte) error {
 
 	format, ok := formats[text]
 	if !ok {
-		return fmt.Errorf("xtime: Invalid TimeFormat '%s'", text)
+		return fmt.Errorf("xtime: Invalid DurationFormat '%s'", text)
 	}
 
 	*f = format
@@ -41,7 +47,8 @@ func (f *TimeFormat) UnmarshalTOML(bytes []byte) error {
 	return nil
 }
 
-// A Weekday specifies a day of the week (Sunday = 0, ...).
+// Weekday is a type used to extend the built-in 'time.Weekday' type to add new methods to help with
+// things like parsing weekday strings into a stricter type.
 type Weekday time.Weekday
 
 // All possible Weekday values.
@@ -70,7 +77,9 @@ func (w Weekday) TimeWeekday() time.Weekday {
 	return time.Weekday(w)
 }
 
-// UnmarshalTOML takes a raw TOML weekday value and attempts to parse the value as a Weekday.
+// UnmarshalTOML takes a raw TOML weekday string value and attempts to parse the value as a Weekday.
+// The value passed to this method should be a byte array of a quoted string (i.e. the raw TOML
+// value), the method will remove the quotes.
 func (w *Weekday) UnmarshalTOML(bytes []byte) error {
 	text, err := strconv.Unquote(string(bytes))
 	if err != nil {
@@ -89,10 +98,8 @@ func (w *Weekday) UnmarshalTOML(bytes []byte) error {
 	return nil
 }
 
-const (
-	// DateFmt is a fairly standard, date-only format for times.
-	DateFmt = "2006-01-02"
-)
+// DateFmt is a fairly standard, date-only format for times.
+const DateFmt = "2006-01-02"
 
 // Date returns a given time, without any time on it. Only the date.
 func Date(datetime time.Time) time.Time {
@@ -105,7 +112,7 @@ func Date(datetime time.Time) time.Time {
 	return date
 }
 
-// LastWeekday finds the last date for the given weekday.
+// LastWeekday finds the date of the most recent occurrence of a given weekday in the past.
 func LastWeekday(weekday time.Weekday) time.Time {
 	date := Date(time.Now())
 
@@ -116,8 +123,8 @@ func LastWeekday(weekday time.Weekday) time.Time {
 	return date
 }
 
-// FormatDuration prints the time using the given format.
-func FormatDuration(duration time.Duration, timeFormat TimeFormat) string {
+// FormatDuration returns the given time.Duration as a string in the given DurationFormat.
+func FormatDuration(duration time.Duration, timeFormat DurationFormat) string {
 	switch timeFormat {
 	case FormatDecimal:
 		return strconv.FormatFloat(duration.Hours(), 'f', 2, 64)

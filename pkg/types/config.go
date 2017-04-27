@@ -11,7 +11,7 @@ type Config struct {
 
 // ConfigDisplay represents configuration for output.
 type ConfigDisplay struct {
-	TimeFormat   xtime.TimeFormat
+	TimeFormat   xtime.DurationFormat
 	FirstWeekday xtime.Weekday
 }
 
