@@ -2,17 +2,19 @@ package toml
 
 import (
 	"os"
-	"fmt"
-	"github.com/naoina/toml"
+
+	"path/filepath"
+
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/naoina/toml"
 )
 
 // BoltDatabaseFilename is the name of the database file name on disk.
 const TomlConfigFilename = "config.toml"
 
 // Open opens the configuration file or it creates it if it doesn't exist already.
-func Open(tidDir string) (types.TomlConfig, error) {
-	config := types.NewTomlConfig()
+func Open(tidDir string) (types.Config, error) {
+	config := types.NewConfig()
 
 	// Make the `path` if it does not exist.
 	err := os.MkdirAll(tidDir, os.ModePerm)
@@ -20,19 +22,19 @@ func Open(tidDir string) (types.TomlConfig, error) {
 		return config, err
 	}
 
-	var configFilePath = fmt.Sprintf("%s/%s", tidDir, TomlConfigFilename)
+	var configFilePath = filepath.Join(tidDir, TomlConfigFilename)
 
 	f, err := os.OpenFile(configFilePath, os.O_RDONLY|os.O_CREATE, 0644)
 
 	if err != nil {
-		panic(err)
+		return config, err
 	}
 
 	defer f.Close()
 
-	fileStat, err := f.Stat();
+	fileStat, err := f.Stat()
 	if err != nil {
-		panic(err)
+		return config, err
 	}
 
 	if fileStat.Size() == 0 {
@@ -45,4 +47,3 @@ func Open(tidDir string) (types.TomlConfig, error) {
 
 	return config, nil
 }
-

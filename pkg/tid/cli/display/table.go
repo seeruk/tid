@@ -11,7 +11,7 @@ import (
 )
 
 // WriteEntriesTable writes the given entries to a writer as a table.
-func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.TomlConfig) {
+func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.Config) {
 	table := createTable(writer)
 	table.SetHeader([]string{
 		"Date",
@@ -30,7 +30,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.Tom
 			entry.Created.Format(entry.CreatedTimeFormat()),
 			entry.Updated.Format(entry.UpdatedTimeFormat()),
 			entry.Note,
-			getTimeInRightFormat(entry.Duration, config.Display.TimeFormat),
+			formatDuration(entry.Duration, config.Display.TimeFormat),
 			fmt.Sprintf("%t", entry.IsRunning),
 		})
 	}
@@ -39,7 +39,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.Tom
 }
 
 // WriteTimesheetsTable writes the given timesheets to a writer as a table.
-func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config types.TomlConfig) {
+func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config types.Config) {
 	table := createTable(writer)
 	table.SetHeader([]string{
 		"Date",
@@ -63,7 +63,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config typ
 		table.Append([]string{
 			sheet.Key,
 			fmt.Sprintf("%d", len(sheet.Entries)),
-			getTimeInRightFormat(duration, config.Display.TimeFormat),
+			formatDuration(duration, config.Display.TimeFormat),
 		})
 	}
 
@@ -77,9 +77,9 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config typ
 	table.Render()
 }
 
-// getTimeInRightFormat prints the time using the format specified in config file.
-func getTimeInRightFormat(duration time.Duration, timeFormat string) string {
-	if (timeFormat == "decimal") {
+// formatDuration prints the time using the format specified in config file.
+func formatDuration(duration time.Duration, timeFormat string) string {
+	if timeFormat == "decimal" {
 		return 	strconv.FormatFloat(duration.Hours(), 'f', 2, 64)
 	}
 

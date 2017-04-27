@@ -14,7 +14,7 @@ import (
 )
 
 // StatusCommand creates a command to view the status of the current timer.
-func StatusCommand(factory util.Factory, config types.TomlConfig) *console.Command {
+func StatusCommand(factory util.Factory, config types.Config) *console.Command {
 	var format string
 	var hash string
 

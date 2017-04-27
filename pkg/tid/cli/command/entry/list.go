@@ -14,7 +14,7 @@ import (
 )
 
 // ListCommand creates a command to list timesheet entries.
-func ListCommand(factory util.Factory, config types.TomlConfig) *console.Command {
+func ListCommand(factory util.Factory, config types.Config) *console.Command {
 	var date time.Time
 	var end time.Time
 	var format string

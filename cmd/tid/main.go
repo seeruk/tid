@@ -20,7 +20,7 @@ func main() {
 	dir, err := tid.GetLocalDirectory()
 	fatal(err)
 
-	tomlConfig := getTomlConfig(dir)
+	config := getTomlConfig(dir)
 
 	db := getBoltDB(dir)
 	defer db.Close()
@@ -28,17 +28,17 @@ func main() {
 	backend := bolt.NewBoltBackend(db)
 
 	// Initialise the backend, preparing it for use, ensuring it's up-to-date.
-	migErr := migrate.Backend(backend)
-	fatal(migErr)
+	err = migrate.Backend(backend)
+	fatal(err)
 
 	factory := util.NewStandardFactory(backend)
-	kernel := cli.NewTidKernel(backend, factory, tomlConfig)
+	kernel := cli.NewTidKernel(backend, factory, config)
 
 	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:], os.Environ()))
 }
 
 // getTomlConfig gets the config
-func getTomlConfig(dir string) types.TomlConfig {
+func getTomlConfig(dir string) types.Config {
 	tomlConfig, err := toml.Open(dir)
 	fatal(err)
 

@@ -1,13 +1,24 @@
 package timeutil
 
 import (
-	"time"
-	"strings"
 	"fmt"
+	"strings"
+	"time"
 )
 
 // DateFmt is a fairly standard, date-only format for times.
 const DateFmt = "2006-01-02"
+
+// weekday maps days defined in string to time.Weekday
+var weekday = map[string]time.Weekday{
+	"monday":    time.Monday,
+	"tuesday":   time.Tuesday,
+	"wednesday": time.Wednesday,
+	"thursday":  time.Thursday,
+	"friday":    time.Friday,
+	"saturday":  time.Saturday,
+	"sunday":    time.Sunday,
+}
 
 // Date returns a given time, without any time on it. Only the date.
 func Date(datetime time.Time) time.Time {
@@ -24,32 +35,19 @@ func Date(datetime time.Time) time.Time {
 func LastWeekday(weekday time.Weekday) time.Time {
 	date := Date(time.Now())
 
-	for date.Weekday() !=  weekday{
+	for date.Weekday() != weekday {
 		date = date.AddDate(0, 0, -1)
 	}
 
 	return date
 }
 
-// StringToWeekday transforms a string to time.Weekday
-// it returns Monday if wrong day specified in config.toml
-func StringToWeekday(weekday string) (time.Weekday, error){
-	switch strings.ToLower(weekday) {
-		case "monday":
-			return time.Monday, nil
-		case "tuesday":
-			return time.Tuesday, nil
-		case "wednesday":
-			return time.Wednesday, nil
-		case "thursday":
-			return time.Thursday, nil
-		case "friday":
-			return time.Friday, nil
-		case "saturday":
-			return time.Saturday, nil
-		case "sunday":
-			return time.Sunday, nil
+// StringToWeekday maps a string to a time.Weekday.
+func StringToWeekday(day string) (time.Weekday, error) {
+	timeWeekday, ok := weekday[strings.ToLower(day)]
+	if !ok {
+		return time.Sunday, fmt.Errorf("timeutil: Invalid weekday '%s' given", day)
 	}
 
-	return time.Sunday, fmt.Errorf("Invalid first week day '%s' specifid in config.toml. Sunday is used as default", weekday)
+	return timeWeekday, nil
 }

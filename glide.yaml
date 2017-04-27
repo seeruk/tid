@@ -10,3 +10,5 @@ import:
   subpackages:
   - proto
 - package: github.com/olekukonko/tablewriter
+- package: github.com/naoina/toml
+  version: ^0.1.0

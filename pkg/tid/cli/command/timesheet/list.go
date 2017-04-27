@@ -7,15 +7,15 @@ import (
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
 	"github.com/SeerUK/tid/pkg/timeutil"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
-	"github.com/SeerUK/tid/pkg/types"
 	"fmt"
 )
 
 // ListCommand creates a command to list timesheets.
-func ListCommand(factory util.Factory, config types.TomlConfig) *console.Command {
+func ListCommand(factory util.Factory, config types.Config) *console.Command {
 	var end time.Time
 	var format string
 	var start time.Time
@@ -50,9 +50,9 @@ func ListCommand(factory util.Factory, config types.TomlConfig) *console.Command
 		now := timeutil.Date(time.Now())
 
 		if !hasStart {
-			weekday, err := timeutil.StringToWeekday(config.Display.FirstWeekDay)
+			weekday, err := timeutil.StringToWeekday(config.Display.FirstWeekday)
 			if err != nil {
-				fmt.Println(err)
+				return fmt.Errorf("list: Invalid fist weekday '%s' given in config", config.Display.FirstWeekday)
 			}
 
 			start = timeutil.LastWeekday(weekday)
