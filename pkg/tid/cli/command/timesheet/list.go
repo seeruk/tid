@@ -2,6 +2,7 @@ package timesheet
 
 import (
 	"errors"
+	"fmt"
 	"text/template"
 	"time"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/SeerUK/tid/pkg/util"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
-	"fmt"
 )
 
 // ListCommand creates a command to list timesheets.

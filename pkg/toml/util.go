@@ -2,14 +2,13 @@ package toml
 
 import (
 	"os"
-
 	"path/filepath"
 
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/naoina/toml"
 )
 
-// BoltDatabaseFilename is the name of the database file name on disk.
+// TomlConfigFilename is the name of the config file name on disk.
 const TomlConfigFilename = "config.toml"
 
 // Open opens the configuration file or it creates it if it doesn't exist already.
@@ -24,7 +23,7 @@ func Open(tidDir string) (types.Config, error) {
 
 	var configFilePath = filepath.Join(tidDir, TomlConfigFilename)
 
-	f, err := os.OpenFile(configFilePath, os.O_RDONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(configFilePath, os.O_RDONLY|os.O_CREATE, 0666)
 
 	if err != nil {
 		return config, err
@@ -42,7 +41,7 @@ func Open(tidDir string) (types.Config, error) {
 	}
 
 	if err := toml.NewDecoder(f).Decode(&config); err != nil {
-		panic(err)
+		return config, err
 	}
 
 	return config, nil

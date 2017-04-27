@@ -2,6 +2,7 @@ package timeutil
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,4 +51,13 @@ func StringToWeekday(day string) (time.Weekday, error) {
 	}
 
 	return timeWeekday, nil
+}
+
+// FormatDuration prints the time using the given format.
+func FormatDuration(duration time.Duration, timeFormat string) string {
+	if timeFormat == "decimal" {
+		return strconv.FormatFloat(duration.Hours(), 'f', 2, 64)
+	}
+
+	return duration.String()
 }

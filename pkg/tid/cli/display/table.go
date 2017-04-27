@@ -5,9 +5,9 @@ import (
 	"io"
 	"time"
 
+	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/olekukonko/tablewriter"
-	"strconv"
 )
 
 // WriteEntriesTable writes the given entries to a writer as a table.
@@ -30,7 +30,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.Con
 			entry.Created.Format(entry.CreatedTimeFormat()),
 			entry.Updated.Format(entry.UpdatedTimeFormat()),
 			entry.Note,
-			formatDuration(entry.Duration, config.Display.TimeFormat),
+			timeutil.FormatDuration(entry.Duration, config.Display.TimeFormat),
 			fmt.Sprintf("%t", entry.IsRunning),
 		})
 	}
@@ -63,7 +63,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config typ
 		table.Append([]string{
 			sheet.Key,
 			fmt.Sprintf("%d", len(sheet.Entries)),
-			formatDuration(duration, config.Display.TimeFormat),
+			timeutil.FormatDuration(duration, config.Display.TimeFormat),
 		})
 	}
 
@@ -71,19 +71,10 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config typ
 	table.Append([]string{
 		"TOTAL",
 		fmt.Sprintf("%d", totalEntries),
-		totalDuration.String(),
+		timeutil.FormatDuration(totalDuration, config.Display.TimeFormat),
 	})
 
 	table.Render()
-}
-
-// formatDuration prints the time using the format specified in config file.
-func formatDuration(duration time.Duration, timeFormat string) string {
-	if timeFormat == "decimal" {
-		return 	strconv.FormatFloat(duration.Hours(), 'f', 2, 64)
-	}
-
-	return duration.String()
 }
 
 // createTable creates the base table instance with some default options set.
