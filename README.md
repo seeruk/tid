@@ -1,5 +1,8 @@
 <p align="center">
     <img src="./logo.png" height="256" /><br>
+    <a href="https://travis-ci.org/SeerUK/tid">
+        <img src="https://travis-ci.org/SeerUK/tid.svg?branch=master" />
+    </a>
     <a href="https://goreportcard.com/report/github.com/SeerUK/tid">
         <img src="https://goreportcard.com/badge/github.com/SeerUK/tid" />
     </a>
@@ -8,7 +11,7 @@
     </a>
 </p>
 
-A simple, CLI-based, personal time tracking utility. `tid` uses [Bolt][1] as a storage backend, and 
+A simple, CLI-based, personal time tracking utility. `tid` uses [Bolt][1] as a storage backend, and
 does not require an active daemon to run.
 
 ## Installation
@@ -263,7 +266,7 @@ directory.
 
 ### BitBar
 
-A [BitBar](https://github.com/matryer/bitbar) plugin is available (with installation instructions) in the 
+A [BitBar](https://github.com/matryer/bitbar) plugin is available (with installation instructions) in the
 `extras/bitbar` directory.
 
 ## License
