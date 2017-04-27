@@ -7,15 +7,15 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
-	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/SeerUK/tid/pkg/util"
+	"github.com/SeerUK/tid/pkg/xtime"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
 
 // ReportCommand creates a command to view a timesheet report.
-func ReportCommand(factory util.Factory) *console.Command {
+func ReportCommand(factory util.Factory, config types.Config) *console.Command {
 	var date time.Time
 	var end time.Time
 	var format string
@@ -63,7 +63,7 @@ func ReportCommand(factory util.Factory) *console.Command {
 		hasStart := input.HasOption([]string{"s", "start"})
 
 		// We need to get the current date, this is a little hacky, but we need it without any time
-		now := timeutil.Date(time.Now())
+		now := xtime.Date(time.Now())
 
 		if !hasStart {
 			start = now
@@ -105,7 +105,7 @@ func ReportCommand(factory util.Factory) *console.Command {
 			return nil
 		}
 
-		display.WriteEntriesTable(entries, output.Writer)
+		display.WriteEntriesTable(entries, output.Writer, config)
 
 		return nil
 	}
@@ -121,10 +121,10 @@ func ReportCommand(factory util.Factory) *console.Command {
 
 func getDateRange(start time.Time, end time.Time) string {
 	if start.Equal(end) {
-		return end.Format(timeutil.DateFmt)
+		return end.Format(xtime.DateFmt)
 	}
 
-	return fmt.Sprintf("%s to %s", start.Format(timeutil.DateFmt), end.Format(timeutil.DateFmt))
+	return fmt.Sprintf("%s to %s", start.Format(xtime.DateFmt), end.Format(xtime.DateFmt))
 }
 
 func getDurationForEntries(entries []types.Entry) time.Duration {

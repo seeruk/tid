@@ -6,11 +6,12 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/xtime"
 	"github.com/olekukonko/tablewriter"
 )
 
 // WriteEntriesTable writes the given entries to a writer as a table.
-func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
+func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.Config) {
 	table := createTable(writer)
 	table.SetHeader([]string{
 		"Date",
@@ -29,7 +30,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
 			entry.Created.Format(entry.CreatedTimeFormat()),
 			entry.Updated.Format(entry.UpdatedTimeFormat()),
 			entry.Note,
-			entry.Duration.String(),
+			xtime.FormatDuration(entry.Duration, config.Display.TimeFormat),
 			fmt.Sprintf("%t", entry.IsRunning),
 		})
 	}
@@ -38,7 +39,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer) {
 }
 
 // WriteTimesheetsTable writes the given timesheets to a writer as a table.
-func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
+func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config types.Config) {
 	table := createTable(writer)
 	table.SetHeader([]string{
 		"Date",
@@ -62,7 +63,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 		table.Append([]string{
 			sheet.Key,
 			fmt.Sprintf("%d", len(sheet.Entries)),
-			duration.String(),
+			xtime.FormatDuration(duration, config.Display.TimeFormat),
 		})
 	}
 
@@ -70,7 +71,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer) {
 	table.Append([]string{
 		"TOTAL",
 		fmt.Sprintf("%d", totalEntries),
-		totalDuration.String(),
+		xtime.FormatDuration(totalDuration, config.Display.TimeFormat),
 	})
 
 	table.Render()

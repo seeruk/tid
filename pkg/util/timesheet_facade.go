@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/state"
-	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/xtime"
 )
 
 // TimesheetFacade provides a simpler interface for common Timesheet-related tasks.
@@ -26,7 +26,7 @@ func NewTimesheetFacade(trGateway state.TrackingGateway, entryFacade *EntryFacad
 
 // Delete attempts to delete a timesheet at the given date.
 func (f *TimesheetFacade) Delete(date time.Time) (types.Timesheet, error) {
-	sheet, err := f.trGateway.FindTimesheet(date.Format(timeutil.DateFmt))
+	sheet, err := f.trGateway.FindTimesheet(date.Format(xtime.DateFmt))
 	if err != nil {
 		return sheet, err
 	}
