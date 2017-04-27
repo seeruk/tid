@@ -2,14 +2,13 @@ package timesheet
 
 import (
 	"errors"
-	"fmt"
 	"text/template"
 	"time"
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
-	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/types"
 	"github.com/SeerUK/tid/pkg/util"
+	"github.com/SeerUK/tid/pkg/xtime"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
 )
@@ -47,15 +46,10 @@ func ListCommand(factory util.Factory, config types.Config) *console.Command {
 		hasFormat := input.HasOption([]string{"f", "format"})
 		hasStart := input.HasOption([]string{"s", "start"})
 
-		now := timeutil.Date(time.Now())
+		now := xtime.Date(time.Now())
 
 		if !hasStart {
-			weekday, err := timeutil.StringToWeekday(config.Display.FirstWeekday)
-			if err != nil {
-				return fmt.Errorf("list: Invalid fist weekday '%s' given in config", config.Display.FirstWeekday)
-			}
-
-			start = timeutil.LastWeekday(weekday)
+			start = xtime.LastWeekday(config.Display.FirstWeekday.TimeWeekday())
 		}
 
 		if !hasEnd {

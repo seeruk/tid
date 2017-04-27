@@ -1,5 +1,9 @@
 package types
 
+import (
+	"github.com/SeerUK/tid/pkg/xtime"
+)
+
 // Config represents the application configuration format.
 type Config struct {
 	Display ConfigDisplay
@@ -7,16 +11,16 @@ type Config struct {
 
 // ConfigDisplay represents configuration for output.
 type ConfigDisplay struct {
-	TimeFormat   string
-	FirstWeekday string
+	TimeFormat   xtime.TimeFormat
+	FirstWeekday xtime.Weekday
 }
 
 // NewConfig creates a Config struct with default values.
 func NewConfig() Config {
 	return Config{
 		Display: ConfigDisplay{
-			TimeFormat:   "text",
-			FirstWeekday: "Monday",
+			TimeFormat:   xtime.FormatText,
+			FirstWeekday: xtime.Monday,
 		},
 	}
 }

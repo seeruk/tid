@@ -254,6 +254,24 @@ $ tid w s freelance
 Switching workspace will first stop any running timers, meaning you don't have to worry about time
 wracking up because you've forgotten to stop then switch!
 
+## Configuration
+
+Tid uses [naoina](https://github.com/naoina/toml) to handle configurations. They are optional and 
+can be defined in your ~/.tid/config.toml file using [toml-lang](https://github.com/toml-lang/toml)
+
+### Available options
+
+| Category | Name          | Valid Values          | Description                                                                                            |
+|:--------:|:-------------:|:---------------------:|:-------------------------------------------------------------------------------------------------------|
+| display  | time_format   | *text* or *decimal*   | <ul><li>text: displays time in 2h23m32s format</li><li>decimal: displays time in decimal format</li></ul>|
+| display  | first_weekday | Any valid weekday name| Specifies the start day on the timesheet list |
+
+### Example
+```toml
+[display]
+time_format = "decimal"
+first_weekday = "Monday"
+```
 ## Extras
 
 ### Completions

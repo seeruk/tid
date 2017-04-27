@@ -5,8 +5,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/SeerUK/tid/pkg/timeutil"
 	"github.com/SeerUK/tid/pkg/types"
+	"github.com/SeerUK/tid/pkg/xtime"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -30,7 +30,7 @@ func WriteEntriesTable(entries []types.Entry, writer io.Writer, config types.Con
 			entry.Created.Format(entry.CreatedTimeFormat()),
 			entry.Updated.Format(entry.UpdatedTimeFormat()),
 			entry.Note,
-			timeutil.FormatDuration(entry.Duration, config.Display.TimeFormat),
+			xtime.FormatDuration(entry.Duration, config.Display.TimeFormat),
 			fmt.Sprintf("%t", entry.IsRunning),
 		})
 	}
@@ -63,7 +63,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config typ
 		table.Append([]string{
 			sheet.Key,
 			fmt.Sprintf("%d", len(sheet.Entries)),
-			timeutil.FormatDuration(duration, config.Display.TimeFormat),
+			xtime.FormatDuration(duration, config.Display.TimeFormat),
 		})
 	}
 
@@ -71,7 +71,7 @@ func WriteTimesheetsTable(sheets []types.Timesheet, writer io.Writer, config typ
 	table.Append([]string{
 		"TOTAL",
 		fmt.Sprintf("%d", totalEntries),
-		timeutil.FormatDuration(totalDuration, config.Display.TimeFormat),
+		xtime.FormatDuration(totalDuration, config.Display.TimeFormat),
 	})
 
 	table.Render()

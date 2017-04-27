@@ -36,7 +36,7 @@ func main() {
 	os.Exit(cli.CreateApplication(kernel).Run(os.Args[1:], os.Environ()))
 }
 
-// getTomlConfig gets the config
+// getTomlConfig gets the config from a TOML configuration file.
 func getTomlConfig(dir string) types.Config {
 	tomlConfig, err := toml.Open(dir)
 	fatal(err)

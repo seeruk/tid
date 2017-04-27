@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/SeerUK/tid/pkg/tid/cli/display"
-	"github.com/SeerUK/tid/pkg/timeutil"
+	"github.com/SeerUK/tid/pkg/types"
 	"github.com/SeerUK/tid/pkg/util"
+	"github.com/SeerUK/tid/pkg/xtime"
 	"github.com/eidolon/console"
 	"github.com/eidolon/console/parameters"
-	"github.com/SeerUK/tid/pkg/types"
 )
 
 // ListCommand creates a command to list timesheet entries.
@@ -54,7 +54,7 @@ func ListCommand(factory util.Factory, config types.Config) *console.Command {
 		hasFormat := input.HasOption([]string{"f", "format"})
 		hasStart := input.HasOption([]string{"s", "start"})
 
-		now := timeutil.Date(time.Now())
+		now := xtime.Date(time.Now())
 
 		if !hasStart {
 			start = now
