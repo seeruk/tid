@@ -57,7 +57,7 @@ func StatusCommand(factory util.Factory) *console.Command {
 		}
 
 		if err == state.ErrStoreNilResult {
-			return fmt.Errorf("status: No entry with hash '%s'\n", hash)
+			return fmt.Errorf("status: No entry with hash '%s'", hash)
 		}
 
 		if hasFormat {
