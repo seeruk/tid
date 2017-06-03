@@ -22,7 +22,7 @@ var ErrNilBucket = errors.New("state: No bucket found")
 // deal with ProtoBuf messages.
 type Backend interface {
 	// -- Buckets
-	// CreateBucketIfNotExists attempts to create a bucket with a given name, if it doens't exist.
+	// CreateBucketIfNotExists attempts to create a bucket with a given name, if it doesn't exist.
 	CreateBucketIfNotExists(name string) error
 	// HasBucket returns true if this Backend has a bucket with the given name.
 	HasBucket(name string) bool
