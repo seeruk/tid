@@ -58,6 +58,11 @@ func (b *boltBackend) Read(bucket string, key string) ([]byte, error) {
 
 	err := b.db.View(func(tx *boltdb.Tx) error {
 		bucket := tx.Bucket([]byte(bucket))
+
+		if bucket == nil {
+			return state.ErrNilBucket
+		}
+
 		value = bucket.Get([]byte(key))
 
 		return nil
