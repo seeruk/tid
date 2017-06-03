@@ -5,6 +5,7 @@ go:
 
 before_install:
 - go get -u -v github.com/golang/lint/golint
+- go get -u -v github.com/mitchellh/gox
 - go get -u -v golang.org/x/tools/cmd/goimports
 
 install:
@@ -15,3 +16,25 @@ script:
 - test $(goimports -l $(find . -type f -name '*.go' ! -path "./proto/*" ! -path "./vendor/*") | wc -l) -eq 0
 - golint -set_exit_status $(go list ./... | grep -v proto | grep -v vendor)
 - go vet $(go list ./... | grep -v proto | grep -v vendor)
+- gox -os="windows linux darwin" -arch="386 amd64" ./cmd/...
+
+deploy:
+  provider: releases
+  api_key:
+    secure: DWTybqRq771gJgh9yQWZMou0DT27yk7+fq+7mScmozE9S8AsuBQd2XcOxlX2ppIEVcQLjlh9iF3Cx7Vr4/JwpO7XmqDYk5MqpRJum5In9I97eco2HJBv4b1Mi0AkfFVlnxxNzrFQGQ+eTgyz06+V7s4PCKnjcin/JSJq/DWzTeWX+SyQ/9m1Q+7PBoid3BHILkCoPoMcdRyWzuUKICzKrm6359nMI8XR/PdxUtbHCGoxNfmelIpeWbC8K/m0o5ChiwYBmv4ty3yfmH/ife5ctChXQHr+eGDPUThFH0MaKzRQVS6AqMR39dXZcrnsjZfklv2ppRKMsf1FbcuqJp1svJPgyR/+TuTLTmWn/xYPLdhxuJmUziVJy3LWknYgcHgAgZw3lk1RN3HQmuGxDyfAdqH4A7uM+bukfoYkfmYfvmhQiHb+RfhEQxLIbVVRgL1W4Oz+PPI+5ZMenG6rPTiOqMg2BabIItv2Rhp38Bp/0c6vmtS8eHJwtmZ2yuZIlPe4PF4/mUheA20inV4gAn4udzhP4I1c735oW8f6f08Jjw2tvcK1TciXNr0FCMHZyk6xFcJuCct4EelNJ+AlyevwrBpXfGuiNmxTy4kvZPH+0nOH5PbbbbUhG5FYFnVJ7XigYWZA0/kcX1OyuVfJzAjy6z7EHVxOm9EZnXHwEvSTTUw=
+  file:
+  - tid_darwin_386
+  - tid_darwin_amd64
+  - tid_linux_386
+  - tid_linux_amd64
+  - tid_windows_386.exe
+  - tid_windows_amd64.exe
+  - tiddate_darwin_386
+  - tiddate_darwin_amd64
+  - tiddate_linux_386
+  - tiddate_linux_amd64
+  - tiddate_windows_386.exe
+  - tiddate_windows_amd64.exe
+  skip_cleanup: true
+  on:
+    tags: true

@@ -28,3 +28,6 @@ _testmain.go
 
 /cmd/tiddate/*
 !/cmd/tiddate/main.go
+
+tid_*
+tiddate_*
