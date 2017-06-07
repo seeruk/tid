@@ -16,9 +16,16 @@ does not require an active daemon to run.
 
 ## Installation
 
+The easiest method is with the installation script:
+
+```
+$ curl -s https://raw.githubusercontent.com/SeerUK/tid/master/install.sh | sh
+```
+
 You can download a pre-built binary for Windows, Linux, or macOS on the [Releases page][2]. If you 
-download a release for Linux or macOS you will have to make it executable. Alternatively build from 
-source using Go:
+download a release for Linux or macOS you will have to make it executable. 
+
+Alternatively build from source using Go:
 
 ```
 $ go get -u -v github.com/SeerUK/tid/...
