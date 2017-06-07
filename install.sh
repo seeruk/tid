@@ -9,7 +9,7 @@ TID_VERSION=""
 
 prepareArch() {
 	TID_ARCH=$(uname -m)
-	case $TID_ARCH in
+	case "$TID_ARCH" in
 		x86) TID_ARCH="386";;
 		x86_64) TID_ARCH="amd64";;
 		i686) TID_ARCH="386";;
@@ -20,7 +20,7 @@ prepareArch() {
 prepareOS() {
 	TID_OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
 
-	case "$OS" in
+	case "$TID_OS" in
 		# Minimalist GNU for Windows
 		mingw*) TID_OS='windows';;
 	esac
@@ -79,7 +79,9 @@ installRelease() {
 			wget -q -O "$BINARY_VERSION_FILE" "$BINARY_RELEASE_URL"
 		fi
 
-		chmod +x "$BINARY_VERSION_FILE"
+		if test "$TID_OS" != "windows"; then
+		    chmod +x "$BINARY_VERSION_FILE"
+		fi
 
 		echo "Linking $BINARY $TID_VERSION..."
 
@@ -88,7 +90,26 @@ installRelease() {
 
 	echo ""
 	echo "Installed to '$TID_BIN_DIR'."
-	echo "Make sure this is on your PATH!"
+	echo "This should be have automatically been added to your path."
+	echo "If it hasn't been, make sure you add it manually!"
+}
+
+installPath() {
+    BASH_LINE="export PATH=\"\$PATH:\$HOME/.tid/bin"
+    FISH_LINE="set -gx PATH \$HOME/.tid/bin \$PATH"
+    ZSH_LINE="$BASH_LINE"
+
+    grep -qF "$BASH_LINE" "$HOME/.bashrc" ||
+        echo "$BASH_LINE" >> "$HOME/.bashrc"
+
+    grep -qF "$BASH_LINE" "$HOME/.profile" ||
+        echo "$BASH_LINE" >> "$HOME/.profile"
+
+    grep -qF "$FISH_LINE" "$HOME/.config/fish/config.fish" ||
+        echo "$FISH_LINE" >> "$HOME/.config/fish/config.fish"
+
+    grep -qF "$ZSH_LINE" "$HOME/.zshrc" ||
+        echo "$ZSH_LINE" >> "$HOME/.zshrc"
 }
 
 prepareArch
@@ -97,6 +118,7 @@ prepareTidDir
 prepareVersion
 
 installRelease
+installPath
 
 # @todo:
 # Backup existing data (how do we know where the DB is? parse config for path?)
