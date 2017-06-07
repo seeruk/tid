@@ -96,7 +96,7 @@ installRelease() {
 }
 
 installPath() {
-    BASH_LINE="export PATH=\"\$PATH:\$HOME/.tid/bin"
+    BASH_LINE="export PATH=\"\$PATH:\$HOME/.tid/bin\""
     FISH_LINE="set -gx PATH \$HOME/.tid/bin \$PATH"
     ZSH_LINE="$BASH_LINE"
 
