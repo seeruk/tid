@@ -112,7 +112,7 @@ end
 
 # List entries from the last 6 months
 function __fish_tid_entries
-    command tid entry list --start=(tiddate --months=-6) --end=(tiddate) \
+    command tid entry list --start=(tiddate --months=-1) --end=(tiddate) \
         --format="{{.ShortHash}}"\t"{{.Note}}"
 end
 

@@ -16,7 +16,7 @@ script:
 - test $(goimports -l $(find . -type f -name '*.go' ! -path "./proto/*" ! -path "./vendor/*") | wc -l) -eq 0
 - golint -set_exit_status $(go list ./... | grep -v proto | grep -v vendor)
 - go vet $(go list ./... | grep -v proto | grep -v vendor)
-- gox -os="windows linux darwin" -arch="386 amd64" ./cmd/...
+- gox -os="windows linux darwin" -arch="386 amd64" -ldflags "-X github.com/SeerUK/tid/pkg/tid/cli.BuildTime=`date -u '+%Y-%m-%d_%H:%M:%S'` -X github.com/SeerUK/tid/pkg/tid/cli.Commit=`git rev-parse HEAD` -X github.com/SeerUK/tid/pkg/tid/cli.Version=`cat VERSION`" ./cmd/...
 
 deploy:
   provider: releases

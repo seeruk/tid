@@ -121,7 +121,7 @@ _tid_get_path() {
 }
 
 _tid_entries() {
-    echo $(command tid entry list --start=$(command tiddate --months=-6) --end=$(command tiddate) \
+    echo $(command tid entry list --start=$(command tiddate --months=-1) --end=$(command tiddate) \
         --format="{{.ShortHash}}")
 }
 
