@@ -11,9 +11,12 @@ import (
 )
 
 var (
-	BuildTime string = "n/a"
-	Commit    string = "n/a"
-	Version   string = "n/a"
+	// BuildTime should be set to a datetime string.
+	BuildTime = "n/a"
+	// Commit should be set to a Git commit SHA.
+	Commit = "n/a"
+	// Version should be set to the tid version.
+	Version = "n/a"
 )
 
 // CreateApplication builds the console application instance. Providing it with some basic
