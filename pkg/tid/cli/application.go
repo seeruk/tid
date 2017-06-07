@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/SeerUK/tid/pkg/tid/cli/command"
 	"github.com/SeerUK/tid/pkg/tid/cli/command/entry"
 	"github.com/SeerUK/tid/pkg/tid/cli/command/timesheet"
@@ -8,10 +10,18 @@ import (
 	"github.com/eidolon/console"
 )
 
+var (
+	BuildTime string = "n/a"
+	Commit    string = "n/a"
+	Version   string = "n/a"
+)
+
 // CreateApplication builds the console application instance. Providing it with some basic
 // information like the name and version.
 func CreateApplication(kernel *TidKernel) *console.Application {
-	application := console.NewApplication("tid", "0.2.3")
+	version := fmt.Sprintf("%s (%s, %s)", Version, Commit, BuildTime)
+
+	application := console.NewApplication("tid", version)
 	application.Logo = `
 ######## ### #######
    ###   ###       ##
