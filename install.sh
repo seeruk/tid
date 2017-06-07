@@ -9,6 +9,7 @@ TID_VERSION=""
 
 prepareArch() {
 	TID_ARCH=$(uname -m)
+
 	case "$TID_ARCH" in
 		x86) TID_ARCH="386";;
 		x86_64) TID_ARCH="amd64";;
